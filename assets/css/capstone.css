@@ -1,0 +1,481 @@
+/**********************************************************************************************
+*	File Name: capstone.css
+*	Author: Symon Ramos and Jack Thiem
+*	Date: 3/5/19
+*	Description: Contains custom css stylings for this application. This is
+*	used by default for laptops and desktops.
+*
+**********************************************************************************************/
+
+
+@import url('https://fonts.googleapis.com/css?family=Roboto:900|Abel|Heebo:700');
+
+body{
+	font-family: 'Abel', cursive;
+	padding-top: 50px;
+}
+
+h1,h2,h3,h4,h5,h6{
+	font-family: 'Heebo';
+}
+
+button h6{
+	font-family: 'Abel';
+	margin: 3px;
+}
+
+.websiteTitle{
+	font-family: 'Roboto';
+	font-size: 40px;
+}
+
+.formSection{
+	background-color: #D5D5D5;
+}
+
+
+.bg-primary{
+	background: linear-gradient(to bottom right, #0066ff 0%, #fafafa 90%);
+}
+
+.homePageText{
+	font-size: 82px;
+}
+
+.scroll {
+    max-height: 70vh;
+    overflow-y: scroll;
+}
+
+.ndaDisclaimer{
+	font-size: 13px;
+	max-height: 200px;
+	overflow-y: scroll;
+
+}
+
+.navbarColor{
+	background: linear-gradient(to bottom right, #D1D1D1, #ffffff 100%);
+}
+
+.jumbotron, .formSection{
+	background: linear-gradient(to bottom, #B1B1B1, #ffffff 100%);
+}
+
+.keywordBadge{
+	margin: 2px;
+}
+
+.keywordBadge:hover{
+	background: #87ceeb;
+	cursor: default;
+}
+
+.a{
+	color:black;
+	text-decoration: none;
+}
+
+.a:hover{
+	color:black;
+}
+
+
+.capstone-nav-btn{
+	margin: 5px;
+}
+
+.admin-btn{
+	margin: 15px;
+
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+#img-upload{
+    width: 100%;
+}
+
+
+/* Test Additions
+->
+*/
+
+:root {
+  --input-padding-x: 1.5rem;
+  --input-padding-y: .75rem;
+}
+
+.bodyLogin {
+  background: #007bff;
+  background: linear-gradient(to right, #0062E6, #33AEFF);
+}
+
+.card-signin {
+  border: 0;
+  border-radius: 1rem;
+  box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);
+}
+
+.card-signin .card-title {
+  margin-bottom: 2rem;
+  font-weight: 300;
+  font-size: 1.5rem;
+}
+
+.card-signin .card-body {
+  padding: 2rem;
+}
+
+.form-signin {
+  width: 100%;
+}
+
+.form-signin .btn {
+  font-size: 80%;
+  border-radius: 5rem;
+  letter-spacing: .1rem;
+  font-weight: bold;
+  padding: 1rem;
+  transition: all 0.2s;
+}
+
+.form-label-group {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.form-label-group input {
+  height: auto;
+  border-radius: 2rem;
+}
+
+.form-label-group>input,
+.form-label-group>label {
+  padding: var(--input-padding-y) var(--input-padding-x);
+}
+
+.form-label-group>label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  margin-bottom: 0;
+  /* Override default `<label>` margin */
+  line-height: 1.5;
+  color: #495057;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+  transition: all .1s ease-in-out;
+}
+
+.form-label-group input::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.form-label-group input:-ms-input-placeholder {
+  color: transparent;
+}
+
+.form-label-group input::-ms-input-placeholder {
+  color: transparent;
+}
+
+.form-label-group input::-moz-placeholder {
+  color: transparent;
+}
+
+.form-label-group input::placeholder {
+  color: transparent;
+}
+
+.form-label-group input:not(:placeholder-shown) {
+  padding-top: calc(var(--input-padding-y) + var(--input-padding-y) * (2 / 3));
+  padding-bottom: calc(var(--input-padding-y) / 3);
+}
+
+.form-label-group input:not(:placeholder-shown)~label {
+  padding-top: calc(var(--input-padding-y) / 3);
+  padding-bottom: calc(var(--input-padding-y) / 3);
+  font-size: 12px;
+  color: #777;
+}
+
+.btn-google {
+  color: white;
+  background-color: #ea4335;
+}
+
+.btn-github {
+  color: white;
+  background-color: #808080;
+}
+
+.btn-onid {
+  color: white;
+  background-color: #FFA500;
+}
+
+.btn-microsoft {
+  color: white;
+  background-color: #7FBA00;
+}
+
+.btn-outlook {
+  color: white;
+  background-color: #0072C6;
+
+}
+
+
+.btn-help {
+	color: white;
+	background-color: #808080;
+}
+
+
+
+
+.bg-image-full {
+  background: no-repeat center center scroll;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  background-size: cover;
+  -o-background-size: cover;
+}
+
+.about {
+	border-spacing: 15px;
+}
+
+#singleprojecttext.active{
+
+}
+
+
+.card-img-top{
+	width:100%;
+}
+
+.capstoneCardColumns{
+	column-count: 4;
+}
+
+.capstoneCardColumnsAdmin{
+	column-count: 8;
+}
+
+.capstoneCard{
+	cursor: default;
+	width: 20rem;
+}
+
+.capstoneCardAdmin{
+	cursor: default;
+	width: 20rem;
+	color: blue;
+}
+
+.capstoneJumbotron{
+	padding: 5px;
+}
+
+.loaderdiv{
+	width:50px;
+ 	margin:10% auto;
+	box-sizing:border-box;
+}
+
+.successText{
+	margin: auto;
+	padding-top: 20px;
+	text-align: center;
+	font-size: 25px;
+	color: green;
+	display:none;
+}
+
+.adminText{
+	margin: auto;
+	padding-top: 20px;
+	text-align: center;
+	font-size: 25px;
+	display:none;
+}
+
+.save-icon{
+  position:relative;
+
+  background:#a4a6a7;
+  height:40px;
+  width:35px;
+  display:block;
+  padding-top:10px;
+
+  -moz-border-radius:3px;
+  border-radius:3px;
+}
+
+.save-icon:before{
+   content:"";
+   position:absolute;
+   top:0;
+   right:0;
+   border-width:0 10px 10px 0;
+   border-style:solid;
+   border-color:#a4a6a7 #a4a6a7;
+}
+
+.save-icon:after{
+  content:"✓";
+  color:green;
+  font-size:30px;
+  position:absolute;
+  top:15%;left:20%;
+  -webkit-transform:scale(0);
+  -moz-transform:scale(0);
+  transform:scale(0);
+
+  -webkit-animation: pop 0.5s 1.25s forwards;
+     -moz-animation: pop 0.5s 1.25s forwards;
+          animation: pop 0.5s 1.25s forwards;
+}
+
+
+
+.loader{
+  background:#fefeff;
+  width:80%;
+  height:5px;
+  display:block;
+  margin:3px auto;
+
+  position:relative;
+  overflow:hidden;
+
+  -webkit-animation:fade-loaders 0.2s 1.25s forwards;
+     -moz-animation:fade-loaders 0.2s 1.25s forwards;
+          animation:fade-loaders 0.2s 1.25s forwards;
+}
+
+
+.loader:after{
+  content: "";
+  background:#2c3033;
+  width:0;
+  height:5px;
+  position:absolute;
+  top:0;left:0;
+}
+
+.loader:first-child:after{
+  -webkit-animation: loader 0.4s 0.25s forwards;
+     -moz-animation: loader 0.4s 0.25s forwards;
+          animation: loader 0.4s 0.25s forwards;
+}
+
+
+.loader:nth-child(2n):after{
+  -webkit-animation: loader 0.4s 0.5s forwards;
+     -moz-animation: loader 0.4s 0.5s forwards;
+          animation: loader 0.4s 0.5s forwards;
+}
+
+.loader:nth-child(3n):after{
+  -webkit-animation: loader 0.4s 0.75s forwards;
+     -moz-animation: loader 0.4s 0.75s forwards;
+          animation: loader 0.4s 0.75s forwards;
+}
+
+
+@-webkit-keyframes loader {0%{ width: 0%; }100% { width: 100%; }}
+   @-moz-keyframes loader {0%{ width: 0%; }100% { width: 100%; }}
+        @keyframes loader {0%{ width: 0%; }100% { width: 100%; }}
+
+@-webkit-keyframes pop {
+  0%   { -webkit-transform: scale(0); }
+  100% { -webkit-transform: scale(1); }
+}
+@-moz-keyframes pop {
+  0%   { -moz-transform: scale(0); }
+  100% { -moz-transform: scale(1); }
+}
+@keyframes pop {
+  0%   { transform: scale(0); }
+  100% { transform: scale(1); }
+}
+
+@-webkit-keyframes fade-loaders{
+  0%   { opactity:1; }
+  100% { opacity:0; }
+}
+@-moz-keyframes fade-loaders{
+  0%   { opactity:1; }
+  100% { opacity:0; }
+}
+@keyframes fade-loaders{
+  0%   { opactity:1; }
+  100% { opacity:0; }
+}
+
+/*hide role-specific div html*/
+div.student {
+	display: none;
+}
+
+.viewSingleProject {
+	padding-top: 50px;
+}
+
+.popup {
+    display: inline-block;
+}
+.popup .popuptext {
+    visibility: hidden;
+    width: 160px;
+    background-color: #b1b1b1;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 20px;
+    position:relative;
+    top:50px;
+    right:150px;
+}
+.popup .show {
+    visibility: visible;
+    -webkit-animation: fadeIn 1s;
+    animation: fadeIn 1s;
+}
+
+.card-img-top {
+  max-height: 275px;
+}
+
+
+
+/* Hide all mobile classes here. */
+.navbarMobile{
+	display: none;
+}
+
+/********************************/
