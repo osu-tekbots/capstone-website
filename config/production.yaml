@@ -1,0 +1,3 @@
+server:
+  displayErrors: false
+  logLevel: info
