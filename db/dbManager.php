@@ -13,6 +13,14 @@
 //SQL database configuration is in the config.php file.
 include_once('../includes/config.php');
 
+//FIXME: Take this out PLEASE ;) //////////////////////////
+$db_username = 'eecs_projectsubmission';
+$db_password = 'YRthknszFbFzkDvy';
+
+$db_hostname = 'engr-db-groups.engr.oregonstate.edu';
+$db_name = 'eecs_projectsubmission';
+////////////////////////////////////////////////////////////
+
 include_once('../modules/mailer.php');
 
 //Uncomment line below to echo queries for every function.
@@ -539,9 +547,20 @@ function changeApplicationStatus($applicationID, $status){
 }
 
 
+function getApplicationsAssociatedWithProject($projectID){
+
+	$query = "select *, `users_application`.last_updated AS last_updated, `users_application`.date_applied AS date_applied from `users_application` inner join `users` on `users_application`.user_id = `users`.user_id inner join `projects` on `users_application`.project_id = `projects`.project_id where `users_application`.project_id = '$projectID'";
+	if(defined('DEBUG')){
+		echo $query;
+	}
+
+	$mysqli = dbConnect();
+	return $mysqli->query($query);
+}
+
 
 function getMyApplications($userID){
-	$query = "select * from `users_application` inner join `users` on `users_application`.user_id = `users`.user_id inner join `projects` on `users_application`.project_id = `projects`.project_id where `users_application`.user_id = '$userID'";
+	$query = "select *, `users_application`.status AS status, `users_application`.last_updated AS last_updated, `users_application`.date_applied AS date_applied from `users_application` inner join `users` on `users_application`.user_id = `users`.user_id inner join `projects` on `users_application`.project_id = `projects`.project_id where `users_application`.user_id = '$userID'";
 	if(defined('DEBUG')){
 		echo $query;
 	}
