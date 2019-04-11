@@ -97,7 +97,7 @@
 					echo '
 						<tr>
 							<td>' . $firstColumnInfo . '</td>
-							<td>' . $secondColumnInfo . '</td>
+							<td>' . $secondColumnInfo . '</td> 
 							<td>' . $dateApplied . '</td>
 							<td>' . $dateUpdated . '</td>
 							<td>';
