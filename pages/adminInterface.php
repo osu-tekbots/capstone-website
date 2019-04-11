@@ -62,6 +62,11 @@ if($_SESSION['accessLevel'] != 'Admin'){
 				<i class="fas fa-fw fa-table"></i>
 				<span>Users</span></a>
 		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="adminApplication.php">
+				<i class="fas fa-fw fa-file-invoice"></i>
+				<span>Applications</span></a>
+		</li>
 	</ul>
 
 	<div id="content-wrapper">
