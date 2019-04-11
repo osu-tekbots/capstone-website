@@ -13,14 +13,6 @@
 //SQL database configuration is in the config.php file.
 include_once('../includes/config.php');
 
-//FIXME: Take this out PLEASE ;) //////////////////////////
-$db_username = 'eecs_projectsubmission';
-$db_password = 'YRthknszFbFzkDvy';
-
-$db_hostname = 'engr-db-groups.engr.oregonstate.edu';
-$db_name = 'eecs_projectsubmission';
-////////////////////////////////////////////////////////////
-
 include_once('../modules/mailer.php');
 
 //Uncomment line below to echo queries for every function.
