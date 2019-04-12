@@ -62,8 +62,8 @@ class UsersDao {
      */
     public function getUser($id) {
         try {
-            $sql = 'SELECT * FROM user WHERE u_id = ?';
-            $params = array($id);
+            $sql = 'SELECT * FROM user WHERE u_id = :id';
+            $params = array(':id' => $id);
             $result = $this->conn->query($sql, $params);
             if (!$result || \count($result) == 0) {
                 return false;
@@ -89,8 +89,8 @@ class UsersDao {
      */
     public function getUserByAuthProviderProvidedId($id) {
         try {
-            $sql = 'SELECT * FROM user WHERE u_uap_provided_id = ?';
-            $params = array($id);
+            $sql = 'SELECT * FROM user WHERE u_uap_provided_id = :id';
+            $params = array(':id' => $id);
             $result = $this->conn->query($sql, $params);
             if (!$result || \count($result) == 0) {
                 return false;
@@ -115,21 +115,21 @@ class UsersDao {
             $sql = 'INSERT INTO user ';
             $sql .= '(u_id, u_ut_id, u_fname, u_lname, u_us_id, u_email, u_phone, u_major, u_affiliation, u_onid ';
             $sql .= 'u_uap_id, u_auth_provider_id, u_date_created) ';
-            $sql .= 'VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)';
+            $sql .= 'VALUES (:id,:type,:fname,:lname,:salu,:email,:phone,:maj,:affil,:onid,:auth,:authpid,:datec)';
             $params = array(
-                $user->getId(),
-                $user->getType()->getId(),
-                $user->getFirstName(),
-                $user->getLastName(),
-                $user->getSalutation()->getId(),
-                $user->getEmail(),
-                $user->getPhone(),
-                $user->getMajor(),
-                $user->getAffiliation(),
-                $user->getOnid(),
-                $user->getAuthProvider()->getId(),
-                $user->getAuthProviderId(),
-                $user->getDateCreated()
+                ':id' => $user->getId(),
+                ':type' => $user->getType()->getId(),
+                ':fname' => $user->getFirstName(),
+                ':lname' => $user->getLastName(),
+                ':salu' => $user->getSalutation()->getId(),
+                ':email' => $user->getEmail(),
+                ':phone' => $user->getPhone(),
+                ':maj' => $user->getMajor(),
+                ':affil' => $user->getAffiliation(),
+                ':onid' => $user->getOnid(),
+                ':auth' => $user->getAuthProvider()->getId(),
+                ':authpid' => $user->getAuthProviderId(),
+                ':datec' => $user->getDateCreated()
             );
             $this->conn->execute($sql, $params);
 
@@ -153,27 +153,27 @@ class UsersDao {
     public function updateUser($user) {
         try {
             $sql = 'UPDATE user SET ';
-            $sql .= 'u_ut_id = ?';
-            $sql .= 'u_fname = ?, ';
-            $sql .= 'u_lname = ?, ';
-            $sql .= 'u_us_id = ?, ';
-            $sql .= 'u_email = ?, ';
-            $sql .= 'u_phone = ?, ';
-            $sql .= 'u_major = ?, ';
-            $sql .= 'u_affiliation = ?, ';
-            $sql .= 'u_date_updated = ? ';
-            $sql .= 'WHERE u_id = ?';
+            $sql .= 'u_ut_id = :type';
+            $sql .= 'u_fname = :fname, ';
+            $sql .= 'u_lname = :lname, ';
+            $sql .= 'u_us_id = :salu, ';
+            $sql .= 'u_email = :email, ';
+            $sql .= 'u_phone = :phone, ';
+            $sql .= 'u_major = :maj, ';
+            $sql .= 'u_affiliation = :affil, ';
+            $sql .= 'u_date_updated = :dateu ';
+            $sql .= 'WHERE u_id = :id';
             $params = array(
-                $user->getType()->getId(),
-                $user->getFirstName(),
-                $user->getLastName(),
-                $user->getSalutation()->getId(),
-                $user->getEmail(),
-                $user->getPhone(),
-                $user->getMajor(),
-                $user->getAffiliation(),
-                new \DateTime(),
-                $user->getId()
+                ':type' => $user->getType()->getId(),
+                ':fname' => $user->getFirstName(),
+                ':lname' => $user->getLastName(),
+                ':salu' => $user->getSalutation()->getId(),
+                ':email' => $user->getEmail(),
+                ':phone' => $user->getPhone(),
+                ':maj' => $user->getMajor(),
+                ':affil' => $user->getAffiliation(),
+                ':dateu' => new \DateTime(),
+                ':id' => $user->getId()
             );
             $this->conn->execute($sql, $params);
 

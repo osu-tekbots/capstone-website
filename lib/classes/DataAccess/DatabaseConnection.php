@@ -91,13 +91,13 @@ class DatabaseConnection {
      * 
      * This function is specifically used to retrieve data from the database (i.e. SELECT queries). It will return
      * an associative array containing the results of the query. When variables or user-provided values need to
-     * be part of the query, use a '?' placeholder in the SQL query and then pass the variables needed to populate
-     * the placeholders in as an associative array. The example below fetches all students who are older than 24
-     * years old and are graduating in 2019:
+     * be part of the query, use a parameter placeholder by inserting a ':' prefixed symbol name in the SQL query and 
+     * then pass the variables needed to populate the placeholders in as an associative array. 
+     * The example below fetches all students who are older than 24 years old and are graduating in 2019:
      * 
      * ```php
-     * $sql = 'SELECT * FROM students WHERE age > ? AND year_graduating = ?';
-     * $params = array(24, 2019);
+     * $sql = 'SELECT * FROM students WHERE age > :age AND year_graduating = :year';
+     * $params = array(':age' => 24, ':year' => 2019);
      * $result = $db->query($sql, $params);
      * ```
      *
@@ -125,13 +125,13 @@ class DatabaseConnection {
      * Execute a query that modifies data in the database.
      * 
      * This function is specifically used to modify data in the database (i.e. INSERT, UPDATE, and DELETE queries).
-     * When variables or user-provided values need to be part of the query, use a '?' placeholder in the SQL query 
-     * and then pass the variables needed to populate the placeholders in as an associative array. 
-     * The example below sets the age of the user with ID 1234 to 55:
+     * When variables or user-provided values need to be part of the query, use a parameter placeholder by inserting 
+     * a ':' prefixed symbol name in the SQL query and then pass the variables needed to populate the placeholders in 
+     * as an associative array. The example below sets the age of the user with ID 1234 to 55:
      * 
      * ```php
-     * $sql = 'UPDATE users SET age = ? WHERE id = ?';
-     * $params = array(55, 1234);
+     * $sql = 'UPDATE users SET age = :age WHERE id = :id;
+     * $params = array(':age' => 55, ':id' => '1234');
      * $result = $db->execute($sql, $params);
      * ```
      *
