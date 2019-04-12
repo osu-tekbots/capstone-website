@@ -39,13 +39,14 @@ class UsersDao {
      */
     public function getAllUsers() {
         try {
-            $sql = 'SELECT * FROM user';
+            $sql = 'SELECT * FROM user, user_type, user_salutation, user_auth_provider ';
+            $sql .= 'WHERE u_ut_id = ut_id AND u_us_id = us_id AND u_uap_id = uap_id';
             $result = $this->conn->query($sql);
             if (!$result) {
                 return false;
             }
 
-            return \array_map(array('self::ExtractFromRow'), $result);
+            return \array_map(array('self::ExtractUserFromRow'), $result);
         } catch (\Exception $e) {
             $this->logError('Failed to fetch users: ' . $e->getMessage());
 
@@ -62,14 +63,15 @@ class UsersDao {
      */
     public function getUser($id) {
         try {
-            $sql = 'SELECT * FROM user WHERE u_id = :id';
+            $sql = 'SELECT * FROM user, user_type, user_salutation, user_auth_provider ';
+            $sql .= 'WHERE u_id = :id AND u_ut_id = ut_id AND u_us_id = us_id AND u_uap_id = uap_id';
             $params = array(':id' => $id);
             $result = $this->conn->query($sql, $params);
             if (!$result || \count($result) == 0) {
                 return false;
             }
 
-            return self::ExtractFromRow($result[0]);
+            return self::ExtractUserFromRow($result[0]);
         } catch (\Exception $e) {
             $this->logError('Failed to fetch single user by ID: ' . $e->getMessage());
 
@@ -89,14 +91,15 @@ class UsersDao {
      */
     public function getUserByAuthProviderProvidedId($id) {
         try {
-            $sql = 'SELECT * FROM user WHERE u_uap_provided_id = :id';
+            $sql = 'SELECT * FROM user, user_type, user_salutation, user_auth_provider ';
+            $sql .= 'WHERE u_uap_provided_id = :id AND u_ut_id = ut_id AND u_us_id = us_id AND u_uap_id = uap_id';
             $params = array(':id' => $id);
             $result = $this->conn->query($sql, $params);
             if (!$result || \count($result) == 0) {
                 return false;
             }
 
-            return self::ExtractFromRow($result[0]);
+            return self::ExtractUserFromRow($result[0]);
         } catch (\Exception $e) {
             $this->logError('Failed to fetch single user by ID: ' . $e->getMessage());
 
@@ -186,27 +189,120 @@ class UsersDao {
     }
 
     /**
+     * Fetch all available user type enumerations from the database.
+     *
+     * @return UserType[]|boolean the UserType objects from the database on success, false otherwise
+     */
+    public function getUserTypes() {
+        try {
+            $sql = 'SELECT * FROM user_type';
+            $results = $this->conn->query($sql);
+            return \array_map('self::ExtractUserTypeFromRow', $results);
+        } catch (\Exception $e) {
+            $this->logError('Failed to fetch user types: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Fetch all available user salutation enumerations from the database.
+     *
+     * @return UserSalutation[]|boolean the UserSalutation objects from the database on success, false otherwise
+     */
+    public function getUserSalutations() {
+        try {
+            $sql = 'SELECT * FROM user_salutation';
+            $results = $this->conn->query($sql);
+            return \array_map('self::ExtractUserSalutationFromRow', $results);
+        } catch (\Exception $e) {
+            $this->logError('Failed to fetch user salutations: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Fetch all available user auth provider enumerations from the database.
+     *
+     * @return UserAuthProvider[]|boolean the UserAuthProvider objects from the database on success, false otherwise
+     */
+    public function getUserAuthProviders() {
+        try {
+            $sql = 'SELECT * FROM user_auth_provider';
+            $results = $this->conn->query($sql);
+            return \array_map('self::ExtractUserAuthProviderFromRow', $results);
+        } catch (\Exception $e) {
+            $this->logError('Failed to fetch user auth providers: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Creates a new User object by extracting the information from a row in the database.
      *
      * @param string[] $row a row from the database containing user information
      * @return \Model\User
      */
-    public static function ExtractFromRow($row) {
+    public static function ExtractUserFromRow($row) {
         return (new User($row['u_id']))
-            ->setType(new UserType(\intval($row['u_ut_id']), $row['ut_name']))
+            ->setType(self::ExtractUserTypeFromRow($row, true))
             ->setFirstName($row['u_fname'])
             ->setLastName(array('u_lname'))
-            ->setSalutation(new UserSalutation(\intval($row['u_us_id']), $row['us_name']))
+            ->setSalutation(self::ExtractUserSalutationFromRow($row, true))
             ->setEmail($row['u_email'])
             ->setPhone($row['u_phone'])
             ->setMajor($row['u_major'])
             ->setAffiliation($row['u_affiliation'])
             ->setOnid($row['u_onid'])
-            ->setAuthProvider(new UserAuthProvider(\intval($row['u_uap_id']), $row['uap_name']))
+            ->setAuthProvider(self::ExtractUserAuthProviderFromRow($row, true))
             ->setAuthProviderId($row['u_uap_provided_id'])
             ->setDateCreated(new \DateTime($row['u_date_created']))
             ->setDateUpdated(new \DateTime($row['u_date_updated']))
             ->setDateLastLogin(new \DateTime($row['u_date_last_login']));
+    }
+
+    /**
+     * Creates a new UserType object by extracting the necessary information from a row in a database.
+     * 
+     * The extraction will default to using the UserType ID from the user table if it is present so that this
+     * function can be used on the user table alone without joining on the user type table.
+     *
+     * @param mixed[] $row the row from the database
+     * @param boolean $userInRow flag indicating whether entries from the user table are in the row or not
+     * @return \Model\UserType the user type extracted from the row
+     */
+    public static function ExtractUserTypeFromRow($row, $userInRow = false) {
+        $idKey = $userInRow ? 'u_ut_id' : 'ut_id';
+        return new UserType(\intval($row[$idKey]), $row['ut_name']);
+    }
+
+    /**
+     * Creates a new UserSalutation object by extracting the necessary information from a row in a database.
+     * 
+     * The extraction will default to using the UserSalutation ID from the user table if it is present so that this
+     * function can be used on the user table alone without joining on the user salutation table.
+     *
+     * @param mixed[] $row the row from the database
+     * @param boolean $userInRow flag indicating whether entries from the user table are in the row or not
+     * @return \Model\UserSalutation the user salutation extracted from the row
+     */
+    public static function ExtractUserSalutationFromRow($row, $userInRow = false) {
+        $idKey = $userInRow ? 'u_us_id' : 'us_id';
+        return new UserSalutation(\intval($row[$idKey]), $row['us_name']);
+    }
+
+    /**
+     * Creates a new UserAuthProvider object by extracting the necessary information from a row in a database.
+     * 
+     * The extraction will default to using the UserAuthProvider ID from the user table if it is present so that this
+     * function can be used on the user table alone without joining on the user auth provider table.
+     *
+     * @param mixed[] $row the row from the database
+     * @param boolean $userInRow flag indicating whether entries from the user table are in the row or not
+     * @return \Model\UserAuthProvider the user auth provider extracted from the row
+     */
+    public static function ExtractUserAuthProviderFromRow($row, $userInRow = false) {
+        $idKey = $userInRow ? 'u_uap_id' : 'uap_id';
+        return new UserAuthProvider(\intval($row[$idKey]), $row['uap_name']);
     }
 
     /**
