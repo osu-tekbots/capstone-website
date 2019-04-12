@@ -69,7 +69,7 @@ class UsersDao {
                 return false;
             }
 
-            return \array_map(array('self::ExtractFromRow'), $result)[0];
+            return self::ExtractFromRow($result[0]);
         } catch (\Exception $e) {
             $this->logError('Failed to fetch single user by ID: ' . $e->getMessage());
 
@@ -78,22 +78,25 @@ class UsersDao {
     }
 
     /**
-     * Fetches a single user with the AuthProvider ID from the database.
+     * Fetches a single user with the AuthProvider's provided ID from the database.
+     * 
+     * The ID provided by the AuthProvider is determined when the user logs in for the first time using one
+     * of the authentication methods.
      *
      * @param string $id the ID returned from the AuthProvider for the User to fetch
      * @return User|boolean the corresponding User from the database if the fetch succeeds and the user exists, 
      * false otherwise
      */
-    public function getUserByAuthProviderId($id) {
+    public function getUserByAuthProviderProvidedId($id) {
         try {
-            $sql = 'SELECT * FROM user WHERE u_auth_provider_id = ?';
+            $sql = 'SELECT * FROM user WHERE u_uap_provided_id = ?';
             $params = array($id);
             $result = $this->conn->query($sql, $params);
             if (!$result || \count($result) == 0) {
                 return false;
             }
 
-            return \array_map(array('self::ExtractFromRow'), $result)[0];
+            return self::ExtractFromRow($result[0]);
         } catch (\Exception $e) {
             $this->logError('Failed to fetch single user by ID: ' . $e->getMessage());
 
@@ -141,7 +144,7 @@ class UsersDao {
     /**
      * Updates an existing user in the database. 
      * 
-     * This function only updates trivial user information, such as the first and last names, salutation, majors, 
+     * This function only updates trivial user information, such as the type, first and last names, salutation, majors, 
      * affiliations, and contact information.
      *
      * @param \Model\User $user the user to update
@@ -158,7 +161,7 @@ class UsersDao {
             $sql .= 'u_phone = ?, ';
             $sql .= 'u_major = ?, ';
             $sql .= 'u_affiliation = ?, ';
-            $sql .= 'u_date_updated = ?, ';
+            $sql .= 'u_date_updated = ? ';
             $sql .= 'WHERE u_id = ?';
             $params = array(
                 $user->getType()->getId(),
@@ -189,8 +192,8 @@ class UsersDao {
      * @return \Model\User
      */
     public static function ExtractFromRow($row) {
-        $user = new User($row['u_id']);
-        $user->setType(new UserType(\intval($row['u_ut_id']), $row['ut_name']))
+        return (new User($row['u_id']))
+            ->setType(new UserType(\intval($row['u_ut_id']), $row['ut_name']))
             ->setFirstName($row['u_fname'])
             ->setLastName(array('u_lname'))
             ->setSalutation(new UserSalutation(\intval($row['u_us_id']), $row['us_name']))
@@ -200,11 +203,10 @@ class UsersDao {
             ->setAffiliation($row['u_affiliation'])
             ->setOnid($row['u_onid'])
             ->setAuthProvider(new UserAuthProvider(\intval($row['u_uap_id']), $row['uap_name']))
+            ->setAuthProviderId($row['u_uap_provided_id'])
             ->setDateCreated(new \DateTime($row['u_date_created']))
             ->setDateUpdated(new \DateTime($row['u_date_updated']))
             ->setDateLastLogin(new \DateTime($row['u_date_last_login']));
-
-        return $user;
     }
 
     /**
