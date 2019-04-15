@@ -2,7 +2,7 @@
 namespace Model;
 
 /**
- * Data class representing an CapstoneProjectCop enumeration
+ * Data class representing an CapstoneProjectCop enumeration (Committee of Practice)
  */
 class CapstoneProjectCop {
     
