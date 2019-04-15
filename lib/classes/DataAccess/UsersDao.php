@@ -108,6 +108,31 @@ class UsersDao {
     }
 
     /**
+     * Fetches a single user with the user's ONID.
+     *
+     * @param string $onid the ONID of the user, provided by OSU
+     * @return User|boolean the corresponding User from the database if the fetch succeeds and the user exists, 
+     * false otherwise
+     */
+    public function getUserByOnid($onid) {
+        try {
+            $sql = 'SELECT * FROM user, user_type, user_salutation, user_auth_provider ';
+            $sql .= 'WHERE u_onid = :id AND u_ut_id = ut_id AND u_us_id = us_id AND u_uap_id = uap_id';
+            $params = array(':id' => $onid);
+            $result = $this->conn->query($sql, $params);
+            if (!$result || \count($result) == 0) {
+                return false;
+            }
+
+            return self::ExtractUserFromRow($result[0]);
+        } catch (\Exception $e) {
+            $this->logError('Failed to fetch single user by ID: ' . $e->getMessage());
+
+            return false;
+        }
+    }
+
+    /**
      * Adds a new user to the database.
      *
      * @param \Model\User $user the user to add to the database

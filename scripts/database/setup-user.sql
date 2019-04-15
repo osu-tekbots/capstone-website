@@ -1,5 +1,6 @@
 --
 -- User Tables
+-- Setup Script Order: 1
 --
 CREATE TABLE IF NOT EXISTS user_type (
     ut_id INT NOT NULL AUTO_INCREMENT,
@@ -24,23 +25,23 @@ CREATE TABLE IF NOT EXISTS user_auth_provider (
 
 CREATE TABLE IF NOT EXISTS user (
     u_id CHAR(16) NOT NULL,
-    u_type INT NOT NULL,
+    u_ut_id INT NOT NULL,
     u_fname VARCHAR(128),
     u_lname VARCHAR(128),
-    u_salutation INT,
-    u_email VARCHAR(200),
+    u_us_id INT,
+    u_email VARCHAR(256),
     u_phone INT,
     u_major VARCHAR(128),
-    u_affiliation VARCHAR(256),
+    u_affiliation VARCHAR(128),
     u_onid VARCHAR(32),
-    u_auth_provider INT NOT NULL,
-    u_auth_provider_id VARCHAR(128),
+    u_uap_id INT NOT NULL,
+    u_uap_provided_id VARCHAR(256),
     u_date_created DATETIME NOT NULL,
     u_date_updated DATETIME,
     u_date_last_login DATETIME,
 
     PRIMARY KEY (u_id),
-    FOREIGN KEY (u_type) REFERENCES user_type(ut_id),
-    FOREIGN KEY (u_salutation) REFERENCES user_salutation (us_id),
-    FOREIGN KEY (u_auth_provider) REFERENCES user_auth_provider (uap_id)
+    FOREIGN KEY (u_ut_id) REFERENCES user_type(ut_id),
+    FOREIGN KEY (u_us_id) REFERENCES user_salutation (us_id),
+    FOREIGN KEY (u_uap_id) REFERENCES user_auth_provider (uap_id)
 );

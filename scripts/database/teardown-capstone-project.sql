@@ -8,5 +8,5 @@ DROP TABLE IF EXISTS capstone_project_category;
 DROP TABLE IF EXISTS capstone_project_type;
 DROP TABLE IF EXISTS capstone_project_focus;
 DROP TABLE IF EXISTS capstone_project_cop;
-DROP TABLE IF EXISTS capstone_nda_ip;
+DROP TABLE IF EXISTS capstone_project_nda_ip;
 DROP TABLE IF EXISTS capstone_project_status;
