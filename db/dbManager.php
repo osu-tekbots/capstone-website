@@ -288,6 +288,7 @@ function getMyProjects(){
 	return $mysqli->query($query);
 }
 
+
 /*********************************************************************************
 * Function Name: changeProjectStatus()
 * Input: Project ID and status to be changed into
@@ -552,7 +553,7 @@ function getApplicationsAssociatedWithProject($projectID){
 
 
 function getMyApplications($userID){
-	$query = "select *, `users_application`.status AS status, `users_application`.last_updated AS last_updated, `users_application`.date_applied AS date_applied from `users_application` inner join `users` on `users_application`.user_id = `users`.user_id inner join `projects` on `users_application`.project_id = `projects`.project_id where `users_application`.user_id = '$userID'";
+	$query = "select *, `users_application`.status AS appstatus, `users_application`.last_updated AS last_updated, `users_application`.date_applied AS date_applied from `users_application` inner join `users` on `users_application`.user_id = `users`.user_id inner join `projects` on `users_application`.project_id = `projects`.project_id where `users_application`.user_id = '$userID'";
 	if(defined('DEBUG')){
 		echo $query;
 	}
@@ -589,6 +590,19 @@ function submitApplication($Application){
 	changeApplicationStatus($id, "Submitted");
 	applicationSubmissionEmail($id);
 }
+
+
+function createApplicationReviewEntry($applicationID, $type){
+//Note: types will be either "Desirable", "Impartial", or "Undesirable".
+	//echo $applicationID . ' ' . $type;
+	//fixme: 4/14/19 tested, working here. just create code now.
+	
+	$mysqli = dbConnect();
+	
+	//FIXME: 4/14/19 Stopped here because I don't have phpMyAdmin access off-campus.
+	$query = "";
+}
+
 
 
 /////////////////////////////////////////////////////////////
@@ -744,6 +758,21 @@ if(isset($_POST['action'])){
 			break;
 		case "saveApplicationDraft":
 			updateApplication($_POST['A']);
+			exit();
+			break;
+		case "desirableApplication":
+			$applicationID = $mysqli->real_escape_string($_POST['applicationID']);
+			createApplicationReviewEntry($applicationID, 'Desirable');
+			exit();
+			break;
+		case "impartialApplication":
+			$applicationID = $mysqli->real_escape_string($_POST['applicationID']);
+			createApplicationReviewEntry($applicationID, 'Impartial');
+			exit();
+			break;
+		case "undesirableApplication":
+			$applicationID = $mysqli->real_escape_string($_POST['applicationID']);
+			createApplicationReviewEntry($applicationID, 'Undesirable');
 			exit();
 			break;
 		case "saveProfile":

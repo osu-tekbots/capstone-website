@@ -60,10 +60,10 @@
 							<tbody>
 				';
 				foreach ($rows as $row): 
-					$projectId = $row['project_id'];
+					$appID = $row['application_id'];
 					
 					if($isProposer){
-						$firstColumnInfo = 'Application ' . $row['project_id'];
+						$firstColumnInfo = 'Application ' . $appID;
 					}
 					else{
 						//This will be the name of the project.
@@ -77,7 +77,7 @@
 					else{
 						//This will show whether or not the student's application 
 						//has been created or submitted.
-						$secondColumnInfo = $row['status'];
+						$secondColumnInfo = $row['appstatus'];
 					}
 					
 					$applicationId = $row['application_id'];
@@ -123,12 +123,12 @@
 		?>
 
 		<?php 
-		//FIXME FIXME FIXME: change "!=" to "=="
-		if ($_SESSION['accessLevel'] != 'Proposer'){ 
+		
+		function createProposerInterface(){
 			$projectResult = getMyProjects();
 
 			while($projectRow = $projectResult->fetch_assoc()){
-				
+
 				$applicationResult = getApplicationsAssociatedWithProject($projectRow['project_id']);
 				$applicationRows = array();
 				while ($tmp = $applicationResult->fetch_assoc()) {
@@ -141,13 +141,32 @@
 				}
 			}
 		}
-		else{ 
+		
+		function createStudentInterface(){
 			$result = getMyApplications($_SESSION['userID']);
 			$rows = array();
 			while ($tmp = $result->fetch_assoc()) {
 			    $rows[] = $tmp;
 			} 
 			createApplicationTable($rows, false);
+		}
+		
+		
+		switch($_SESSION['accessLevel']){
+			case 'Proposer': 
+				createProposerInterface();
+				break;
+			case 'Student':
+				createStudentInterface();
+				break;
+			case 'Admin': 
+				echo '<h2>Your Proposer Interface:</h2><br><br>';
+				createProposerInterface();
+				echo '<br><br><h2>Your Student Interfae:</h2><br><br>';
+				createStudentInterface();
+				break;
+			default: 
+				break;
 		}
 		
 		echo '</div>';
