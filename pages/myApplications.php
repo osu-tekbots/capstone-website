@@ -17,8 +17,14 @@
 		<h1>My Applications</h1>
 		<br>
 		<?php 
-			//$isProposer will dictate whether the Edit button will appear 
-			//(for students) or the Review button (for proposers).
+			/*********************************************************************************
+			* Function Name: createApplicationTable($rows, $isProposer)
+			* Input: $rows is an array of objects from the 'users_application' table. $isProposer
+			* indicates whether or not the user is a proposer - this will dictate certain columns 
+			* in the table in addition to the button displayed.
+			* Output: Creates an application table in the user interface. Note that multiple application 
+			* tables can exists and this function is used in both the Student and Proposer interfaces.
+			*********************************************************************************/
 			function createApplicationTable($rows, $isProposer){	
 				
 				echo '
@@ -35,6 +41,7 @@
 							<thead>
 				';
 				
+				//Create table column headers based on the user's access level.
 				if($isProposer){
 					echo '<th>Application Name</th>';
 					echo '<th>Applicant</th>';
@@ -53,13 +60,18 @@
 							</thead>
 							<tbody>
 				';
+				
+				//Iterating through every single application associated with this specific project...
 				foreach ($rows as $row): 
 					$appID = $row['application_id'];
 					
+					//Gather relevant application review data.
 					$appReviewResult = getApplicationReviewEntry($appID);
 					$appReviewRow = $appReviewResult->fetch_assoc();
 					
+					//Possible interest levels include "Desirable", "Impartial", and "Undesirable" as of 4/15/19.
 					$interestLevel = $appReviewRow['interest_level'];
+					//The interestLevel must be selected for an application to have been reviewed.
 					$isReviewed = $interestLevel != '' ? "Yes" : "No";
 				
 					if($isProposer){
@@ -77,20 +89,26 @@
 
 					$applicationId = $row['application_id'];
 					$strDate = $row['last_updated'];
+					
+					//Handle invalid dates.
 					if ($strDate == '0000-00-00 00:00:00') {
 						$dateUpdated = 'N/A';
 					} else {
 						$dateUpdated = date('m-d-Y h:i a', strtotime($strDate));
 					}
-					$strDate = $row['last_updated'];
+					
+					$strDate = $row['date_applied'];
+					
 					if ($strDate == '0000-00-00 00:00:00') {
 						$dateApplied = 'Not Submitted';
 					} else {
 						$dateApplied = date('m-d-Y h:i a', strtotime($strDate));
 					}
 					
+					//Generate table rows for each application.
 					echo '<tr>';
 					echo '<td>' . $title . '</td>';
+					
 					if($isProposer){
 						echo '<td>' . $name . '</td>';
 						echo '<td>' . $isReviewed . '</td>';
@@ -105,6 +123,7 @@
 							<td>' . $dateUpdated . '</td>';
 					
 					echo '<td>';
+					
 					if($isProposer){		
 						echo '<a class="btn btn-outline-primary" href="./reviewApplication.php?id=' . $applicationId . '">Review</a>';
 					}
@@ -155,7 +174,7 @@
 			createApplicationTable($rows, false);
 		}
 		
-		
+		//Different interfaces are displayed depending on user's access level.
 		switch($_SESSION['accessLevel']){
 			case 'Proposer': 
 				createProposerInterface();

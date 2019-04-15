@@ -20,6 +20,7 @@
 		if(($row['user_id'] == $_SESSION['userID']) || (array_key_exists("accessLevel", $_SESSION) && $_SESSION['accessLevel'] == "Admin")){
 			$validUserCredentials = true;
 			
+			//Retrieve all relevant application and project information here.
 			$justification = $row['justification'];
 			$time_available = $row['time_available'];
 			$skill_set = $row['skill_set'];
@@ -41,6 +42,8 @@
 			$firstName = $row['first_name'];
 			$lastName = $row['last_name'];
 			
+			
+			//Retrieve existing application review data and style page accordingly.
 			$reviewResult = getApplicationReviewEntry($applicationID);
 			$reviewRow = $reviewResult->fetch_assoc();
 			
@@ -85,18 +88,17 @@
 
 	<div class="container-fluid">
 		<br>
-		<!--<h1>Review Application <?php echo $row['application_id']; ?></h1>
-		-->
 		<div class="row">
 			<div class="col-sm-1">	
 				<br><br><br><br><br>
 				<br><br><br><br><br>
 				<br><br><br><br><br>
-				<br><br><br><br><!-- fixme, find what styling i need to make this button float on the bottom -->
+				<br><br><br><br>
 				<a href="./myApplications.php"><button class="btn btn-lg btn-outline-primary">Back</button></a>
 			</div>
 			<div class="col-sm-6">
 				<div class="scrollShorter jumbotron capstoneJumbotron">
+					<!-- Display application data. -->
 					<?php 
 						echo '<h3>Application ' . $row['application_id'] . '</h3>';
 						echo '<h4>By ' . $firstName . ' ' . $lastName . '</h4>';
@@ -119,6 +121,7 @@
 							<textarea class="form-control" id="commentsText" rows="2"><?php echo $comments; ?></textarea>
 						</div>
 					</form>
+					<!-- Each button's class is dynamically generated so that the selected one will be filled whereas the other two will have 'outline' property. -->
 					<button class="btn btn-lg <?php echo $desirableBtnClass; ?>" id="desirableBtn">Desirable</button>
 					<button class="btn btn-lg <?php echo $impartialBtnClass; ?>" id="impartialBtn">Impartial</button>
 					<button class="btn btn-lg <?php echo $undesirableBtnClass; ?>" id="undesirableBtn">Undesirable</button>
@@ -128,6 +131,7 @@
 			</div>
 			<div class="col-sm-4">
 				<div class="scroll jumbotron capstoneJumbotron">
+					<!-- Display project data. -->
 					<?php
 					echo '<br>
 						<h2>'. $title .'</h2> 
