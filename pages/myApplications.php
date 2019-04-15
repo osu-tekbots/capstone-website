@@ -19,7 +19,8 @@
 		<?php 
 			//$isProposer will dictate whether the Edit button will appear 
 			//(for students) or the Review button (for proposers).
-			function createApplicationTable($rows, $isProposer){
+			function createApplicationTable($rows, $isProposer){	
+				
 				echo '
 				<div class="row">
 					<div class="col">
@@ -32,26 +33,19 @@
 				echo '
 						<table class="table">
 							<thead>
-								<th>
 				';
 				
 				if($isProposer){
-					echo 'Application Name';
-				}
-				else{
-					echo 'Project Name';
-				}
-				
-				echo '
-								</th>
-					';
-				
-				if($isProposer){
+					echo '<th>Application Name</th>';
 					echo '<th>Applicant</th>';
+					echo '<th>Reviewed?</th>';
+					echo '<th>Interest Level</th>';
 				}
 				else{
+					echo '<th>Project Name</th>';
 					echo '<th>Status</th>';
 				}
+
 				echo '
 								<th>Start Date</th>
 								<th>Updated</th>
@@ -62,24 +56,25 @@
 				foreach ($rows as $row): 
 					$appID = $row['application_id'];
 					
+					$appReviewResult = getApplicationReviewEntry($appID);
+					$appReviewRow = $appReviewResult->fetch_assoc();
+					
+					$interestLevel = $appReviewRow['interest_level'];
+					$isReviewed = $interestLevel != '' ? "Yes" : "No";
+				
 					if($isProposer){
-						$firstColumnInfo = 'Application ' . $appID;
+						$title = 'Application ' . $appID;
+						//Display the name of the applicant for proposers.
+						$name = $row['first_name'] . ' ' . $row['last_name'];
 					}
 					else{
 						//This will be the name of the project.
-						$firstColumnInfo = $row['title'];
-					}
-					
-					if($isProposer){
-						//Display the name of the applicant for proposers.
-						$secondColumnInfo = $row['first_name'] . ' ' . $row['last_name'];
-					}
-					else{
+						$title = $row['title'];
 						//This will show whether or not the student's application 
 						//has been created or submitted.
-						$secondColumnInfo = $row['appstatus'];
+						$status = $row['appstatus'];
 					}
-					
+
 					$applicationId = $row['application_id'];
 					$strDate = $row['last_updated'];
 					if ($strDate == '0000-00-00 00:00:00') {
@@ -93,14 +88,23 @@
 					} else {
 						$dateApplied = date('m-d-Y h:i a', strtotime($strDate));
 					}
-					$title = $row['title']; 
+					
+					echo '<tr>';
+					echo '<td>' . $title . '</td>';
+					if($isProposer){
+						echo '<td>' . $name . '</td>';
+						echo '<td>' . $isReviewed . '</td>';
+						echo '<td>' . $interestLevel . '</td>';
+					}
+					else{
+						echo '<td>' . $status . '</td>';
+					}
+					
 					echo '
-						<tr>
-							<td>' . $firstColumnInfo . '</td>
-							<td>' . $secondColumnInfo . '</td> 
 							<td>' . $dateApplied . '</td>
-							<td>' . $dateUpdated . '</td>
-							<td>';
+							<td>' . $dateUpdated . '</td>';
+					
+					echo '<td>';
 					if($isProposer){		
 						echo '<a class="btn btn-outline-primary" href="./reviewApplication.php?id=' . $applicationId . '">Review</a>';
 					}

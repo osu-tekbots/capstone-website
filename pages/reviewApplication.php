@@ -41,6 +41,32 @@
 			$firstName = $row['first_name'];
 			$lastName = $row['last_name'];
 			
+			$reviewResult = getApplicationReviewEntry($applicationID);
+			$reviewRow = $reviewResult->fetch_assoc();
+			
+			$comments = $reviewRow['comments'];
+			switch($reviewRow['interest_level']){
+				case 'Desirable':
+					$desirableBtnClass = "btn-success";
+					$impartialBtnClass = "btn-outline-secondary";
+					$undesirableBtnClass = "btn-outline-warning";
+					break;
+				case 'Impartial':
+					$desirableBtnClass = "btn-outline-success";
+					$impartialBtnClass = "btn-secondary";
+					$undesirableBtnClass = "btn-outline-warning";
+					break;
+				case 'Undesirable':
+					$desirableBtnClass = "btn-outline-success";
+					$impartialBtnClass = "btn-outline-secondary";
+					$undesirableBtnClass = "btn-warning";
+					break;
+				default: 
+					$desirableBtnClass = "btn-outline-success";
+					$impartialBtnClass = "btn-outline-secondary";
+					$undesirableBtnClass = "btn-outline-warning";
+					break;
+			}
 		}
 		else{
 			//Redirect if user is not allowed to visit this page.
@@ -87,9 +113,15 @@
 				</div>
 				<center>
 					<div id="successText" class="successText" style="display:none;">Successfully rated application!</div>
-					<button class="btn btn-lg btn-outline-success" id="desirableBtn">Desirable</button>
-					<button class="btn btn-lg btn-outline-secondary" id="impartialBtn">Impartial</button>
-					<button class="btn btn-lg btn-outline-warning" id="undesirableBtn">Undesirable</button>
+					<form>
+						<div class="form-group">
+							<h6 style="float:left;">Comments:</h6>
+							<textarea class="form-control" id="commentsText" rows="2"><?php echo $comments; ?></textarea>
+						</div>
+					</form>
+					<button class="btn btn-lg <?php echo $desirableBtnClass; ?>" id="desirableBtn">Desirable</button>
+					<button class="btn btn-lg <?php echo $impartialBtnClass; ?>" id="impartialBtn">Impartial</button>
+					<button class="btn btn-lg <?php echo $undesirableBtnClass; ?>" id="undesirableBtn">Undesirable</button>
 				</center>
 			</div>
 			<div class="col-sm-1">
@@ -135,20 +167,22 @@ function fade_out(){
 	$("#successText").fadeOut();
 }
 
-$('#desirableBtn').on('click', function(e){
-	applicationID = <?php echo $row['application_id']; ?>
-	
+
+
+function createApplicationReview(actionType){
+	applicationID = <?php echo $row['application_id']; ?>;
+	comments = $('#commentsText').val();
+
 	$.ajax({
 		type: 'POST',
 		url: '../db/dbManager.php',
 		dataType: 'html',
 		data: {
 				applicationID: applicationID,
-				action: 'desirableApplication'},
+				comments: comments,
+				action: actionType},
 				success: function(result)
 				{
-					alert(result);
-					
 					createSaveText();
 				},
 				error: function (xhr, ajaxOptions, thrownError) {
@@ -157,52 +191,18 @@ $('#desirableBtn').on('click', function(e){
 					alert(thrownError);
 				}
 	});
+}
+
+$('#desirableBtn').on('click', function(e){
+	createApplicationReview('desirableApplication');
 });
 
 $('#impartialBtn').on('click', function(e){
-	applicationID = <?php echo $row['application_id']; ?>
-		
-	$.ajax({
-		type: 'POST',
-		url: '../db/dbManager.php',
-		dataType: 'html',
-		data: {
-				applicationID: applicationID,
-				action: 'impartialApplication'},
-				success: function(result)
-				{
-					alert(result);
-					createSaveText();
-				},
-				error: function (xhr, ajaxOptions, thrownError) {
-					alert(xhr.status);
-					alert(xhr.responseText);
-					alert(thrownError);
-				}
-	});
+	createApplicationReview('impartialApplication');
 });
 
 $('#undesirableBtn').on('click', function(e){
-	applicationID = <?php echo $row['application_id']; ?>
-
-	$.ajax({
-		type: 'POST',
-		url: '../db/dbManager.php',
-		dataType: 'html',
-		data: {
-				applicationID: applicationID,
-				action: 'undesirableApplication'},
-				success: function(result)
-				{
-					alert(result);
-					createSaveText();
-				},
-				error: function (xhr, ajaxOptions, thrownError) {
-					alert(xhr.status);
-					alert(xhr.responseText);
-					alert(thrownError);
-				}
-	});
+	createApplicationReview('undesirableApplication');
 });
 
 </script>

@@ -160,21 +160,35 @@
 						height:40px;
 					}
 				</style>
-				<div id="indexDiv" style="width:100%;max-height:200px;display:grid;">
+				<div id="indexDiv" style="width:100%;max-height:300px;display:grid;">
 					<select id="defaultImageSelect" class="image-picker show-html">
 					  <option data-img-src="../images/' . $image . '" data-img-class="first data-img" value="x' . $image . '">  Page 1  </option>';
 					  
 					  //$defaultImageNum = 1;
 					  function createDefaultImageOption($imageName, $defaultImageNum){
 						  //global $defaultImageNum;
-						  echo '<option data-img-src="../images/' . $imageName . '" data-img-class="data-img" value="' . $defaultImageNum . $imageName . '">' . $imageName . '</option>';
+						  echo '<option data-img-src="../images/default/' . $imageName . '" data-img-class="data-img" value="' . $defaultImageNum . $imageName . '">' . $imageName . '</option>';
 						  //$defaultImageNum += 1;
 					  }
 					   
-					   createDefaultImageOption("capstone.jpg", 1);
-					   createDefaultImageOption("loginImage.jpg", 2);
-					   createDefaultImageOption("light.jpg", 3);
-					   createDefaultImageOption("loginImage.jpg", 4);
+					   createDefaultImageOption("default_ai_1.jpg", 1);
+					   createDefaultImageOption("default_board_1.jpg", 2);
+					   createDefaultImageOption("default_circuit_1.jpg", 3);
+					   createDefaultImageOption("default_code_1.jpg", 4);
+					   createDefaultImageOption("default_drone_1.jpg", 5);
+					   createDefaultImageOption("default_iot_1.jpg", 6);
+					   createDefaultImageOption("default_meeting_1.jpg", 7);
+					   createDefaultImageOption("default_mobile_1.jpg", 8);
+					   createDefaultImageOption("default_module_1.jpg", 9);
+					   createDefaultImageOption("default_module_2.jpg", 10);
+					   createDefaultImageOption("default_module_3.jpg", 11);
+					   createDefaultImageOption("default_plan_1.jpg", 12);
+					   createDefaultImageOption("default_probe_1.jpg", 13);
+					   createDefaultImageOption("default_research_1.jpg", 14);
+					   createDefaultImageOption("default_rocket_1.jpg", 15);
+					   createDefaultImageOption("default_security_1.jpg", 16);
+					   createDefaultImageOption("default_vr_1.jpg", 17);
+					   
 					echo '
 					</select>
 

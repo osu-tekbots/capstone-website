@@ -48,7 +48,7 @@ button h6{
 }
 
 .scrollShorter {
-    max-height: 60vh;
+    max-height: 50vh;
     overflow-y: scroll;
 }
 

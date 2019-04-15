@@ -591,18 +591,41 @@ function submitApplication($Application){
 	applicationSubmissionEmail($id);
 }
 
-
-function createApplicationReviewEntry($applicationID, $type){
-//Note: types will be either "Desirable", "Impartial", or "Undesirable".
-	//echo $applicationID . ' ' . $type;
-	//fixme: 4/14/19 tested, working here. just create code now.
-	
+function getApplicationReviewEntry($applicationID){	
 	$mysqli = dbConnect();
-	
-	//FIXME: 4/14/19 Stopped here because I don't have phpMyAdmin access off-campus.
-	$query = "";
+	$query = "SELECT * FROM `user_application_review` WHERE application_id = '$applicationID'";
+
+	return $mysqli->query($query);
 }
 
+function createApplicationReviewEntry($applicationID, $interestLevel, $comments){
+	//Note: types will be either "Desirable", "Impartial", or "Undesirable".
+	//Note: The 'application_id' column in the application reviews table has a unique key.
+	
+	
+	//fixme: stopped here at 4/15/19. Working on getting the thing to update correctly.
+	
+	/*
+	$appReviewResult = getApplicationReviewEntry($applicationID);
+	$appReviewRow = $appReviewResult->fetch_assoc();
+	
+	$isReviewed = $appReviewRow['interest_level'] != '' ? true : false;
+	
+	$applicationReviewID = $appReviewRow['application_review_id'];
+
+	if($isReviewed){	
+*/	
+		$query = "INSERT INTO `user_application_review` (`application_review_id`, `application_id`, `interest_level`, `comments`) VALUES (NULL, $applicationID, '$interestLevel', '$comments')";
+	/*
+	}
+	else{
+		$query = "UPDATE `user_application_review` SET `interest_level` = '$interestLevel', `comments` = '$comments' WHERE `application_review_id` = '$applicationReviewID'";
+	}
+	*/
+	
+	$mysqli = dbConnect();
+	$mysqli->query($query);
+}
 
 
 /////////////////////////////////////////////////////////////
@@ -762,17 +785,20 @@ if(isset($_POST['action'])){
 			break;
 		case "desirableApplication":
 			$applicationID = $mysqli->real_escape_string($_POST['applicationID']);
-			createApplicationReviewEntry($applicationID, 'Desirable');
+			$comments = $mysqli->real_escape_string($_POST['comments']);
+			createApplicationReviewEntry($applicationID, 'Desirable', $comments);
 			exit();
 			break;
 		case "impartialApplication":
 			$applicationID = $mysqli->real_escape_string($_POST['applicationID']);
-			createApplicationReviewEntry($applicationID, 'Impartial');
+			$comments = $mysqli->real_escape_string($_POST['comments']);
+			createApplicationReviewEntry($applicationID, 'Impartial', $comments);
 			exit();
 			break;
 		case "undesirableApplication":
 			$applicationID = $mysqli->real_escape_string($_POST['applicationID']);
-			createApplicationReviewEntry($applicationID, 'Undesirable');
+			$comments = $mysqli->real_escape_string($_POST['comments']);
+			createApplicationReviewEntry($applicationID, 'Undesirable', $comments);
 			exit();
 			break;
 		case "saveProfile":
