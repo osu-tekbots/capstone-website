@@ -1,6 +1,4 @@
 <?php
-use DataAccess\UsersDao;
-
 /**
  * This file is password protected on the Apache Web Server. It allows for local development of an authenticated
  * test user without the need for CAS or other OAuth authentication services, since these services do not permit
@@ -8,9 +6,18 @@ use DataAccess\UsersDao;
  * 
  * Essentially, we are masquerading as another user while we do development offline.
  */
+use DataAccess\UsersDao;
+
+session_start();
+
 $dao = new UsersDao($dbConn, $logger);
 
-$redirect = "<script>location.replace('./pages/index.php')</script>";
+$redirect = "<script>location.replace('../pages/index.php')</script>";
+
+$masqerading = isset($_SESSION['masq']);
+if ($masqerading) {
+    $user = $dao->getUser($_SESSION['userId']);
+}
 
 $action = $_POST['action'];
 
@@ -20,33 +27,77 @@ switch ($action) {
         if ($onid . '' != '') {
             $user = $dao->getUserByOnid($onid);
             if ($user) {
-                $_SESSION['userId'] = $user->getId();
-                $_SESSION['accessLevel'] = $user->getType()->getName();
-                $_SESSION['newUser'] = false;
+                stopMasquerade();
+                startMasquerade($user);
                 echo $redirect;
                 die();
             }
+            $message = 'User with the provided ONID not found';
         }
         break;
         
     case 'stop':
-        unset($_SESSION['userId']);
-        unset($_SESSION['accessLevel']);
-        unset($_SESSION['newUser']);
+        stopMasquerade();
         echo $redirect;
-        break;
+        die();
 
     default:
         break;
 }
+
+/**
+ * Stops the current masquerade (if there is one) and restores the original user session variables.
+ *
+ * @return void
+ */
+function stopMasquerade() {
+    if (isset($_SESSION['masq'])) {
+        unset($_SESSION['userId']);
+        unset($_SESSION['accessLevel']);
+        unset($_SESSION['newUser']);
+        if (isset($_SESSION['masq']['savedPreviousUser'])) {
+            $_SESSION['userId'] = $_SESSION['masq']['userId'];
+            $_SESSION['accessLevel'] = $_SESSION['masq']['accessLevel'];
+            $_SESSION['newUser'] = $_SESSION['masq']['newUser'];
+        }
+        unset($_SESSION['masq']);
+    }
+}
+
+/**
+ * Starts to masquerade as the provided user
+ *
+ * @param \Model\User $user the user to masquerade as
+ * @return void
+ */
+function startMasquerade($user) {
+    $_SESSION['masq'] = array('active' => true);
+    if (isset($_SESSION['userId'])) {
+        $_SESSION['masq']['savedPreviousUser'] = true;
+        $_SESSION['masq']['userId'] = $_SESSION['userId'];
+        $_SESSION['masq']['accessLevel'] = $_SESSION['accessLevel'];
+        $_SESSION['masq']['newUser'] = $_SESSION['newUser'];
+    }
+    $_SESSION['userId'] = $user->getId();
+    $_SESSION['accessLevel'] = $user->getType()->getName();
+    $_SESSION['newUser'] = false;
+}
 ?>
 
-<h1>Masquerade as Another User</h1>
+<h1>Senior Design Capstone: Masquerade as Another User</h1>
+
+<?php if ($masqerading): ?>
+    <p>Currently masqerading as <strong><?php echo $user->getFirstName() . ' ' . $user->getLastName(); ?></strong></p>
+<?php endif; ?>
+
+<?php if (isset($message)): ?>
+    <p><?php echo $message ?></p>
+<?php endif; ?>
 
 <h3>Masquerade as Existing</h3>
 <form method="post">
     <input type="hidden" name="action" value="start" />
-    <label for="onid">ONID></label>
+    <label for="onid">ONID</label>
     <input required type="text" id="eonid" name="onid" autocomplete="off" />
     <button type="submit">Start Masquerading</button>
 </form>
