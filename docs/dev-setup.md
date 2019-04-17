@@ -28,7 +28,7 @@ Docker on your machine.
 
 1. Now we need to generate a `.htpasswd` file so that we can restrict access to the masquerading feature that allows us
    to bypass third-party authentication while we are doing development.
-   1. "Exec" into the container running the the website. This opens an interactive shell inside the container.
+   1. "Exec" into the container running the website. This opens an interactive shell inside the container.
 
          docker exec -it osu-local-web-server /bin/bash
 

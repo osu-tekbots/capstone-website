@@ -7,11 +7,11 @@ Since we cannot use our authentication providers from `localhost`, we will need 
 developing. This is beneficial in many ways, one of which being that it allows us to explore the site as a user, a
 proposer, and an admin without needing to log in with credentials for different users.
 
-1. "Exec" into the container running the the website. This opens an interactive shell inside the container.
+1. "Exec" into the container running the website. This opens an interactive shell inside the container.
 
        docker exec -it osu-local-web-server /bin/bash
 
-1. Navigate the the `scripts` directory of the repository.
+1. Navigate to the `scripts` directory of the repository.
 
        cd /var/www/html/scripts
 
@@ -28,7 +28,7 @@ proposer, and an admin without needing to log in with credentials for different 
 1. On the ensuing page, enter the ONID of the user you created and click "Start Masquerading". This will "log you in"
    as the user and let you see the site through their eyes.
 
-1. At any point to stop masquerading, return the the masquerade page and click the "Stop" button.
+1. At any point to stop masquerading, return to the masquerade page and click the "Stop" button.
 
 
 ## Development Workflow and GitHub
