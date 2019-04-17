@@ -16,3 +16,9 @@ spl_autoload_register(function ($className) {
 $configManager = new Util\ConfigManager(PUBLIC_FILES . '/config' );
 
 $dbConn = DataAccess\DatabaseConnection::FromConfig($configManager->getDatabaseConfig());
+
+try {
+    $logger = new Util\Logger($configManager->getLogFilePath(), $configManager->getLogLevel());
+} catch (\Exception $e) {
+    $logger = null;
+}
