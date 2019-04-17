@@ -7,22 +7,8 @@ Initial Development: Winter Term 2019
 Contributors: Symon Ramos, Thien Nam, Braden Hitchcock
 
 ## Development
-The workflow for making changes to the source is as follows:
-1. Clone the repository locally on your computer
-1. Make changes to the code on a separate branch
-1. Push the changes to a remote copy of the branch
-1. Submit a pull request to the `dev/stage` branch
-1. Once the pull request has been accepted and merged, test the changes at 
-   [the dev site on ENGR servers](http://eecs.oregonstate.edu/education/capstone/newcapstone/)
-1. Once the changes have been tested on the dev site, make final configuration changes and save them on the 
-   `dev/stage` branch
-1. Create a pull request to merge the changes from `dev/stage` into `master`
-1. Smoke test the changes after pulling them to [the production site](http://eecs.oregonstate.edu/capstone/submission/)
-1. Before continuing development on your branch, before to pull again from the master branch
-
-### Local Development Setup
-We are able to use containerization with [Docker](https://www.docker.com/) to allow for local development on 
-individual laptops (i.e. off the ENGR servers). To set this up
+- [Local Development Setup](./docs/dev-setup.md)
+- [Development Workflow](./docs/dev-workflow.md)
 
 ### Remote Individual Development Setup
 1. Clone the repository under `http://eecs.oregonstate.edu/education/capstone/newcapstone/dev/[workspace]`, where 
