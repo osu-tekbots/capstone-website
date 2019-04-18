@@ -46,15 +46,9 @@
 			$description = $row['description'];
 			$motivation = $row['motivation'];
 			$objectives = $row['objectives'];
-			$minQualifications = $row['minQualifications'];
-			$prefQualifications = $row['prefQualifications'];
-			$deliverables = $row['deliverables'];
-			$website = $row['website'];
-			$video = $row['video'];
-			$startBy = $row['startBy'];
-			$completeBy = $row['completeBy'];
-			$image = $row['image'] != NULL ? $row['image'] : "capstone.jpg";
-			
+			$minQualifications = $row['minimum_qualifications'];
+			$prefQualifications = $row['preferred_qualifications'];
+
 			$firstName = $row['first_name'];
 			$lastName = $row['last_name'];
 			
@@ -119,12 +113,6 @@
 						<p>'. $minQualifications .'</p>
 						<h5>Preferred Qualifications:</h5>
 						<p>'. $prefQualifications .'</p>
-						<h5>Deliverables:</h5>
-						<p>'. $deliverables .'</p>
-						<h5>Website:</h5>
-						<p>'. $website .'</p>
-						<h5>Video:</h5>
-						<p>'. $video .'</p>
 					</div>
 				</div>
 			</div>
