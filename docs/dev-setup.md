@@ -4,6 +4,44 @@ This document outlines how to setup development locally using Docker containers 
 > **NOTE**: Setup will require that you have access to some private files and passwords not included in the repository.
 > Contact the Tekbots Web Dev Team for more information.
 
+## TL;DR
+From the [osu-tekbots/container-dev-env] repository.
+
+```sh
+sh dev-setup.sh /path/to/private/files /path/to/capstone/repository/root
+```
+
+After following setup below, the directory structure inside the container should look like the following (use
+`docker exec -it osu-local-web-server /bin/bash` to interact with the web server container):
+
+```sh
+/var/www/
+  |- # Private files (outside the repository). Mounted from a host directory.
+  |- .htpasswd
+  |- auth.ini
+  |- database.ini
+  |- out.log
+  |- html/
+       |- # Public files (the Git repository root). Mounted from a host directory.
+       |- ...
+       |- .htaccess # Update path to bootstrap.php to /var/www/html/bootstrap.php
+       |- config/
+            |- ...
+            |- site.ini # Mode is set to 'local'
+            |- local.ini # Configuration set for local development
+       |- masq/
+            |- ...
+            |- .htaccess # Location to password file set to /var/www/.htpasswd
+```
+
+You can stop and start your development environment at anytime without having to repeat the whole process with the 
+following:
+
+```sh
+sh dev-stop.sh
+sh dev-start.sh
+```
+
 ## Local Development Setup
 We are able to use containerization with [Docker](https://www.docker.com/) to allow for local development on 
 individual laptops (i.e. off the ENGR servers). Before completing the below steps, **make sure Docker is installed**
@@ -14,14 +52,14 @@ Docker on your machine.
    - `auth.ini`: OAuth client IDs and secrets used by the application. This file could be empty, but it needs to
       exist in the private directory.
    - `out.log`: the output log file for the logger. It needs to have write permissions enabled for all users.
-
-         chmod a+w out.log
+     (`chmod a+w out.log`)
 
 1. Clone the [osu-tekbots/container-dev-env] repository locally.
+
 1. Run the `dev-setup` script from the above mentioned repository to download and build the required containers. The
    script will also start the containers for you. The example below uses the shell on Linux.
 
-       sh dev-setup.sh /home/username/path/to/private/files /home/username/path/to/capstone/repository/root
+       sh dev-setup.sh /path/to/private/files /path/to/capstone/repository/root
 
    Once the script has finished executing, it will output the necessary configuration for access to the database. Place
    this configuration inside the private directory in `database.ini`.
@@ -30,7 +68,7 @@ Docker on your machine.
    to bypass third-party authentication while we are doing development.
    1. "Exec" into the container running the website. This opens an interactive shell inside the container.
 
-         docker exec -it osu-local-web-server /bin/bash
+          docker exec -it osu-local-web-server /bin/bash
 
    1. Change into the `/var/www` directory.
 
