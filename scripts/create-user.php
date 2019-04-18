@@ -31,9 +31,7 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 // Setup a quick autoloader for simplicity's sake
-spl_autoload_register(function ($className) {
-    include '../lib/classes/' . str_replace('\\', '/', $className) . '.php';
-});
+include '../lib/shared/autoload.php';
 
 // Load configuration
 $configManager = new Util\ConfigManager('../config' );
