@@ -62,7 +62,9 @@
 			<br>
 			<div class="container-fluid">
 				<div class="row">
-					<div class="col-sm-8 jumbotron scroll">
+					<div class="col-sm-1">
+					</div>
+					<div class="col-sm-6 jumbotron scroll">
 						<div class="row">
 							<div class="col-sm-7">
 								<h2>Application ' . $applicationID . '</h2>
@@ -72,7 +74,7 @@
 							<div id="cssloader" class="col-sm-1">
 							</div>
 							<div class="col-sm-4">
-								<button id="saveApplicationDraftBtn" class="btn btn-success capstone-nav-btn" type="button" >Save Application Draft</button>
+								<button id="saveApplicationDraftBtn" class="btn btn-success capstone-nav-btn" type="button" >Save Draft</button>
 								<button name="submitButtonPressed" id="submitBtn" class="btn btn-primary capstone-nav-btn" type="button">Submit</button>
 								<div id="successText" class="successText" style="display:none;">Successfully submitted application!</div>
 								<div id="errorTextDiv" style="color:red;"></div>
@@ -102,7 +104,9 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-sm-4 scroll">
+					<div class="col-sm-1">
+					</div>
+					<div class="col-sm-4 scroll jumbotron capstoneJumbotron">
 						<br>
 						<h2>'. $title .'</h2> 
 						<p>'. $description .'</p>

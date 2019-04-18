@@ -13,6 +13,6 @@ spl_autoload_register(function ($className) {
 });
 
 // Load configuration
-$configManager = new Util\ConfigManager(PUBLIC_FILES . '/config' );
+//$configManager = new Util\ConfigManager(PUBLIC_FILES . '/config' );
 
-$dbConn = DataAccess\DatabaseConnection::FromConfig($configManager->getDatabaseConfig());
+//$dbConn = DataAccess\DatabaseConnection::FromConfig($configManager->getDatabaseConfig());
