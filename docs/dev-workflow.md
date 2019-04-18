@@ -2,6 +2,33 @@
 This document contains information about the development workflow of the software for the Senior Design Capstone
 website.
 
+## Development Workflow and GitHub
+Essentially there are three locations of the website:
+
+1. **Local**: this is where current development occurs.
+1. **Staging**: this is where the legacy development occurred and is located on the ENGR server.
+1. **Production**: this is the live site on the ENGR server.
+
+The workflow for making changes to the source is as follows:
+
+1. Pull the latest version from `master`. Make changes locally on a separate branch. Convention is to include your 
+   name in the branch name.
+1. Push the changes to a remote copy of the branch. Make sure to adjust configuration for the staging server in the 
+   commit before merging in the next step.
+1. Submit a pull request to the `stage` branch.
+1. Once the pull request has been accepted and merged, pull and test the changes at 
+   [the dev site on ENGR servers](http://eecs.oregonstate.edu/education/capstone/newcapstone/)
+1. Once the changes have been tested on the dev site, make final configuration changes and save them on the 
+   `stage` branch
+1. Create a pull request to merge the changes from `stage` into `master`. Merge the changes.
+1. Pull the latest changes from `master` to [the production site](http://eecs.oregonstate.edu/capstone/submission/)
+
+Before continuing development on your branch, make sure to pull again from the master branch to get an up to date
+copy of the master branch (including merge request commit logs).
+
+<img src="https://drive.google.com/uc?id=1o_GVzpQ0bLwZqK4bUJFDYVR0NepNy-HM" alt="dev workflow visualized"
+    style="width: 700px; display: block; margin: auto;"/>
+
 ## Masquerading to Develop
 Since we cannot use our authentication providers from `localhost`, we will need create a user manually to use while
 developing. This is beneficial in many ways, one of which being that it allows us to explore the site as a user, a
@@ -29,27 +56,3 @@ proposer, and an admin without needing to log in with credentials for different 
    as the user and let you see the site through their eyes.
 
 1. At any point to stop masquerading, return to the masquerade page and click the "Stop" button.
-
-
-## Development Workflow and GitHub
-Essentially there are three locations of the website:
-
-1. **Local**: this is where current development occurs.
-1. **Staging/Testing**: this is where the legacy development occurred and is located on the ENGR servers.
-1. **Production**: this is the live site on the ENGR servers.
-
-The workflow for making changes to the source is as follows:
-
-1. Make changes to the code on a separate branch, locally on your computer. Convention is to include your name in the
-   branch.
-1. Push the changes to a remote copy of the branch. Make sure to adjust configuration for the staging server in the 
-   commit before merging in the next step.
-1. Submit a pull request to the `dev/stage` branch.
-1. Once the pull request has been accepted and merged, test the changes at 
-   [the dev site on ENGR servers](http://eecs.oregonstate.edu/education/capstone/newcapstone/)
-1. Once the changes have been tested on the dev site, make final configuration changes and save them on the 
-   `dev/stage` branch
-1. Create a pull request to merge the changes from `dev/stage` into `master`. Merge the changes.
-1. Smoke test the changes after pulling them to [the production site](http://eecs.oregonstate.edu/capstone/submission/)
-1. Before continuing development on your branch, make sure to pull again from the master branch to get an up to date
-   copy of the master branch.
