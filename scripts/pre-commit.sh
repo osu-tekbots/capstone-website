@@ -7,7 +7,21 @@
 #
 echo "Starting pre-commit..."
 
-echo "Changing file permissions for files and directories to be public before commit"
-sh scripts/allow.sh
+echo "Making sure permissions for files and directories are public"
+for f in $(find . -not -path "./.git/*"); do
+    if [ "$f" = "." ] || [ "$f" = ".." ] || [ "$f" ]; then
+        continue
+    fi
+    FILE_PERMISSIONS=$(stat -c "%a" $f)
+    if [ -d $f ] && [ "$FILE_PERMISSIONS" != '755' ]; then
+        echo "Found directory '$f' with incorrect permissions '$FILE_PERMISSIONS'"
+        echo "Run 'sh scripts/allow.sh' from the repository root before committing"
+        exit 1
+    elif [ -f $f ] && [ "$FILE_PERMISSIONS" -ne '664' ]; then
+        echo "Found file '$f' with incorrect permissions '$FILE_PERMISSIONS'"
+        echo "Run 'sh scripts/allow.sh' from the repository root before committing"
+        exit 1
+    fi
+done
 
 echo "Pre-commit done"
