@@ -61,7 +61,7 @@ class User {
      * @param string|null $id the ID of the user. If null, a new ID will be generated for the user.
      */
     public function __construct($id = null) {
-        if($id == null) {
+        if ($id == null) {
             $id = IdGenerator::generateSecureUniqueId();
             $this->setId($id);
         } else {
@@ -72,8 +72,7 @@ class User {
     /**
      * Get the value of id
      */ 
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -82,8 +81,7 @@ class User {
      *
      * @return  self
      */ 
-    public function setId($id)
-    {
+    public function setId($id) {
         $this->id = $id;
 
         return $this;
@@ -92,8 +90,7 @@ class User {
     /**
      * Get the value of type
      */ 
-    public function getType()
-    {
+    public function getType() {
         return $this->type;
     }
 
@@ -102,8 +99,7 @@ class User {
      *
      * @return  self
      */ 
-    public function setType($type)
-    {
+    public function setType($type) {
         $this->type = $type;
 
         return $this;
@@ -112,8 +108,7 @@ class User {
     /**
      * Get the value of firstName
      */ 
-    public function getFirstName()
-    {
+    public function getFirstName() {
         return $this->firstName;
     }
 
@@ -122,8 +117,7 @@ class User {
      *
      * @return  self
      */ 
-    public function setFirstName($firstName)
-    {
+    public function setFirstName($firstName) {
         $this->firstName = $firstName;
 
         return $this;
@@ -132,8 +126,7 @@ class User {
     /**
      * Get the value of lastName
      */ 
-    public function getLastName()
-    {
+    public function getLastName() {
         return $this->lastName;
     }
 
@@ -142,8 +135,7 @@ class User {
      *
      * @return  self
      */ 
-    public function setLastName($lastName)
-    {
+    public function setLastName($lastName) {
         $this->lastName = $lastName;
 
         return $this;
@@ -152,8 +144,7 @@ class User {
     /**
      * Get the value of salutation
      */ 
-    public function getSalutation()
-    {
+    public function getSalutation() {
         return $this->salutation;
     }
 
@@ -162,8 +153,7 @@ class User {
      *
      * @return  self
      */ 
-    public function setSalutation($salutation)
-    {
+    public function setSalutation($salutation) {
         $this->salutation = $salutation;
 
         return $this;
@@ -172,8 +162,7 @@ class User {
     /**
      * Get the value of email
      */ 
-    public function getEmail()
-    {
+    public function getEmail() {
         return $this->email;
     }
 
@@ -182,8 +171,7 @@ class User {
      *
      * @return  self
      */ 
-    public function setEmail($email)
-    {
+    public function setEmail($email) {
         $this->email = $email;
 
         return $this;
@@ -192,8 +180,7 @@ class User {
     /**
      * Get the value of phone
      */ 
-    public function getPhone()
-    {
+    public function getPhone() {
         return $this->phone;
     }
 
@@ -202,8 +189,7 @@ class User {
      *
      * @return  self
      */ 
-    public function setPhone($phone)
-    {
+    public function setPhone($phone) {
         $this->phone = $phone;
 
         return $this;
@@ -212,8 +198,7 @@ class User {
     /**
      * Get the value of major
      */ 
-    public function getMajor()
-    {
+    public function getMajor() {
         return $this->major;
     }
 
@@ -222,8 +207,7 @@ class User {
      *
      * @return  self
      */ 
-    public function setMajor($major)
-    {
+    public function setMajor($major) {
         $this->major = $major;
 
         return $this;
@@ -232,8 +216,7 @@ class User {
     /**
      * Get the value of affiliation
      */ 
-    public function getAffiliation()
-    {
+    public function getAffiliation() {
         return $this->affiliation;
     }
 
@@ -242,8 +225,7 @@ class User {
      *
      * @return  self
      */ 
-    public function setAffiliation($affiliation)
-    {
+    public function setAffiliation($affiliation) {
         $this->affiliation = $affiliation;
 
         return $this;
@@ -252,8 +234,7 @@ class User {
     /**
      * Get the value of onid
      */ 
-    public function getOnid()
-    {
+    public function getOnid() {
         return $this->onid;
     }
 
@@ -262,8 +243,7 @@ class User {
      *
      * @return  self
      */ 
-    public function setOnid($onid)
-    {
+    public function setOnid($onid) {
         $this->onid = $onid;
 
         return $this;
@@ -272,8 +252,7 @@ class User {
     /**
      * Get the value of authProvider
      */ 
-    public function getAuthProvider()
-    {
+    public function getAuthProvider() {
         return $this->authProvider;
     }
 
@@ -282,8 +261,7 @@ class User {
      *
      * @return  self
      */ 
-    public function setAuthProvider($authProvider)
-    {
+    public function setAuthProvider($authProvider) {
         $this->authProvider = $authProvider;
 
         return $this;
@@ -292,8 +270,7 @@ class User {
     /**
      * Get the value of authProviderId
      */ 
-    public function getAuthProviderId()
-    {
+    public function getAuthProviderId() {
         return $this->authProviderId;
     }
 
@@ -302,8 +279,7 @@ class User {
      *
      * @return  self
      */ 
-    public function setAuthProviderId($authProviderId)
-    {
+    public function setAuthProviderId($authProviderId) {
         $this->authProviderId = $authProviderId;
 
         return $this;
@@ -312,8 +288,7 @@ class User {
     /**
      * Get the value of dateCreated
      */ 
-    public function getDateCreated()
-    {
+    public function getDateCreated() {
         return $this->dateCreated;
     }
 
@@ -322,8 +297,7 @@ class User {
      *
      * @return  self
      */ 
-    public function setDateCreated($dateCreated)
-    {
+    public function setDateCreated($dateCreated) {
         $this->dateCreated = $dateCreated;
 
         return $this;
@@ -332,8 +306,7 @@ class User {
     /**
      * Get the value of dateUpdated
      */ 
-    public function getDateUpdated()
-    {
+    public function getDateUpdated() {
         return $this->dateUpdated;
     }
 
@@ -342,8 +315,7 @@ class User {
      *
      * @return  self
      */ 
-    public function setDateUpdated($dateUpdated)
-    {
+    public function setDateUpdated($dateUpdated) {
         $this->dateUpdated = $dateUpdated;
 
         return $this;
@@ -352,8 +324,7 @@ class User {
     /**
      * Get the value of dateLastLogin
      */ 
-    public function getDateLastLogin()
-    {
+    public function getDateLastLogin() {
         return $this->dateLastLogin;
     }
 
@@ -362,8 +333,7 @@ class User {
      *
      * @return  self
      */ 
-    public function setDateLastLogin($dateLastLogin)
-    {
+    public function setDateLastLogin($dateLastLogin) {
         $this->dateLastLogin = $dateLastLogin;
 
         return $this;

@@ -5,6 +5,7 @@ namespace DataAccess;
  * Connection to the MySQL database server through which all queries and transactions are executed.
  */
 class DatabaseConnection {
+
     private $conn = null;
 
     /**
@@ -20,6 +21,7 @@ class DatabaseConnection {
         $url = 'mysql:host=' . $host . ';dbname=' . $dbname;
         try {
             $this->conn = new \PDO($url, $username, $password);
+            $this->conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         } catch (\PDOException $e) {
             throw new \Exception('Failed to connect to database: ' . $e->getMessage());
         }
@@ -53,7 +55,7 @@ class DatabaseConnection {
     /**
      * Abort the current MySQL transaction.
      *
-     * @throws Exception if there is no active database connection or an error occurs while attempting to rollback
+     * @throws \Exception if there is no active database connection or an error occurs while attempting to rollback
      * @return void
      */
     public function rollback() {
@@ -112,8 +114,9 @@ class DatabaseConnection {
         }
         try {
             $prepared = $this->conn->prepare($sql);
-            $prepared->setFetchMode(PDO::FETCH_ASSOC);
-            $prepared->execute($params);
+            $this->bind($prepared, $params);
+            $prepared->setFetchMode(\PDO::FETCH_ASSOC);
+            $prepared->execute();
 
             return $prepared->fetchAll();
         } catch (\PDOException $e) {
@@ -137,7 +140,7 @@ class DatabaseConnection {
      *
      * @param string $sql the SQL query to execute
      * @param mixed[] $params an array of the paramters to safely insert into the SQL query
-     * @throws Exception if there is no active database connection or an error occurs while executing the query
+     * @throws \Exception if there is no active database connection or an error occurs while executing the query
      * @return void
      */
     public function execute($sql, $params = array()) {
@@ -146,9 +149,41 @@ class DatabaseConnection {
         }
         try {
             $prepared = $this->conn->prepare($sql);
-            $prepared->execute($params);
+            $this->bind($prepared, $params);
+            $prepared->execute();
         } catch (\PDOException $e) {
             throw new \Exception('Failed to execute statement: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Binds the provided paramters to the statement, performing necessary cleaning and SQL injection prevention.
+     *
+     * @param \PDOStatement $statement the prepared statement to bind the parameters to
+     * @param mixed[] $params the parameters to bind to the statement
+     * @throws \PDOException if the function fails to bind a parameter to the statement
+     * @return void
+     */
+    private function bind($statement, $params) {
+        $ok = true;
+        foreach($params as $marker => $value) {
+            $type = \gettype($value);
+            switch($type) {
+                case 'integer':
+                    $ok = $statement->bindValue($marker, $value, \PDO::PARAM_INT);
+                    break;
+                case 'boolean':
+                    $ok = $statement->bindValue($marker, $value, \PDO::PARAM_BOOL);
+                    break;
+                case 'NULL':
+                    $ok = $statement->bindValue($marker, $value, \PDO::PARAM_NULL);
+                    break;
+                default:
+                    $ok = $statement->bindValue($marker, $value, \PDO::PARAM_STR);
+            }
+            if(!$ok) {
+                throw new \PDOException("Failed to bind parameter of type '$type' with value '$value' to '$marker'");
+            }
         }
     }
 
@@ -162,7 +197,7 @@ class DatabaseConnection {
      * - `db_name` : the name of the database to connect with
      *
      * @param string[] $config the configuration values used to connect to and authenticate with the database server
-     * @throws Exception if the attempt to establish a database connection fails
+     * @throws \Exception if the attempt to establish a database connection fails
      * @return DatabaseConnection
      */
     public static function FromConfig($config) {
