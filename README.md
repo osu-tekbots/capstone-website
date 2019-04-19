@@ -1,54 +1,63 @@
 # Senior Design Capstone Web Application
 Senior Design Capstone is an application that enables students to browse Senior Design projects proposed by 
-individuals from industry and other sponsors.
+individuals from industry and other sponsors. See [the changelog](./CHANGELOG.md) for detailed information about
+updates to the website.
 
-Initial Development: Winter Term 2019
+**Initial Development**: Winter Term 2019
 
-Contributors: Symon Ramos, Thien Nam, Braden Hitchcock
+**Contributors**
+- Symon Ramos (ramossy@oregonstate.edu)
+- Thien Nam (namt@oregonstate.edu)
+- Braden Hitchcock (hitchcob@oregonstate.edu)
 
 ## Development
+The following resources provide information about how to develop the website locally and the workflow for pushing
+changes to the staging area and subsequently deploying them to production.
+
 - [Local Development Setup](./docs/dev-setup.md)
 - [Development Workflow](./docs/dev-workflow.md)
 
-### Remote Individual Development Setup
-1. Clone the repository under `http://eecs.oregonstate.edu/education/capstone/newcapstone/dev/[workspace]`, where 
-   `[workspace]` is your assigned sandbox directory
-1. Create an `images/` directory from the root of the site (e.g. `mkdir images`)
-1. Copy the `config.php` file containing database and auth provider configuration into the `include/` directory.
+In addition, **create a pre-commit hook** that will ensure fill permissions are set accordingly before you commit
+code. To do this, copy the `scripts/pre-commit.sh` file and save it as `pre-commit` in your local `.git/hooks`
+directory. Also ensure it is executable.
+
+```sh
+cp scripts/pre-commit.sh .git/hooks/pre-commit
+chmod a+x .git/hooks/pre-commit
+```
 
 ## Structural Overview
-- All HTML pages are rendered inside of php files in the `./pages/` folder.
+- All HTML pages are rendered inside of PHP files in the `pages/` folder.
 
-- All database management is handled in the `./db/dbManager.php` file. Please maintain
-  this consistency.
+- All database management is handled by database access objects in the `lib/classes/DataAccess/` and 
+  `lib/shared/classes/DataAccess/` directories. Any additional queries required to accomplish site functionality
+  should be included in these DAOs (or in a new DAO in the same namespace/file location).
 
-- The `./db/upload.php` file handles uploading images to the `./images/` folder that the
-  user provides.
+- All database configuration is located in a private directory *outside this repository* in a `database.ini` file.
 
-- All external css and js files are located in the `./assets/css/` and `./assets/js/`
-  respectively. An internal css file called `./assets/css/capstone.css` contains
-  customized css proporties relevant to this application.
+- Third-party authentication provider IDs and secrets are located *outside this repository* in a `auth.ini` file.
 
-	- Please be aware that this css file is global and will modify the entire
-	  application to adhere to its standards. (EX: modifying the background color
-	  of the "body" element will modify all "body" elements of all pages, not just
-	  a single one.) Please create new classes whenever applicable.
+- The `db/upload.php` file handles uploading images to the `images/` folder that the user provides.
 
-- The `./includes/config.php` file contains DB and Authentication credentials.
+- All external CSS and JS files are located in the `assets/css/` and `assets/js/` respectively. An internal CSS 
+  file called `assets/css/capstone.css` contains customized CSS proporties relevant to this application.
 
-- The `./includes/header.php` file contains all references to external css and js files.
-  `header.php` should be included in all files in the `./pages/` folder.
+	> Please be aware that this CSS file is global and will modify the entire application to adhere to its standards. 
+	> (EX: modifying the background color of the "body" element will modify all "body" elements of all pages, not just
+	> a single one.) Please create new classes whenever applicable.
+
+- The `includes/header.php` file contains all references to external CSS and JS files. The `header.php` and 
+  `footer.php` files should be included in all files in the `pages/` directory.
   
-- The `./modules/mailer.php` file contains all e-mail handling functions.
+- The `modules/mailer.php` file contains all e-mail handling functions.
 
-- The `./modules/` folder contains encapsulated code that is shared between files in the
-  `./pages/` folder. Whenever possible , please deprecate duplicate functionality into
-  a single module or folder. For example, the `./modules/createCards.php` will contain
-  functions utilized in `./pages/browseProjects.php` and `./pages/myProjects.php` to
-  render project cards with different attributes.
+- The `modules/` folder contains encapsulated code that is shared between multiple files in the `pages/` folder. 
+  Whenever possible , please consolidate duplicate functionality into a single module or folder. For example, the 
+  `modules/createCards.php` will contain functions utilized in `pages/browseProjects.php` and 
+  `pages/myProjects.php` to render project cards with different attributes.
   
 
-## Workflow Design
+## User Types and Website Workflow Design
 **Proposers**
 1. create new projects.
 2. edit projects.
@@ -69,129 +78,44 @@ Contributors: Symon Ramos, Thien Nam, Braden Hitchcock
 
 ## Database Architecture
 
-As of 3/4/19:
-
-Authentication data is located in `./includes/config.php`.
+Authentication data is located in a `database.ini` file **outside this repository**. The Tekbots Web Dev Team's shared
+Google Drive contains documentation on the internal structure of database tables used in this site.
 
 Database Name: `eecs_projectsubmission`
 Server Name: `engr-db Groups`
 
-```
-Tables:
-	/***************************************
-	* keywords
-	***************************************/
-		- keyword_id (Primary Key, Auto Increment)
-		- name
-
-	/***************************************
-	* projects
-	***************************************/
-		*All fields are "text" type unless otherwise stated.
-
-		- project_id (Primary Key, Auto Increment)
-		- proposer_id
-		- status
-		- category
-		- is_hidden (tinyint boolean, defaults to 0)
-		- type
-		- year (int)
-		- section (int)
-		- title
-		- website
-		- video
-		- additional_emails
-		- start_by
-		- complete_by
-		- date_created (datetime, defaults to CURRENT_TIMESTAMP)
-		- last_updated (datetime)
-		- preferred_qualifications
-		- minimum_qualifications
-		- motivation
-		- description
-		- objectives
-		- NDA/IP
-		- compensation
-		- comments
-		- focus
-		- image
-		- number_groups (int)
-		- keywords (comma separated string)
-
-		Triggers:
-			- ins_year (sets `year` before the insertion of a row as current year.)
-			- upd_last_updated (sets `last_updated` before the updating of a row as CURRENT_TIMESTAMP)
-
-	/***************************************
-	* project_assignments
-	***************************************/
-		- 3/4/19: In Development
-
-	/***************************************
-	* users
-	***************************************/
-		- user_id (Primary Key, NOT auto incremented. Pulled from OAUTH_CLIENT authenticator.)
-		- first_name
-		- last_name
-		- student_id
-		- salutation
-		- email
-		- phone
-		- affiliation
-		- major
-		- auth_provider
-		- type
-		- project_assigned
-
-	/***************************************
-	* users_application
-	***************************************/
-		- 3/4/19: In Development
-
-	/***************************************
-	* user_application_review
-	***************************************/
-		- 3/4/19: In Development
-```
-
 ## Login Authentication
-- Within `./pages/login.php`, the `./auth_providers/login_with_[authenticator].php`
-  script is executed on login button click.
+Within `pages/login.php`, the `auth_providers/login_with_[authenticator].php` script is executed on login button click. 
+Login credentials required to interface with the authenticator are:
+- redirect_uri
+- client_id
+- client_secret
 
-- Login credentials required to interface with the authenticator are:
-	- redirect_uri
-	- client_id
-	- client_secret
+Each authenticator will provide different user info configurations but will have sufficient data needed to create a 
+new user. All new users are defaulted as Students and are re-directed to `pages/login.php` with a new portal section.
 
-- Each authenticator will provide different user info configurations but will have
-  sufficient data needed to create a new user. All new users are defaulted as Students
-  and are re-directed to `./pages/login.php` with a new portal section.
-
-- Users must contact an administrator of this application in order to be given the
-  access level of admin.
+Users must contact an administrator of this application in order to be given the access level of admin.
 
 ## Admin Interface
 
 
-## Session Variables Used
+## Session Variables
 Session variables are used to persist user data throughout the course of a user's active session. The instantiation 
 of these variables occur in the following workflow:
   
-  1. The user visits the `./pages/login.php` page. 
-  2. The user selects a login authentication type (EX: Google, Microsoft).
-  3. After successful authentication, the following session variables are instantiated and can be used in PHP throughout the entire application: 
-	- `$_SESSION['userID']`: This variable is a string of numbers. 
-	- `$_SESSION['accessLevel']`: This variable is a string that can be either: 
-		- "Student"
-		- "Proposer"
-		- "Admin"
-	- `$_SESSION['newUser']`: This variable is a boolean (either true or false).
+1. The user visits the `pages/login.php` page. 
+2. The user selects a login authentication type (EX: Google, Microsoft).
+3. After successful authentication, the following session variables are instantiated and can be used in PHP throughout the entire application: 
+   - `$_SESSION['userID']`: This variable is a string of numbers. 
+   - `$_SESSION['accessLevel']`: This variable is a string that can be either: 
+      - "Student"
+      - "Proposer"
+      - "Admin"
+   - `$_SESSION['newUser']`: This variable is a boolean (either true or false).
 
-> **NOTE**: Please do NOT reference `$_SESSION['userID']` in javascript, as 
-> Google Authentication may provide a userID that is longer than the acceptable
-> max character length for javascript. Instead, echo the session varible in a 
-> hidden div and reference that text of that div in order to use the userID in 
-> javascript.
+> **NOTE**: Please do NOT reference `$_SESSION['userID']` in javascript, as Google Authentication may provide a 
+> userID that is longer than the acceptable max character length for javascript. Instead, echo the session varible in a 
+> hidden div and reference that text of that div in order to use the userID in JavaScript.
 
 
 ## Future Implementation
@@ -202,8 +126,11 @@ of these variables occur in the following workflow:
 ## Troubleshooting and Helpful Notes
 
 ### Problem
-The `user_id` columns in the database are `char(64)` and because Google Authentication returns an ID that is often times more than 64 bits, the session variable for userID can't be explicitly referenced in Javascript and will be truncated.
+The `u_uap_provided_id` columns in the database are `VARCHAR(256)` and because Google Authentication returns an ID that 
+is often times more than 64 bits, the session variable for userID can't be explicitly referenced in Javascript and will 
+be truncated.
   
 #### Solution 
-Create a hidden div and echo out the SESSION variable there. Then reference that div in the javascript. Found in `./pages/viewSingleProject.php`: 
+Create a hidden div and echo out the SESSION variable there. Then reference that div in the javascript. Found in 
+`pages/viewSingleProject.php`: 
 		 
