@@ -47,6 +47,11 @@ button h6{
     overflow-y: scroll;
 }
 
+.scrollShorter {
+    max-height: 50vh;
+    overflow-y: scroll;
+}
+
 .ndaDisclaimer{
 	font-size: 13px;
 	max-height: 200px;
