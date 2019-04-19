@@ -30,6 +30,8 @@ function prompt($message, $default = null) {
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
+define('PUBLIC_FILES', '..');
+
 // Setup a quick autoloader for simplicity's sake
 include '../lib/shared/autoload.php';
 
