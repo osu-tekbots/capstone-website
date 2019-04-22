@@ -87,6 +87,9 @@ class UsersActionHandler extends ActionHandler {
 
             case 'saveProfile':
                 $this->saveUserProfile();
+
+            default:
+                $this->respond(new Response(Response::BAD_REQUEST, 'Invalid action on user resource'));
         }
     }
 
