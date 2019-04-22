@@ -33,6 +33,7 @@ class ConfigManager {
 
         // Handle the default configurations
         $this->setShouldDisplayErrors($this->config['server']['display_errors']);
+        $this->setDisplayErrorSeverity($this->config['server']['display_errors_severity']);
         $this->databaseConfig = $this->loadIni(join('/', array($this->getPrivateFilesDirectory(), 
             $this->config['database']['config_file'])));
         $this->authProviderConfig = $this->loadIni(join('/', array($this->getPrivateFilesDirectory(), 
@@ -168,6 +169,24 @@ class ConfigManager {
      */
     public function getAuthProviderConfig() {
         return $this->authProviderConfig;
+    }
+
+    /**
+     * Fetches the full path to the log file used for log output.
+     *
+     * @return string the path to the log file
+     */
+    public function getLogFilePath() {
+        return $this->getPrivateFilesDirectory() . '/' . $this->config['logger']['log_file'];
+    }
+
+    /**
+     * Fetches the level of the logger from configuration.
+     *
+     * @return string the level of the logger
+     */
+    public function getLogLevel() {
+        return $this->config['logger']['level'];
     }
 
     /**

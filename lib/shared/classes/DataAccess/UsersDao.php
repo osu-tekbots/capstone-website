@@ -19,15 +19,20 @@ class UsersDao {
     /** @var \Util\Logger */
     private $logger;
 
+    /** @var boolean */
+    private $echoOnError;
+
     /**
      * Constructs a new instance of a User Data Access Object.
      *
      * @param DatabaseConnection $connection the connection used to perform user-related queries on the database
      * @param \Util\Logger $logger the logger to use for logging messages and errors associated with fetching user data
+     * @param boolean $echoOnError determines whether to echo an error whether or not a logger is present
      */
-    public function __construct($connection, $logger = null) {
+    public function __construct($connection, $logger = null, $echoOnError = false) {
         $this->logger = $logger;
         $this->conn = $connection;
+        $this->echoOnError = $echoOnError;
     }
 
     /**
@@ -141,8 +146,8 @@ class UsersDao {
     public function addNewUser($user) {
         try {
             $sql = 'INSERT INTO user ';
-            $sql .= '(u_id, u_ut_id, u_fname, u_lname, u_us_id, u_email, u_phone, u_major, u_affiliation, u_onid ';
-            $sql .= 'u_uap_id, u_auth_provider_id, u_date_created) ';
+            $sql .= '(u_id, u_ut_id, u_fname, u_lname, u_us_id, u_email, u_phone, u_major, u_affiliation, u_onid, ';
+            $sql .= 'u_uap_id, u_uap_provided_id, u_date_created) ';
             $sql .= 'VALUES (:id,:type,:fname,:lname,:salu,:email,:phone,:maj,:affil,:onid,:auth,:authpid,:datec)';
             $params = array(
                 ':id' => $user->getId(),
@@ -157,7 +162,7 @@ class UsersDao {
                 ':onid' => $user->getOnid(),
                 ':auth' => $user->getAuthProvider()->getId(),
                 ':authpid' => $user->getAuthProviderId(),
-                ':datec' => $user->getDateCreated()
+                ':datec' => $user->getDateCreated()->format('Y-m-d H:i:s')
             );
             $this->conn->execute($sql, $params);
 
@@ -271,7 +276,7 @@ class UsersDao {
         return (new User($row['u_id']))
             ->setType(self::ExtractUserTypeFromRow($row, true))
             ->setFirstName($row['u_fname'])
-            ->setLastName(array('u_lname'))
+            ->setLastName($row['u_lname'])
             ->setSalutation(self::ExtractUserSalutationFromRow($row, true))
             ->setEmail($row['u_email'])
             ->setPhone($row['u_phone'])
@@ -341,6 +346,9 @@ class UsersDao {
     private function logError($message) {
         if ($this->logger != null) {
             $this->logger->error($message);
+        }
+        if ($this->echoOnError) {
+            echo "$message\n";
         }
     }
 }

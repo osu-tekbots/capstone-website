@@ -1,0 +1,5 @@
+# CONFIG: need to change the AuthUserFile to the proper location of the .htpasswd file
+AuthType Basic
+AuthName "Password Protected Area"
+AuthUserFile /nfs/ca/info/eecs_www/education/capstone/.htpasswd
+Require valid-user

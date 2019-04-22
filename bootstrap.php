@@ -6,13 +6,15 @@ error_reporting(E_ALL);
 
 define('PUBLIC_FILES', __DIR__);
 
-// Define an autoloader for custom PHP classes so we don't have to
-// include their files manually
-spl_autoload_register(function ($className) {
-    include PUBLIC_FILES . '/lib/classes/' . str_replace('\\', '/', $className) . '.php';
-});
+include PUBLIC_FILES . '/lib/shared/autoload.php';
 
 // Load configuration
-//$configManager = new Util\ConfigManager(PUBLIC_FILES . '/config' );
+$configManager = new Util\ConfigManager(PUBLIC_FILES . '/config' );
 
-//$dbConn = DataAccess\DatabaseConnection::FromConfig($configManager->getDatabaseConfig());
+$dbConn = DataAccess\DatabaseConnection::FromConfig($configManager->getDatabaseConfig());
+
+try {
+    $logger = new Util\Logger($configManager->getLogFilePath(), $configManager->getLogLevel());
+} catch (\Exception $e) {
+    $logger = null;
+}
