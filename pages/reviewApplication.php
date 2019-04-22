@@ -25,6 +25,8 @@
 			$time_available = $row['time_available'];
 			$skill_set = $row['skill_set'];
 			$external_link = $row['external_link'];
+			$user_id = $row['user_id'];
+			$project_id = $row['project_id'];
 			
 			$title = $row['title'];
 			$description = $row['description'];
@@ -35,7 +37,6 @@
 			
 			$firstName = $row['first_name'];
 			$lastName = $row['last_name'];
-			
 			
 			//Retrieve existing application review data and style page accordingly.
 			$reviewResult = getApplicationReviewEntry($applicationID);
@@ -110,9 +111,18 @@
 				<center>
 					<?php
 					if(array_key_exists("userID",$_SESSION) && $_SESSION['accessLevel'] == 'Admin'){
-						echo('
-						<h6 style="float:left;">Proposer Comments About Applicant: '.$comments.'</h6>
 
+						$result = applicantOtherProjects($user_id, $project_id);
+						$row = $result->fetch_assoc();
+						$otherProjects = $row["GROUP_CONCAT(title)"];
+						if ($comments != ""){
+							echo('<h6 style="float:left;">Proposer Comments About Applicant: '.$comments.'</h6>');
+						}
+						if ($otherProjects != ""){
+							echo('<h6 style="float:left;">Other Projects Applicant has Applied For: '.$otherProjects.'</h6>');
+						}
+
+						echo('
 						<br>
 						<br>
 						<br>
@@ -135,6 +145,7 @@
 						</form>
 						<!-- Each buttons class is dynamically generated so that the selected one will be filled whereas the other two will have "outline" property. -->
 						<h6 style="float:center;">Assign Desirability To Applicant:</h6>
+						<h6 style="float:left;">*Assigning desirability in no way indicates that you will have an applicant chosen/not chosen.  All applicants will in the end be chosen by the admins*</h6>
 						<button class="btn btn-lg '.$desirableBtnClass.' id="desirableBtn">Desirable</button>
 						<button class="btn btn-lg '.$impartialBtnClass.' id="impartialBtn">Impartial</button>
 						<button class="btn btn-lg '.$undesirableBtnClass.' id="undesirableBtn">Undesirable</button>

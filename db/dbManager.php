@@ -670,6 +670,17 @@ function adminChooseProjectCategory($id, $category){
 	$mysqli->query($query);
 }
 
+function applicantOtherProjects($user_id, $project_id){
+	$mysqli = dbConnect();
+	$query = "SELECT GROUP_CONCAT(title) FROM projects INNER JOIN users_application
+	ON users_application.project_id = projects.project_id
+	WHERE user_id = '$user_id' AND projects.project_id != '$project_id'";
+	if(defined('DEBUG')){
+		echo $query;
+	}
+	return $mysqli->query($query);
+}
+
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 
