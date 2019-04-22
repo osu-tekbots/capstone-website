@@ -598,31 +598,18 @@ function getApplicationReviewEntry($applicationID){
 	return $mysqli->query($query);
 }
 
+function updateApplicationReviewEntry($applicationID, $interestLevel, $comments){
+	$query = "UPDATE `user_application_review` SET `interest_level` = '$interestLevel', `comments` = '$comments' WHERE `application_review_id` = '$applicationReviewID'";
+	$mysqli = dbConnect();
+	$mysqli->query($query);
+}
+
 function createApplicationReviewEntry($applicationID, $interestLevel, $comments){
 	//Note: types will be either "Desirable", "Impartial", or "Undesirable".
 	//Note: The 'application_id' column in the application reviews table has a unique key.
 	
-	
-	//fixme: stopped here at 4/15/19. Working on getting the thing to update correctly.
-	
-	/*
-	$appReviewResult = getApplicationReviewEntry($applicationID);
-	$appReviewRow = $appReviewResult->fetch_assoc();
-	
-	$isReviewed = $appReviewRow['interest_level'] != '' ? true : false;
-	
-	$applicationReviewID = $appReviewRow['application_review_id'];
+	$query = "INSERT INTO `user_application_review` (`application_review_id`, `application_id`, `interest_level`, `comments`) VALUES (NULL, $applicationID, '$interestLevel', '$comments')";
 
-	if($isReviewed){	
-*/	
-		$query = "INSERT INTO `user_application_review` (`application_review_id`, `application_id`, `interest_level`, `comments`) VALUES (NULL, $applicationID, '$interestLevel', '$comments')";
-	/*
-	}
-	else{
-		$query = "UPDATE `user_application_review` SET `interest_level` = '$interestLevel', `comments` = '$comments' WHERE `application_review_id` = '$applicationReviewID'";
-	}
-	*/
-	
 	$mysqli = dbConnect();
 	$mysqli->query($query);
 }
@@ -681,6 +668,17 @@ function adminChooseProjectCategory($id, $category){
 		echo $query;
 	}
 	$mysqli->query($query);
+}
+
+function applicantOtherProjects($user_id, $project_id){
+	$mysqli = dbConnect();
+	$query = "SELECT GROUP_CONCAT(title) FROM projects INNER JOIN users_application
+	ON users_application.project_id = projects.project_id
+	WHERE user_id = '$user_id' AND projects.project_id != '$project_id'";
+	if(defined('DEBUG')){
+		echo $query;
+	}
+	return $mysqli->query($query);
 }
 
 /////////////////////////////////////////////////////////////

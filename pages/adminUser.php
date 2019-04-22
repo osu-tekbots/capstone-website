@@ -134,7 +134,7 @@ $(document).ready(function(){
 		editButton: false,
 		columns: {
 		  identifier: [0, 'user_id'],
-		  editable: [[1, 'first_name'], [2, 'last_name'], [3, 'student_id'], [6, 'phone'], [8, 'major'], [10, 'type', '{"1": "Admin", "2": "Proposer", "3": "Student"}'], [11, 'project_assigned']]
+		  editable: [[1, 'first_name'], [2, 'last_name'], [3, 'student_id'], [6, 'phone'], [8, 'major'], [10, 'type', '{"Admin": "Admin", "Proposer": "Proposer", "Student": "Student"}'], [11, 'project_assigned']]
 		},
 		hideIdentifier: false,
 		url: '../modules/live_edit.php'
