@@ -75,6 +75,7 @@
 			/*********************************************************************************
 			* Tool Tip Descriptions
 			*********************************************************************************/
+			$adminProjectCategorySelectToolTip = "";
 			$projectTitleInputToolTip = "";
 			$saveProjectDraftBtnToolTip = "";
 			$submitForApprovalBtnToolTip = "Submit your project for approval. Once your project has been approved, you will receive a confirmation email indicating that it is available for public viewing. ";
@@ -140,9 +141,6 @@
 			echo '<div class="row">
 
 			<div class="col-sm-3">
-				<h3 id="proposerNameHeader style="display:none;">' . $proposerName . '</h3>
-				<h3 id="proposerIDHeader" style="display:none;">' . $userID . '</h3>
-				<h3 id="projectIDHeader" style="display:none;">' . $id . '</h3>
 				<div class="form-group">
 					<div class="input-group">
 						<span class="input-group-btn">
@@ -160,21 +158,41 @@
 						height:40px;
 					}
 				</style>
-				<div id="indexDiv" style="width:100%;max-height:200px;display:grid;">
-					<select id="defaultImageSelect" class="image-picker show-html">
+				<div id="indexDiv" style="width:100%;max-height:300px;display:grid;">
+					<select id="defaultImageSelect" class="image-picker show-html">';
+					//Note: Within the first value of the first option, an additional "x" character is added because switching background-color
+					//from a default image selection to the current one will consume the first character.
+					echo'
 					  <option data-img-src="../images/' . $image . '" data-img-class="first data-img" value="x' . $image . '">  Page 1  </option>';
 					  
 					  //$defaultImageNum = 1;
 					  function createDefaultImageOption($imageName, $defaultImageNum){
 						  //global $defaultImageNum;
-						  echo '<option data-img-src="../images/' . $imageName . '" data-img-class="data-img" value="' . $defaultImageNum . $imageName . '">' . $imageName . '</option>';
+						  echo '<option data-img-src="../images/default/' . $imageName . '" data-img-class="data-img" value="' . $defaultImageNum . $imageName . '">' . $imageName . '</option>';
 						  //$defaultImageNum += 1;
 					  }
 					   
-					   createDefaultImageOption("capstone.jpg", 1);
-					   createDefaultImageOption("loginImage.jpg", 2);
-					   createDefaultImageOption("light.jpg", 3);
-					   createDefaultImageOption("loginImage.jpg", 4);
+					   //The second parameter is a placeholder character that must be different 
+					   //from each other option. It will be consumed when saving the project draft 
+					   //or changing the selected image. 
+					   createDefaultImageOption("default_ai_1.jpg", "a");
+					   createDefaultImageOption("default_board_1.jpg", "b");
+					   createDefaultImageOption("default_circuit_1.jpg", "c");
+					   createDefaultImageOption("default_code_1.jpg", "d");
+					   createDefaultImageOption("default_drone_1.jpg", "e");
+					   createDefaultImageOption("default_iot_1.jpg", "f");
+					   createDefaultImageOption("default_meeting_1.jpg", "g");
+					   createDefaultImageOption("default_mobile_1.jpg", "h");
+					   createDefaultImageOption("default_module_1.jpg", "i");
+					   createDefaultImageOption("default_module_2.jpg", "j");
+					   createDefaultImageOption("default_module_3.jpg", "k");
+					   createDefaultImageOption("default_plan_1.jpg", "l");
+					   createDefaultImageOption("default_probe_1.jpg", "m");
+					   createDefaultImageOption("default_research_1.jpg", "n");
+					   createDefaultImageOption("default_rocket_1.jpg", "o");
+					   createDefaultImageOption("default_security_1.jpg", "p");
+					   createDefaultImageOption("default_vr_1.jpg", "q");
+					   
 					echo '
 					</select>
 
@@ -618,7 +636,7 @@ var uploadedImage = 0;
 
 //Uploads image to ./images/ folder.
 function Upload() {
-	id = <?php echo $projectID?>;
+	id = "<?php echo $projectID?>";
 	var file_data = $('#imgInp').prop('files')[0]
 	var form_data = new FormData();
 
@@ -655,10 +673,12 @@ function createSaveIcon(){
 class Project {
   constructor() {
     this.title = $('#projectTitleInput').val();
-	this.proposerName = $('#proposerNameHeader').val();
-    this.id = <?php echo $projectID?>;
+    this.id = "<?php echo $projectID?>"; 
 	if(uploadedImage == 1){
 		this.image = "project_" + this.id + "_" + $('#nameOfImageInput').val();
+	}
+	else if($('#nameOfImageInput').val().includes("default") && !($('#nameOfImageInput').val().includes("default/"))){
+		this.image = "default/" + $('#nameOfImageInput').val();
 	}
 	else{
 		this.image = $('#nameOfImageInput').val();
@@ -787,7 +807,7 @@ $(document).ready( function() {
 		
 		$('#nameOfImageInput').val(selectedImageName);
 		
-		$('#img-upload').attr('src', '../images/' + selectedImageName);
+		$('#img-upload').attr('src', '../images/default/' + selectedImageName);
 		});		
 });
 /***************************************************************************************

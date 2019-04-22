@@ -46,15 +46,9 @@
 			$description = $row['description'];
 			$motivation = $row['motivation'];
 			$objectives = $row['objectives'];
-			$minQualifications = $row['minQualifications'];
-			$prefQualifications = $row['prefQualifications'];
-			$deliverables = $row['deliverables'];
-			$website = $row['website'];
-			$video = $row['video'];
-			$startBy = $row['startBy'];
-			$completeBy = $row['completeBy'];
-			$image = $row['image'] != NULL ? $row['image'] : "capstone.jpg";
-			
+			$minQualifications = $row['minimum_qualifications'];
+			$prefQualifications = $row['preferred_qualifications'];
+
 			$firstName = $row['first_name'];
 			$lastName = $row['last_name'];
 			
@@ -62,7 +56,9 @@
 			<br>
 			<div class="container-fluid">
 				<div class="row">
-					<div class="col-sm-8 jumbotron scroll">
+					<div class="col-sm-1">
+					</div>
+					<div class="col-sm-6 jumbotron scroll">
 						<div class="row">
 							<div class="col-sm-7">
 								<h2>Application ' . $applicationID . '</h2>
@@ -72,7 +68,7 @@
 							<div id="cssloader" class="col-sm-1">
 							</div>
 							<div class="col-sm-4">
-								<button id="saveApplicationDraftBtn" class="btn btn-success capstone-nav-btn" type="button" >Save Application Draft</button>
+								<button id="saveApplicationDraftBtn" class="btn btn-success capstone-nav-btn" type="button" >Save Draft</button>
 								<button name="submitButtonPressed" id="submitBtn" class="btn btn-primary capstone-nav-btn" type="button">Submit</button>
 								<div id="successText" class="successText" style="display:none;">Successfully submitted application!</div>
 								<div id="errorTextDiv" style="color:red;"></div>
@@ -102,7 +98,9 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-sm-4 scroll">
+					<div class="col-sm-1">
+					</div>
+					<div class="col-sm-4 scroll jumbotron capstoneJumbotron">
 						<br>
 						<h2>'. $title .'</h2> 
 						<p>'. $description .'</p>
@@ -115,12 +113,6 @@
 						<p>'. $minQualifications .'</p>
 						<h5>Preferred Qualifications:</h5>
 						<p>'. $prefQualifications .'</p>
-						<h5>Deliverables:</h5>
-						<p>'. $deliverables .'</p>
-						<h5>Website:</h5>
-						<p>'. $website .'</p>
-						<h5>Video:</h5>
-						<p>'. $video .'</p>
 					</div>
 				</div>
 			</div>

@@ -288,6 +288,7 @@ function getMyProjects(){
 	return $mysqli->query($query);
 }
 
+
 /*********************************************************************************
 * Function Name: changeProjectStatus()
 * Input: Project ID and status to be changed into
@@ -552,7 +553,7 @@ function getApplicationsAssociatedWithProject($projectID){
 
 
 function getMyApplications($userID){
-	$query = "select *, `users_application`.status AS status, `users_application`.last_updated AS last_updated, `users_application`.date_applied AS date_applied from `users_application` inner join `users` on `users_application`.user_id = `users`.user_id inner join `projects` on `users_application`.project_id = `projects`.project_id where `users_application`.user_id = '$userID'";
+	$query = "select *, `users_application`.status AS appstatus, `users_application`.last_updated AS last_updated, `users_application`.date_applied AS date_applied from `users_application` inner join `users` on `users_application`.user_id = `users`.user_id inner join `projects` on `users_application`.project_id = `projects`.project_id where `users_application`.user_id = '$userID'";
 	if(defined('DEBUG')){
 		echo $query;
 	}
@@ -588,6 +589,29 @@ function submitApplication($Application){
 	$id = $mysqli->real_escape_string($Application['id']);
 	changeApplicationStatus($id, "Submitted");
 	applicationSubmissionEmail($id);
+}
+
+function getApplicationReviewEntry($applicationID){	
+	$mysqli = dbConnect();
+	$query = "SELECT * FROM `user_application_review` WHERE application_id = '$applicationID'";
+
+	return $mysqli->query($query);
+}
+
+function updateApplicationReviewEntry($applicationID, $interestLevel, $comments){
+	$query = "UPDATE `user_application_review` SET `interest_level` = '$interestLevel', `comments` = '$comments' WHERE `application_review_id` = '$applicationReviewID'";
+	$mysqli = dbConnect();
+	$mysqli->query($query);
+}
+
+function createApplicationReviewEntry($applicationID, $interestLevel, $comments){
+	//Note: types will be either "Desirable", "Impartial", or "Undesirable".
+	//Note: The 'application_id' column in the application reviews table has a unique key.
+	
+	$query = "INSERT INTO `user_application_review` (`application_review_id`, `application_id`, `interest_level`, `comments`) VALUES (NULL, $applicationID, '$interestLevel', '$comments')";
+
+	$mysqli = dbConnect();
+	$mysqli->query($query);
 }
 
 
@@ -644,6 +668,17 @@ function adminChooseProjectCategory($id, $category){
 		echo $query;
 	}
 	$mysqli->query($query);
+}
+
+function applicantOtherProjects($user_id, $project_id){
+	$mysqli = dbConnect();
+	$query = "SELECT GROUP_CONCAT(title) FROM projects INNER JOIN users_application
+	ON users_application.project_id = projects.project_id
+	WHERE user_id = '$user_id' AND projects.project_id != '$project_id'";
+	if(defined('DEBUG')){
+		echo $query;
+	}
+	return $mysqli->query($query);
 }
 
 /////////////////////////////////////////////////////////////
@@ -744,6 +779,24 @@ if(isset($_POST['action'])){
 			break;
 		case "saveApplicationDraft":
 			updateApplication($_POST['A']);
+			exit();
+			break;
+		case "desirableApplication":
+			$applicationID = $mysqli->real_escape_string($_POST['applicationID']);
+			$comments = $mysqli->real_escape_string($_POST['comments']);
+			createApplicationReviewEntry($applicationID, 'Desirable', $comments);
+			exit();
+			break;
+		case "impartialApplication":
+			$applicationID = $mysqli->real_escape_string($_POST['applicationID']);
+			$comments = $mysqli->real_escape_string($_POST['comments']);
+			createApplicationReviewEntry($applicationID, 'Impartial', $comments);
+			exit();
+			break;
+		case "undesirableApplication":
+			$applicationID = $mysqli->real_escape_string($_POST['applicationID']);
+			$comments = $mysqli->real_escape_string($_POST['comments']);
+			createApplicationReviewEntry($applicationID, 'Undesirable', $comments);
 			exit();
 			break;
 		case "saveProfile":
