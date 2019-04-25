@@ -162,7 +162,7 @@ class UsersDao {
                 ':onid' => $user->getOnid(),
                 ':auth' => $user->getAuthProvider()->getId(),
                 ':authpid' => $user->getAuthProviderId(),
-                ':datec' => $user->getDateCreated()->format('Y-m-d H:i:s')
+                ':datec' => QueryUtils::FormatDate($user->getDateCreated())
             );
             $this->conn->execute($sql, $params);
 
@@ -205,7 +205,7 @@ class UsersDao {
                 ':phone' => $user->getPhone(),
                 ':maj' => $user->getMajor(),
                 ':affil' => $user->getAffiliation(),
-                ':dateu' => new \DateTime(),
+                ':dateu' => QueryUtils::FormatDate($user->getDateUpdated()),
                 ':id' => $user->getId()
             );
             $this->conn->execute($sql, $params);
