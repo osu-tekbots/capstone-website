@@ -11,7 +11,7 @@
     position: fixed; /* Sit on top of the screen */
     z-index: 100; /* Add a z-index if needed */
     right: 30px; /* Center the snackbar */
-    top: 145px; /* 30px from the bottom */
+    bottom: 30px; /* 30px from the bottom */
     display: flex;
     align-items: center;
 }
@@ -47,21 +47,21 @@
 
 /* Animations to fade the snackbar in and out */
 @-webkit-keyframes fadein {
-    from {top: 115px; opacity: 0;}
-    to {top: 145px; opacity: 1;}
+    from {bottom: 0px; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
 }
 
 @keyframes fadein {
-    from {top: 115px; opacity: 0;}
-    to {top: 145px; opacity: 1;}
+    from {bottom: 0px; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
 }
 
 @-webkit-keyframes fadeout {
-    from {top: 145px; opacity: 1;}
-    to {top: 115px; opacity: 0;}
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0px; opacity: 0;}
 }
 
 @keyframes fadeout {
-    from {top: 145px; opacity: 1;}
-    to {top: 115px; opacity: 0;}
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0px; opacity: 0;}
 }
