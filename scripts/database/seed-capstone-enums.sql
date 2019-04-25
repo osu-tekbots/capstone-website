@@ -24,22 +24,22 @@ INSERT INTO capstone_project_compensation (cpcmp_id, cpcmp_name) VALUES
     (1, 'None'), (2, 'Hourly'), (3, 'Stipend'), (4, 'Completion-dependent'), (5, 'Other');
 
 INSERT INTO capstone_project_category (cpc_id, cpc_name) VALUES 
-    (1, 'Electrical Engineering'), (2, 'Computer Science'), (3, 'EECS');
+    (1, 'None'), (2, 'Electrical Engineering'), (3, 'Computer Science'), (4, 'EECS');
 
 INSERT INTO capstone_project_type (cpt_id, cpt_name) VALUES 
     (1, 'Capstone'), (2, 'Long-term'), (3, 'Student Club Project');
 
 INSERT INTO capstone_project_focus (cpf_id, cpf_name) VALUES 
-    (1, 'Research'), (2, 'Development');
+    (1, 'Research'), (2, 'Development'), (3, 'Research & Development');
 
 -- TODO: get additional seeds for the communities of practice
 INSERT INTO capstone_project_cop (cpcop_id, cpcop_name) VALUES  
-    (1, 'Internet-of-Things Alliance'), (2, 'Linux Users Group');
+    (1, 'None'), (2, 'Internet-of-Things Alliance'), (3, 'Linux Users Group');
 
 INSERT INTO capstone_project_nda_ip (cpni_id, cpni_name) VALUES 
-    (1, 'No Agreement Required'), (2, 'NDA Required'), (3, 'NDA/IP Required');
+    (1, 'Not Selected'), (2, 'No Agreement Required'), (3, 'NDA Required'), (4, 'NDA/IP Required');
 
 INSERT INTO capstone_project_status (cps_id, cps_name) VALUES 
-    (1, 'Pending Approval'), (2, 'Rejected'), (3, 'Accepting Applicants'), (4, 'In-progress'), (5, 'Complete'), 
-    (6, 'Incomplete');
+    (1, 'Created'), (2, 'Pending Approval'), (3, 'Rejected'), (4, 'Accepting Applicants'), (5, 'In-progress'), 
+    (6, 'Complete'), (7, 'Incomplete');
 
