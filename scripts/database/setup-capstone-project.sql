@@ -57,12 +57,12 @@ CREATE TABLE IF NOT EXISTS capstone_project (
     cp_id CHAR(16) NOT NULL,
     cp_u_id CHAR(16) NOT NULL,
     cp_title VARCHAR(256) NOT NULL,
-    cp_motivation TEXT NOT NULL,
-    cp_description TEXT NOT NULL,
-    cp_objectives TEXT NOT NULL,
-    cp_date_start DATETIME NOT NULL,
-    cp_date_end DATETIME NOT NULL,
-    cp_min_qual TEXT NOT NULL,
+    cp_motivation TEXT,
+    cp_description TEXT,
+    cp_objectives TEXT ,
+    cp_date_start DATETIME,
+    cp_date_end DATETIME,
+    cp_min_qual TEXT,
     cp_preferred_qual TEXT,
     cp_cpcmp_id INT NOT NULL,
     cp_additional_emails TEXT,
@@ -72,14 +72,13 @@ CREATE TABLE IF NOT EXISTS capstone_project (
     cp_cpcop_id INT NOT NULL,
     cp_cpni_id INT NOT NULL,
     cp_website_link VARCHAR(512),
-    cp_image_link VARCHAR(256),
     cp_video_link VARCHAR(256),
     cp_is_hidden BOOLEAN NOT NULL DEFAULT TRUE,
     cp_proposer_comments TEXT,
     cp_cps_id INT NOT NULL,
     cp_archived BOOLEAN NOT NULL DEFAULT FALSE,
     cp_date_created DATETIME NOT NULL,
-    cp_date_updated DATETIME NOT NULL,
+    cp_date_updated DATETIME,
 
     PRIMARY KEY (cp_id),
     FOREIGN KEY (cp_u_id) REFERENCES user (u_id),
@@ -90,6 +89,16 @@ CREATE TABLE IF NOT EXISTS capstone_project (
     FOREIGN KEY (cp_cpcop_id) REFERENCES capstone_project_cop (cpcop_id),
     FOREIGN KEY (cp_cpni_id) REFERENCES capstone_project_nda_ip (cpni_id),
     FOREIGN KEY (cp_cps_id) REFERENCES capstone_project_status (cps_id)
+);
+
+CREATE TABLE IF NOT EXISTS capstone_project_image (
+    cpi_id CHAR(16) NOT NULL,
+    cpi_cp_id CHAR(16) NOT NULL,
+    cpi_name VARCHAR(128) NOT NULL,
+    cpi_is_default BOOLEAN NOT NULL,
+
+    PRIMARY KEY (cpi_id),
+    FOREIGN KEY (cpi_cp_id) REFERENCES capstone_project (cp_id)
 );
 
 CREATE TABLE IF NOT EXISTS capstone_tag (
