@@ -1,16 +1,12 @@
 <?php
 use DataAccess\CapstoneProjectsDao;
 
-include_once PUBLIC_FILES . '/modules/redirect.php';
-
-$title = 'My Projects';
-include_once PUBLIC_FILES . '/modules/header.php';
-
-include_once PUBLIC_FILES . '/modules/cards.php';
-
 if (!session_id()) {
     session_start();
 }
+
+include_once PUBLIC_FILES . '/lib/shared/authorize.php';
+allowIf($_SESSION['userID'] . '' != '');
 
 // Get all the projects that need to be displayed on this page
 $dao = new CapstoneProjectsDao($dbConn, $logger);
@@ -22,6 +18,12 @@ if($_SESSION['accessLevel'] == 'Admin') {
 } else {
 	$projects = $dao->getCapstoneProjectsForUser($_SESSION['userID']);
 }
+
+$title = 'My Projects';
+include_once PUBLIC_FILES . '/modules/header.php';
+
+include_once PUBLIC_FILES . '/modules/cards.php';
+
 ?>
 <br><br>
 <div class="container-fluid">
