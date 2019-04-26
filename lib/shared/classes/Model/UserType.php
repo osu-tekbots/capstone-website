@@ -6,6 +6,10 @@ namespace Model;
  */
 class UserType {
 
+    const USER = 1;
+    const PROPOSER = 2;
+    const ADMIN = 3;
+
     /** @var integer */
     private $id;
     
