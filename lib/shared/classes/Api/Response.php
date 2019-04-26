@@ -5,12 +5,12 @@ namespace Api;
  * Represents the HTTP response object that will be sent to the client.
  */
 class Response {
-    public const OK = 200;
-    public const CREATED = 201;
-    public const BAD_REQUEST = 400;
-    public const UNAUTHORIZED = 401;
-    public const NOT_FOUND = 404;
-    public const INTERNAL_SERVER_ERROR = 500;
+    const OK = 200;
+    const CREATED = 201;
+    const BAD_REQUEST = 400;
+    const UNAUTHORIZED = 401;
+    const NOT_FOUND = 404;
+    const INTERNAL_SERVER_ERROR = 500;
 
     /** @var integer */
     private $code;
@@ -35,13 +35,13 @@ class Response {
     /**
      * Serialize the response into a JSON string.
      *
-     * @return void
+     * @return string
      */
     public function serialize() {
         return \json_encode(array(
             'code' => $this->code,
             'message' => $this->message,
-            'content' => $this->content != null ? \json_encode($this->content) : null
+            'content' => $this->content
         ));
     }
 
