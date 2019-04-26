@@ -3,7 +3,7 @@
  * @returns {string}
  */
 function getProjectId() {
-    return $('#id').val();
+    return $('#projectId').val();
 }
 
 /**

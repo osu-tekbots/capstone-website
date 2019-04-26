@@ -257,7 +257,7 @@ var availableTags = [
 			?>
 			<br>
 			<form id="formProject">
-				<input type="hidden" id="id" name="id" value="<?php echo $pId; ?>" />
+				<input type="hidden" id="projectId" name="id" value="<?php echo $pId; ?>" />
 				<div class="row">
 					<div class="col-sm-4">
 						<div class="form-group">
