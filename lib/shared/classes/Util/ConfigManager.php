@@ -197,4 +197,40 @@ class ConfigManager {
     public function getConfig() {
         return $this->config;
     }
+
+    /**
+     * Fetches an optional subject tag to prefix to email subjects.
+     *
+     * @return string|null the email address on success, null otherwise
+     */
+    public function getEmailSubjectTag() {
+        if(\array_key_exists('email', $this->config)) {
+            return $this->config['email']['subject_tag'];
+        }
+        return null;
+    }
+
+    /**
+     * Fetches the from address for emails sent from this server.
+     *
+     * @return string|boolean the email address on success, false otherwise
+     */
+    public function getEmailFromAddress() {
+        if(\array_key_exists('email', $this->config)) {
+            return $this->config['email']['from_address'];
+        }
+        return false;
+    }
+
+    /**
+     * Fetches the admin email addresses for the server.
+     *
+     * @return string|boolean the email address on success, false otherwise
+     */
+    public function getEmailAdminAddresses() {
+        if(\array_key_exists('email', $this->config)) {
+            return $this->config['email']['admin_addresses'];
+        }
+        return false;
+    }
 }
