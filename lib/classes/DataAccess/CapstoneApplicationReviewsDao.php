@@ -35,7 +35,7 @@ class CapstoneApplicationReviewsDao {
             $sql .= 'WHERE car_ca_id = :aid AND car_cil_id = cil_id';
             $params = array(':aid' => $applicationId);
             $results = $this->conn->query($sql, $params);
-            if(!results || \count($results) == 0) {
+            if(!$results || \count($results) == 0) {
                 return false;
             }
 
