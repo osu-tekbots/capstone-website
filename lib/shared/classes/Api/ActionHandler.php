@@ -8,7 +8,7 @@ namespace Api;
 class ActionHandler {
 
     /** @var \Util\Logger */
-    protected $logger;
+    private $logger;
 
     /** @var mixed[] */
     protected $queryString;
@@ -45,6 +45,25 @@ class ActionHandler {
             $message = $message == null ? "Missing required request body parameter: $name" : $message;
             $this->respond(new Response(Response::BAD_REQUEST, $message));
         }
+    }
+
+    /**
+     * Fetches the provided parameter from the request body. This will not work for nested parameters.
+     * 
+     * If the `$require` parameter is set to `true` and the requested key is not in the request body, the script
+     * will respond with a BAD_REQUEST and terminate.
+     *
+     * @param string $param the name of the request body parameter to fetch
+     * @param boolean $require indicates whether to require the parameter. Defaults to true.
+     * @param string $message a message to output if the required parameter is not present. Only used when $require is
+     * true.
+     * @return mixed|null the value if it exists, null otherwise
+     */
+    public function getFromBody($param, $require = true, $message = null) {
+        if($require) {
+            $this->requireParam($param);
+        }
+        return $this->requestBody[$param];
     }
 
     /**
