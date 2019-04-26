@@ -4,10 +4,20 @@ use DataAccess\CapstoneProjectsDao;
 include PUBLIC_FILES . '/lib/shared/authorize.php';
 
 $title = 'Single Project';
+$js = array(
+    array(
+        'defer' => 'true',
+        'src' => 'assets/js/admin-review.js'
+    )
+);
 include_once PUBLIC_FILES . '/modules/header.php';
 
 $pid = $_GET['id'];
 allowIf($pid . '' != '');
+
+$isLoggedIn = isset($_SESSION['userID']) && $_SESSION['userID'] . ''  != '';
+
+$userId = $_SESSION['userID'];
 
 $isAdmin = $_SESSION['accessLevel'] == 'Admin';
 include_once PUBLIC_FILES . '/modules/admin-review.php';
@@ -45,7 +55,8 @@ $keywords = array();
 
 ?>
 <div class="viewSingleProject">
-	<input type="hidden" id="id" value="<?php echo $project->getId(); ?>" />
+    <input type="hidden" id="projectId" value="<?php echo $project->getId(); ?>" />
+    <input type="hidden" id="userId" value="<?php echo $userId; ?>" />
 
 	  <!-- Header -->
 	  <div class="bg-primary py-5 mb-5">
@@ -78,20 +89,27 @@ $keywords = array();
 					<strong>Preferred Qualifications:</strong>
 					<br><?php echo($pref_qualifications);?>
 					<p></p>
-					<br>
+                    <br>
+                    
+                    <?php 
+                    if ($isLoggedIn): 
+                    ?>
+
+                    <button class="btn btn-lg btn-outline-primary capstone-nav-btn" type="button" data-toggle="modal" 
+                        data-target="#newApplicationModal" id="openNewApplicationModalBtn">
+                        Apply For This Project &raquo
+                    </button>
+
+                    <?php
+                    endif;
+                    ?>
 
 					<?php
-						if (array_key_exists('userID',$_SESSION) && $_SESSION['userID'] != '') {
-						    //Future Implementation @3/19/19 Release
-						    //We will be implementing student application functionality for the next release.
-						    echo('<button class="btn btn-lg btn-outline-primary capstone-nav-btn" type="button" data-toggle="modal" data-target="#newApplicationModal" id="openNewApplicationModalBtn">Apply For This Project &raquo</button>');
-						}
-						//Generate admin interface for admins.
-						if ($isAdmin) {
-						    $categories = $dao->getCapstoneProjectCategories();
-						    renderAdminReviewPanel($project, $categories);
-						}
-
+                    //Generate admin interface for admins.
+                    if ($isAdmin) {
+                        $categories = $dao->getCapstoneProjectCategories();
+                        renderAdminReviewPanel($project, $categories);
+                    }
 					?>
 	      </div>
 
@@ -214,46 +232,29 @@ $keywords = array();
 <?php 
 // Create Application Functionality
 include_once PUBLIC_FILES . '/modules/newApplicationModal.php';
+renderNewApplicationModal($project);
 ?>
 
 </div>
 
 <script type="text/javascript">
-//Future Implementation @3/19/19 Release
-//We will be implementing student application functionality for the next release.
-$('#createApplicationBtn').on('click', function(){
-	projectID = "<?php echo $projectID; ?>";
-	//Bug Fix 4/1/19: An invalid userID was being returned when attempting 
-	//to echo out the SESSION variable for the userID within the Javascript 
-	//code here. The fix I found was to create a hidden div on the page itself 
-	//and echo out the SESSION variable there and reference it here.
-	
-	//This is because Google Authentication provides user IDs that are larger 
-	//than the 64 bit character columns for user IDs in the database and thus 
-	//truncate a part of the the ID. 
-	userID = $('#userIDDiv').text();
-	
-	$.ajax({
-		type: 'POST',
-		url: '../db/dbManager.php',
-		dataType: 'html',
-		data: {
-				userID: userID,
-				projectID: projectID,
-				action: 'createApplication'},
-		success: function(result){
-			//result will return the id of the newly created project.
-			url = "./editApplication.php?id=" + result;
-			window.location.replace(url);
-		},
-		error: function (xhr, ajaxOptions, thrownError) {
-			alert(xhr.status);
-			alert(xhr.responseText);
-			alert(thrownError);
-		}
-	});
-	
-});
+/**
+ * Event handler for creating a new application based on user input into the modal
+ */
+function onCreateApplicationClick() {
+    let body = {
+        action: 'createApplication',
+        projectId: $('#projectId').val(),
+        uid: $('#userId').val()
+    };
+
+    api.post('/applications.php', body).then(res => {
+        window.location.replace('pages/editApplication.php?id=' + res.content.id);
+    }).catch( err=> {
+        snackbar(err.message, 'error');
+    });
+}
+$('#createApplicationBtn').on('click', onCreateApplicationClick);
 
 
 /***************************************************************************************

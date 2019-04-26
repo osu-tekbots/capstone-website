@@ -2,7 +2,13 @@
 use DataAccess\UsersDao;
 use DataAccess\CapstoneProjectsDao;
 
-include_once PUBLIC_FILES . '/modules/redirect.php';
+session_start();
+
+include_once PUBLIC_FILES . '/lib/shared/authorize.php';
+
+$isLoggedIn = isset($_SESSION['userID']) && !empty($_SESSION['userID']);
+
+allowIf($isLoggedIn);
 
 $title = 'My Profile';
 include_once PUBLIC_FILES . '/modules/header.php';

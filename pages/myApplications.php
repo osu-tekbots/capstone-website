@@ -1,201 +1,190 @@
-<!DOCTYPE html>
-<html lang="en">
+<?php
+use DataAccess\CapstoneProjectsDao;
+use DataAccess\CapstoneApplicationsDao;
+use DataAccess\UsersDao;
+use DataAccess\CapstoneApplicationReviewsDao;
+use Model\UserType;
 
-<head>
-	<?php include_once PUBLIC_FILES . '/includes/header.php' ?>
-	<title>My Applications</title>
-</head>
+if (!session_id()) {
+    session_start();
+}
 
-<?php include_once PUBLIC_FILES . '/db/dbManager.php' ?>
-<?php include_once PUBLIC_FILES . '/modules/redirect.php' ?>
+include_once PUBLIC_FILES . '/lib/shared/authorize.php';
 
-<body>
-	<?php include_once '../modules/navbar.php' ?>
+allowIf(isset($_SESSION['userID']) && $_SESSION['userID'] . '' != '');
 
-	<div class="container-fluid">
-		<br>
-		<h1>My Applications</h1>
-		<br>
-		<?php 
-			/*********************************************************************************
-			* Function Name: createApplicationTable($rows, $isProposer)
-			* Input: $rows is an array of objects from the 'users_application' table. $isProposer
-			* indicates whether or not the user is a proposer - this will dictate certain columns 
-			* in the table in addition to the button displayed.
-			* Output: Creates an application table in the user interface. Note that multiple application 
-			* tables can exists and this function is used in both the Student and Proposer interfaces.
-			*********************************************************************************/
-			function createApplicationTable($rows, $isProposer){	
-				
-				echo '
-				<div class="row">
-					<div class="col">
-				';
-				
-				if($isProposer){
-					echo '<h3>' . $rows[0]['title'] . '</h3>';
-				}
-				
-				echo '
-						<table class="table">
-							<thead>
-				';
-				
-				//Create table column headers based on the user's access level.
-				if($isProposer){
-					echo '<th>Application Name</th>';
-					echo '<th>Applicant</th>';
-					echo '<th>Reviewed?</th>';
-					echo '<th>Interest Level</th>';
-				}
-				else{
-					echo '<th>Project Name</th>';
-					echo '<th>Status</th>';
-				}
+$uId = $_SESSION['userID'];
 
-				echo '
-								<th>Start Date</th>
-								<th>Updated</th>
-								<th></th>
-							</thead>
-							<tbody>
-				';
-				
-				//Iterating through every single application associated with this specific project...
-				foreach ($rows as $row): 
-					$appID = $row['application_id'];
-					
-					//Gather relevant application review data.
-					$appReviewResult = getApplicationReviewEntry($appID);
-					$appReviewRow = $appReviewResult->fetch_assoc();
-					
-					//Possible interest levels include "Desirable", "Impartial", and "Undesirable" as of 4/15/19.
-					$interestLevel = $appReviewRow['interest_level'];
-					//The interestLevel must be selected for an application to have been reviewed.
-					$isReviewed = $interestLevel != '' ? "Yes" : "No";
-				
-					if($isProposer){
-						$title = 'Application ' . $appID;
-						//Display the name of the applicant for proposers.
-						$name = $row['first_name'] . ' ' . $row['last_name'];
-					}
-					else{
-						//This will be the name of the project.
-						$title = $row['title'];
-						//This will show whether or not the student's application 
-						//has been created or submitted.
-						$status = $row['appstatus'];
-					}
+$title = 'My Applications';
+include_once PUBLIC_FILES . '/modules/header.php';
 
-					$applicationId = $row['application_id'];
-					$strDate = $row['last_updated'];
-					
-					//Handle invalid dates.
-					if ($strDate == '0000-00-00 00:00:00') {
-						$dateUpdated = 'N/A';
-					} else {
-						$dateUpdated = date('m-d-Y h:i a', strtotime($strDate));
-					}
-					
-					$strDate = $row['date_applied'];
-					
-					if ($strDate == '0000-00-00 00:00:00') {
-						$dateApplied = 'Not Submitted';
-					} else {
-						$dateApplied = date('m-d-Y h:i a', strtotime($strDate));
-					}
-					
-					//Generate table rows for each application.
-					echo '<tr>';
-					echo '<td>' . $title . '</td>';
-					
-					if($isProposer){
-						echo '<td>' . $name . '</td>';
-						echo '<td>' . $isReviewed . '</td>';
-						echo '<td>' . $interestLevel . '</td>';
-					}
-					else{
-						echo '<td>' . $status . '</td>';
-					}
-					
-					echo '
-							<td>' . $dateApplied . '</td>
-							<td>' . $dateUpdated . '</td>';
-					
-					echo '<td>';
-					
-					if($isProposer){		
-						echo '<a class="btn btn-outline-primary" href="./reviewApplication.php?id=' . $applicationId . '">Review</a>';
-					}
-					//Student view
-					else{
-						echo '<a class="btn btn-outline-success" href="./editApplication.php?id=' . $applicationId . '">Edit</a>';
-					}
-					echo '		
-							</td>
-						</tr>
-						';
-					endforeach;
-					echo '
-								</tbody>
-							</table>
-						</div>
-					</div>
-					';
-			}
-		?>
+$usersDao = new UsersDao($dbConn, $logger);
 
-		<?php 
-		
-		function createProposerInterface(){
-			$projectResult = getMyProjects();
+$user = $usersDao->getUser($uId);
 
-			while($projectRow = $projectResult->fetch_assoc()){
+$isProposer = $user->getType()->getId() == UserType::PROPOSER;
+$isAdmin = $user->getType()->getId() == UserType::ADMIN;
 
-				$applicationResult = getApplicationsAssociatedWithProject($projectRow['project_id']);
-				$applicationRows = array();
-				while ($tmp = $applicationResult->fetch_assoc()) {
-					$applicationRows[] = $tmp;
-				}
+$applicationsDao = new CapstoneApplicationsDao($dbConn, $logger);
+$appReviewsDao = new CapstoneApplicationReviewsDao($dbConn, $logger);
 
-				//Omit projects that don't have any applications.
-				if(count($applicationRows) > 0){
-					createApplicationTable($applicationRows, true);
-				}
-			}
-		}
-		
-		function createStudentInterface(){
-			$result = getMyApplications($_SESSION['userID']);
-			$rows = array();
-			while ($tmp = $result->fetch_assoc()) {
-			    $rows[] = $tmp;
-			} 
-			createApplicationTable($rows, false);
-		}
-		
-		//Different interfaces are displayed depending on user's access level.
-		switch($_SESSION['accessLevel']){
-			case 'Proposer': 
-				createProposerInterface();
-				break;
-			case 'Student':
-				createStudentInterface();
-				break;
-			case 'Admin': 
-				echo '<h2>Your Proposer Interface:</h2><br><br>';
-				createProposerInterface();
-				echo '<br><br><h2>Your Student Interfae:</h2><br><br>';
-				createStudentInterface();
-				break;
-			default: 
-				break;
-		}
-		
-		echo '</div>';
-		?>
+$userApplications = array();
+$submittedApplications = array();
+
+if ($isProposer || $isAdmin) {
+    $projectsDao = new CapstoneProjectsDao($dbConn, $logger);
+    $projects = $projectsDao->getCapstoneProjectsForUser($uId);
+    foreach ($projects as $p) {
+        $pid = $p->getId();
+        $projectApplications = $applicationsDao->getAllApplicationForProject($pid, true);
+        $submittedApplications[$pid] = $projectApplications;
+    }
+    if($isAdmin) {
+        $userApplications = $applicationsDao->getAllApplicationsForUser($uId);
+    }
+} else {
+    $userApplications = $applicationsDao->getAllApplicationsForUser($uId);
+}
+
+/**
+ * Creates an application table in the user interface.
+ * 
+ * Note that multiple application tables can exist and this function is used in both the student and proposer
+ * interfaces.
+ *
+ * @param \Model\CapstoneApplication[] $applications the applications to display in the table
+ * @param boolean $isProposer indicates whether the table generator should account for the user being a proposer
+ * @return void
+ */
+function createApplicationTable($applications, $isProposer) {
+    global $appReviewsDao;
+
+    echo '<div class="row"><div class="col">';
+
+    if (count($applications) == 0) {
+        if ($isProposer) {
+            echo '<p>No applications have been submitted for this project</p>';
+        } else {
+            echo "<p>You don't have any applications yet</p>";
+        }
+        echo '</div></div>';
+        return;
+    }
+
+    echo '<table class="table"><thead>';
 	
-	<?php include_once PUBLIC_FILES . '/modules/footer.php' ?>
-</body>
+    //Create table column headers based on the user's access level.
+    if ($isProposer) {
+        echo '<th>Application Name</th>';
+        echo '<th>Applicant</th>';
+        echo '<th>Reviewed?</th>';
+        echo '<th>Interest Level</th>';
+    } else {
+        echo '<th>Project Name</th>';
+        echo '<th>Status</th>';
+    }
 
-</html>
+    echo '<th>Start Date</th>';
+    echo '<th>Updated</th>';
+    echo '<th></th>';
+    echo '</thead>';
+    echo '<tbody>';
+	
+    //Iterating through every single application associated with this specific project...
+    foreach ($applications as $app) {
+        $appID = $app->getId();
+		
+        //Gather relevant application review data.
+        $appReview = $appReviewsDao->getApplicationReviewForApplication($appID);
+        if ($appReview) {
+            $interestLevel = $appReview->getInterestLevel()->getName();
+        } else {
+            $interestLevel = '';
+        }
+        
+        //The interestLevel must be selected for an application to have been reviewed.
+        $isReviewed = $interestLevel != '' ? 'Yes' : 'No';
+        
+        if ($isProposer) {
+            $title = 'Application ' . $appID;
+            //Display the name of the applicant for proposers.
+            $name = $app->getStudent()->getFirstName() . ' ' . $app->getStudent()->getLastName();
+        } else {
+            //This will be the name of the project.
+            $title = $app->getCapstoneProject()->getTitle();
+            //This will show whether or not the student's application 
+            //has been created or submitted.
+            $status = $app->getStatus()->getName();
+        }
+
+        $format = 'm-d-Y h:i a';
+        $dateUpdated = $app->getDateUpdated()->format($format);
+        $dateApplied = $app->getDateSubmitted()->format($format);
+            
+        //Generate table rows for each application.
+        echo '<tr>';
+        echo '<td>' . $title . '</td>';
+            
+        if ($isProposer) {
+            echo '<td>' . $name . '</td>';
+            echo '<td>' . $isReviewed . '</td>';
+            echo '<td>' . $interestLevel . '</td>';
+        } else {
+            echo '<td>' . $status . '</td>';
+        }
+            
+        echo '
+                    <td>' . $dateApplied . '</td>
+                    <td>' . $dateUpdated . '</td>';
+            
+        echo '<td>';
+            
+        if ($isProposer) {
+            echo '<a class="btn btn-outline-primary" href="pages/reviewApplication.php?id=' . $appID . '">Review</a>';
+        }
+        //Student view
+        else {
+            echo '<a class="btn btn-outline-success" href="pages/editApplication.php?id=' . $appID . '">Edit</a>';
+        }
+        echo '		
+                    </td>
+                </tr>
+                ';
+    }
+		
+    echo '</tbody></table></div></div>';
+}
+?>
+
+<div class="container-fluid">
+    <br><br>
+    <h1>My Applications</h1>
+
+    <div class="row">
+        <div class="col">
+            <?php
+            if ($isProposer || $isAdmin) {
+                if (count($projects) == 0) {
+                    echo "<p>You don't have any projects for students to apply for.</p>";
+                } else {
+                    if($isAdmin) {
+                        echo "<h2>Applications for Review</h2>";
+                    }
+                    foreach ($projects as $project) {
+                        echo '<h3>' . $project->getTitle() . '</h3>';
+                        createApplicationTable($submittedApplications[$project->getId()], true);
+                    }
+                }
+                if ($isAdmin) {
+                    echo '<h2>My Applications in Progress</h2>';
+                    createApplicationTable($userApplications, false);
+                }
+            } else {
+                createApplicationTable($userApplications, false);
+            }
+            ?>
+        </div>
+    </div>
+</div>
+
+<?php include_once PUBLIC_FILES . '/modules/footer.php'; ?>
