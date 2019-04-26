@@ -186,7 +186,7 @@ class UsersDao {
     public function updateUser($user) {
         try {
             $sql = 'UPDATE user SET ';
-            $sql .= 'u_ut_id = :type';
+            $sql .= 'u_ut_id = :type,';
             $sql .= 'u_fname = :fname, ';
             $sql .= 'u_lname = :lname, ';
             $sql .= 'u_us_id = :salu, ';
