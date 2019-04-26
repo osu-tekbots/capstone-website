@@ -1,87 +1,89 @@
 <?php
 namespace Model;
 
+use Util\IdGenerator;
+
 /**
  * Data structure representing a Project
  */
-class Project {
+class CapstoneProject {
 
     /** @var string */
     private $id;
 	
-	/** @var string */
-    private $userID;
+    /** @var User */
+    private $proposer;
 	
-	/** @var string */
+    /** @var string */
     private $title;
 	
-	/** @var string */
+    /** @var string */
     private $motivation;
 	
-	/** @var string */
+    /** @var string */
     private $description;
 	
-	/** @var string */
+    /** @var string */
     private $objectives;
 	
-	/** @var \DateTime */
+    /** @var \DateTime */
     private $dateStart;
 
     /** @var \DateTime */
     private $dateEnd;
 	
-	/** @var string */
+    /** @var string */
     private $minQualifications;
 	
-	/** @var string */
+    /** @var string */
     private $preferredQualifications;
 	
-	/** @var ProjectCompensation */
+    /** @var CapstoneProjectCompensation */
     private $compensation;
 	
-	/** @var string */
+    /** @var string */
     private $additionalEmails;
 	
-	/** @var ProjectCategory */
+    /** @var CapstoneProjectCategory */
     private $category;
 	
-	/** @var ProjectType */
+    /** @var CapstoneProjectType */
     private $type;
 	
-	/** @var ProjectFocus */
+    /** @var CapstoneProjectFocus */
     private $focus;
 	
-	/** @var ProjectCop */
+    /** @var CapstoneProjectCop */
     private $cop;
 	
-	/** @var ProjectNDAIP */
+    /** @var CapstoneProjectNDAIP */
     private $ndaIp;
 	
-	/** @var string */
+    /** @var string */
     private $websiteLink;
 	
-	/** @var string */
-    private $imageLink;
+    /** @var CapstoneProjectImage[] */
+    private $images;
 	
-	/** @var string */
+    /** @var string */
     private $videoLink;
 	
-	/** @var boolean */
+    /** @var boolean */
     private $isHidden;
 	
-	/** @var string */
+    /** @var string */
     private $proposerComments;
 	
-	/** @var ProjectStatus */
+    /** @var CapstoneProjectStatus */
     private $status;
 	
-	/** @var boolean */
-	private $archived;
+    /** @var boolean */
+    private $archived;
 	
-	/** @var /DateTime */
+    /** @var \DateTime */
     private $dateCreated;
 	
-	/** @var /DateTime */
+    /** @var \DateTime */
     private $dateUpdated;
 
     /**
@@ -89,15 +91,27 @@ class Project {
      * 
      * @param string|null $id the ID of the Project. If null, a new ID will be generated for the Project.
      */
-    public function __construct() {
-
+    public function __construct($id = null) {
+        if ($id == null) {
+            $id = IdGenerator::generateSecureUniqueId();
+        }
+        $this->setId($id);
+        $this->setCompensation(new CapstoneProjectCompensation(1, 'None'));
+        $this->setCategory(new CapstoneProjectCategory(3, 'EECS'));
+        $this->setType(new CapstoneProjectType(1, 'Capstone'));
+        $this->setFocus(new CapstoneProjectFocus(1, 'Research'));
+        $this->setCop(new CapstoneProjectCop(1, 'None'));
+        $this->setNdaIp(new CapstoneProjectNDAIP(1, 'No Agreement Required'));
+        $this->setStatus( new CapstoneProjectStatus(1, 'Created'));
+        $this->setDateCreated(new \DateTime());
+        $this->setIsHidden(true);
+        $this->setArchived(false);
     }
 
     /**
      * Get the value of id
      */ 
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -106,8 +120,7 @@ class Project {
      *
      * @return  self
      */ 
-    public function setId($id)
-    {
+    public function setId($id) {
         $this->id = $id;
 
         return $this;
@@ -116,8 +129,7 @@ class Project {
     /**
      * Get the value of type
      */ 
-    public function getType()
-    {
+    public function getType() {
         return $this->type;
     }
 
@@ -126,9 +138,404 @@ class Project {
      *
      * @return  self
      */ 
-    public function setType($type)
-    {
+    public function setType($type) {
         $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of the proposer
+     */ 
+    public function getProposer() {
+        return $this->proposer;
+    }
+
+    /**
+     * Set the value of the proposer
+     *
+     * @return  self
+     */ 
+    public function setProposer($proposer) {
+        $this->proposer = $proposer;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of title
+     */ 
+    public function getTitle() {
+        return $this->title;
+    }
+
+    /**
+     * Set the value of title
+     *
+     * @return  self
+     */ 
+    public function setTitle($title) {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of motivation
+     */ 
+    public function getMotivation() {
+        return $this->motivation;
+    }
+
+    /**
+     * Set the value of motivation
+     *
+     * @return  self
+     */ 
+    public function setMotivation($motivation) {
+        $this->motivation = $motivation;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of description
+     */ 
+    public function getDescription() {
+        return $this->description;
+    }
+
+    /**
+     * Set the value of description
+     *
+     * @return  self
+     */ 
+    public function setDescription($description) {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of objectives
+     */ 
+    public function getObjectives() {
+        return $this->objectives;
+    }
+
+    /**
+     * Set the value of objectives
+     *
+     * @return  self
+     */ 
+    public function setObjectives($objectives) {
+        $this->objectives = $objectives;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of dateStart
+     */ 
+    public function getDateStart() {
+        return $this->dateStart;
+    }
+
+    /**
+     * Set the value of dateStart
+     *
+     * @return  self
+     */ 
+    public function setDateStart($dateStart) {
+        $this->dateStart = $dateStart;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of dateEnd
+     */ 
+    public function getDateEnd() {
+        return $this->dateEnd;
+    }
+
+    /**
+     * Set the value of dateEnd
+     *
+     * @return  self
+     */ 
+    public function setDateEnd($dateEnd) {
+        $this->dateEnd = $dateEnd;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of minQualifications
+     */ 
+    public function getMinQualifications() {
+        return $this->minQualifications;
+    }
+
+    /**
+     * Set the value of minQualifications
+     *
+     * @return  self
+     */ 
+    public function setMinQualifications($minQualifications) {
+        $this->minQualifications = $minQualifications;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of preferredQualifications
+     */ 
+    public function getPreferredQualifications() {
+        return $this->preferredQualifications;
+    }
+
+    /**
+     * Set the value of preferredQualifications
+     *
+     * @return  self
+     */ 
+    public function setPreferredQualifications($preferredQualifications) {
+        $this->preferredQualifications = $preferredQualifications;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of compensation
+     */ 
+    public function getCompensation() {
+        return $this->compensation;
+    }
+
+    /**
+     * Set the value of compensation
+     *
+     * @return  self
+     */ 
+    public function setCompensation($compensation) {
+        $this->compensation = $compensation;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of additionalEmails
+     */ 
+    public function getAdditionalEmails() {
+        return $this->additionalEmails;
+    }
+
+    /**
+     * Set the value of additionalEmails
+     *
+     * @return  self
+     */ 
+    public function setAdditionalEmails($additionalEmails) {
+        $this->additionalEmails = $additionalEmails;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of category
+     */ 
+    public function getCategory() {
+        return $this->category;
+    }
+
+    /**
+     * Set the value of category
+     *
+     * @return  self
+     */ 
+    public function setCategory($category) {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of focus
+     */ 
+    public function getFocus() {
+        return $this->focus;
+    }
+
+    /**
+     * Set the value of focus
+     *
+     * @return  self
+     */ 
+    public function setFocus($focus) {
+        $this->focus = $focus;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of cop
+     */ 
+    public function getCop() {
+        return $this->cop;
+    }
+
+    /**
+     * Set the value of cop
+     *
+     * @return  self
+     */ 
+    public function setCop($cop) {
+        $this->cop = $cop;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of ndaIp
+     */ 
+    public function getNdaIp() {
+        return $this->ndaIp;
+    }
+
+    /**
+     * Set the value of ndaIp
+     *
+     * @return  self
+     */ 
+    public function setNdaIp($ndaIp) {
+        $this->ndaIp = $ndaIp;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of websiteLink
+     */ 
+    public function getWebsiteLink() {
+        return $this->websiteLink;
+    }
+
+    /**
+     * Set the value of websiteLink
+     *
+     * @return  self
+     */ 
+    public function setWebsiteLink($websiteLink) {
+        $this->websiteLink = $websiteLink;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of images
+     */ 
+    public function getImages() {
+        return $this->images;
+    }
+
+    /**
+     * Set the value of images
+     *
+     * @return  self
+     */ 
+    public function setImages($images) {
+        $this->images = $images;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of videoLink
+     */ 
+    public function getVideoLink() {
+        return $this->videoLink;
+    }
+
+    /**
+     * Set the value of videoLink
+     *
+     * @return  self
+     */ 
+    public function setVideoLink($videoLink) {
+        $this->videoLink = $videoLink;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of isHidden
+     */ 
+    public function getIsHidden() {
+        return $this->isHidden;
+    }
+
+    /**
+     * Set the value of isHidden
+     *
+     * @return  self
+     */ 
+    public function setIsHidden($isHidden) {
+        $this->isHidden = $isHidden;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of proposerComments
+     */ 
+    public function getProposerComments() {
+        return $this->proposerComments;
+    }
+
+    /**
+     * Set the value of proposerComments
+     *
+     * @return  self
+     */ 
+    public function setProposerComments($proposerComments) {
+        $this->proposerComments = $proposerComments;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of status
+     */ 
+    public function getStatus() {
+        return $this->status;
+    }
+
+    /**
+     * Set the value of status
+     *
+     * @return  self
+     */ 
+    public function setStatus($status) {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of archived
+     */ 
+    public function getArchived() {
+        return $this->archived;
+    }
+
+    /**
+     * Set the value of archived
+     *
+     * @return  self
+     */ 
+    public function setArchived($archived) {
+        $this->archived = $archived;
 
         return $this;
     }
@@ -136,8 +543,7 @@ class Project {
     /**
      * Get the value of dateCreated
      */ 
-    public function getDateCreated()
-    {
+    public function getDateCreated() {
         return $this->dateCreated;
     }
 
@@ -146,8 +552,7 @@ class Project {
      *
      * @return  self
      */ 
-    public function setDateCreated($dateCreated)
-    {
+    public function setDateCreated($dateCreated) {
         $this->dateCreated = $dateCreated;
 
         return $this;
@@ -156,8 +561,7 @@ class Project {
     /**
      * Get the value of dateUpdated
      */ 
-    public function getDateUpdated()
-    {
+    public function getDateUpdated() {
         return $this->dateUpdated;
     }
 
@@ -166,11 +570,9 @@ class Project {
      *
      * @return  self
      */ 
-    public function setDateUpdated($dateUpdated)
-    {
+    public function setDateUpdated($dateUpdated) {
         $this->dateUpdated = $dateUpdated;
 
         return $this;
     }
-
 }

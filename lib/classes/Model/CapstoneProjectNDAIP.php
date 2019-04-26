@@ -5,6 +5,9 @@ namespace Model;
  * Data class representing an CapstoneProjectNDAIP enumeration
  */
 class CapstoneProjectNDAIP {
+    const NO_AGREEMENT_REQUIRED = 1;
+    const NDA_REQUIRED = 2;
+    const NDA_IP_REQUIRED = 3;
     
     /** @var integer */
     private $id;

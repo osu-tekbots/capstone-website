@@ -6,7 +6,7 @@ use Util\IdGenerator;
 class CapstoneApplication {
     /** @var string */
     private $id;
-    /** @var mixed */
+    /** @var CapstoneProject */
     private $capstoneProject;
     /** @var User */
     private $student;

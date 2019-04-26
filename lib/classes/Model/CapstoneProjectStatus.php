@@ -5,6 +5,14 @@ namespace Model;
  * Data class representing an CapstoneProjectStatus enumeration
  */
 class CapstoneProjectStatus {
+
+    const CREATED = 1;
+    const PENDING_APPROVAL = 2;
+    const REJECTED = 3;
+    const ACCEPTING_APPLICANTS = 4;
+    const IN_PROGRESS = 5;
+    const COMPLETE = 6;
+    const INCOMPLETE = 7;
     
     /** @var integer */
     private $id;
