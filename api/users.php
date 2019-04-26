@@ -7,6 +7,10 @@ use DataAccess\UsersDao;
 use Api\UsersActionHandler;
 use Api\Response;
 
+if(!session_id()) {
+    session_start();
+}
+
 // Setup our data access and handler classes
 $dao = new UsersDao($dbConn, $logger);
 $handler = new UsersActionHandler($dao, $logger);
