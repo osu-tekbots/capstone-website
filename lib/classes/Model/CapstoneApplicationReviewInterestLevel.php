@@ -1,15 +1,27 @@
 <?php
 namespace Model;
 
+/**
+ * Represent an interest level enumeration from the database
+ */
 class CapstoneApplicationReviewInterestLevel {
+    const DESIREABLE = 1;
+    const UNDESIREABLE = 2;
+    const IMPARTIAL = 3;
+
     /** @var string */
     private $id;
     /** @var string */
     private $name;
 
-    public function __construct($id, $name) {
-        $this->setId($id);
-        $this->setName($name);
+    public function __construct($id = null, $name = null) {
+        if ($id == null && $name == null) {
+            $this->setId(self::IMPARTIAL);
+            $this->setName('Impartial');
+        } else {
+            $this->setId($id);
+            $this->setName($name);
+        }
     }    
 
     /**

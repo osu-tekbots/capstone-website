@@ -22,6 +22,7 @@ class CapstoneApplicationReview {
         if ($id == null) {
             $id = IdGenerator::generateSecureUniqueId();
             $this->setId($id);
+            $this->setInterestLevel(new CapstoneApplicationReviewInterestLevel());
         } else {
             $this->setId($id);
         }

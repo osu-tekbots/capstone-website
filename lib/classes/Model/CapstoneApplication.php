@@ -26,9 +26,14 @@ class CapstoneApplication {
     private $dateUpdated;
     /** @var \DateTime */
     private $dateSubmitted;
+    /** @var CapstoneApplicationReview */
+    private $review;
 
     /**
      * Creates a new instance of a capstone application.
+     * 
+     * If an ID is provided, defaults will not be set. If an ID is not provided, a new ID will be generated and
+     * defaults will be set.
      *
      * @param string|null $id the ID of the application. If null, a random ID will be generated.
      */
@@ -36,6 +41,9 @@ class CapstoneApplication {
         if ($id == null) {
             $id = IdGenerator::generateSecureUniqueId();
             $this->setId($id);
+            $this->setStatus(new CapstoneApplicationStatus());
+            $this->setReview(new CapstoneApplicationReview());
+            $this->setDateCreated(new \DateTime());
         } else {
             $this->setId($id);
         }
@@ -235,6 +243,24 @@ class CapstoneApplication {
      */ 
     public function setDateSubmitted($dateSubmitted) {
         $this->dateSubmitted = $dateSubmitted;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of review
+     */ 
+    public function getReview() {
+        return $this->review;
+    }
+
+    /**
+     * Set the value of review
+     *
+     * @return  self
+     */ 
+    public function setReview($review) {
+        $this->review = $review;
 
         return $this;
     }
