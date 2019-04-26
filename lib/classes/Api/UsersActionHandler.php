@@ -38,11 +38,12 @@ class UsersActionHandler extends ActionHandler {
         $this->requireParam('uid');
         $this->requireParam('firstName');
         $this->requireParam('lastName');
-        $this->requireParam('salutationID');
+        $this->requireParam('salutationId');
         $this->requireParam('email');
         $this->requireParam('phone');
         $this->requireParam('affiliation');
-        $this->requireParam('major');
+        $major = $this->getFromBody('major', false);
+        if($major == null) $major = '';
 
         $body = $this->requestBody;
 
@@ -51,13 +52,14 @@ class UsersActionHandler extends ActionHandler {
         $user = $this->dao->getUser($body['uid']);
 
         // Update the user
+        $user->getSalutation()->setId($body['salutationId']);
         $user->setFirstName($body['firstName'])
             ->setLastName($body['lastName'])
-            ->setSalutation(new UserSalutation($body['salutationID'], ''))
             ->setEmail($body['email'])
             ->setPhone($body['phone'])
             ->setAffiliation($body['affiliation'])
-            ->setMajor($body['major']);
+            ->setMajor($major)
+            ->setDateUpdated(new \DateTime());
 
         $ok = $this->dao->updateUser($user);
 
