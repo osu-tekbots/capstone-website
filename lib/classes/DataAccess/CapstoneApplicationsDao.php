@@ -38,7 +38,7 @@ class CapstoneApplicationsDao {
             $sql = 'SELECT * FROM capstone_application, capstone_application_status ';
             $sql .= 'WHERE ca_cas_id = cas_id';
             $results = $this->conn->query($sql);
-            if (!$results || \count($results) == 0) {
+            if (!$results) {
                 return false;
             }
 
@@ -57,15 +57,15 @@ class CapstoneApplicationsDao {
      */
     public function getAllApplicationForProject($projectId) {
         try {
-            $sql = 'SELECT * FROM capstone_application, capstone_application_status ';
-            $sql .= 'WHERE ca_cp_id = :id AND ca_cas_id = cas_id';
+            $sql = 'SELECT * FROM capstone_application, capstone_application_status, user ';
+            $sql .= 'WHERE ca_cp_id = :id AND ca_cas_id = cas_id AND ca_u_id = u_id';
             $params = array(':id' => $projectId);
             $results = $this->conn->query($sql, $params);
             if (!$results || \count($results) == 0) {
                 return false;
             }
 
-            return \array_map('self::ExtractApplicationFromRow', $results);
+            return \array_map('self::ExtractApplicationFromRowWithProject', $results);
         } catch (\Exception $e) {
             $this->logError('Failed to get applications for project with id "' . $projectId . '": ' . $e->getMessage());
             return false;
@@ -80,8 +80,8 @@ class CapstoneApplicationsDao {
      */
     public function getAllApplicationsForUser($userId) {
         try {
-            $sql = 'SELECT * FROM capstone_application, capstone_application_status ';
-            $sql .= 'WHERE ca_u_id = :id AND ca_cas_id = cas_id';
+            $sql = 'SELECT * FROM capstone_application, capstone_application_status, user ';
+            $sql .= 'WHERE ca_u_id = :id AND ca_cas_id = cas_id AND ca_u_id = u_id';
             $params = array(':id' => $userId);
             $results = $this->conn->query($sql, $params);
             if (!$results || \count($results) == 0) {
@@ -104,8 +104,8 @@ class CapstoneApplicationsDao {
      */
     public function getApplication($id) {
         try {
-            $sql = 'SELECT * FROM capstone_application, capstone_application_status ';
-            $sql .= 'WHERE ca_id = :id AND ca_cas_id = cas_id';
+            $sql = 'SELECT * FROM capstone_application, capstone_application_status, user ';
+            $sql .= 'WHERE ca_id = :id AND ca_cas_id = cas_id AND ca_u_id = u_id';
             $params = array(':id' => $id);
             $results = $this->conn->query($sql, $params);
             if (!$results || \count($results) == 0) {
@@ -132,8 +132,7 @@ class CapstoneApplicationsDao {
             $sql .= 'VALUES(:id, :projid, :userid, :just, :timeav, :skills, :port, :statid, :datec, :dateu, :dates)';
             $params = array(
                 ':id' => $application->getId(),
-                // TODO: correctly fetch the project ID from the application
-                ':projid' => $application->getCapstoneProject(),
+                ':projid' => $application->getCapstoneProject()->getId(),
                 ':userid' => $application->getStudent()->getId(),
                 ':just' => $application->getJustification(),
                 ':timeav' => $application->getTimeAvailable(),
@@ -190,12 +189,25 @@ class CapstoneApplicationsDao {
     /**
      * Creates a new capstone application object using data from a database row.
      * 
+     * The row is assumed to also have project information that we also want to extract.
+     * 
      * @param mixed[] $row the database row being used to create the capstone application
      * @return \Model\CapstoneApplication the extracted application
      */
-    public static function ExtractApplicationFromRow($row) {
+    public static function ExtractApplicationFromRowWithProject($row) {
+        return self::ExtractApplicationFromRow($row, true);
+    }
+
+    /**
+     * Creates a new capstone application object using data from a database row.
+     * 
+     * @param mixed[] $row the database row being used to create the capstone application
+     * @param boolean $includeProject flag to indicate whether to also extract the project from the row.
+     * @return \Model\CapstoneApplication the extracted application
+     */
+    public static function ExtractApplicationFromRow($row, $includeProject = false) {
         // TODO: also set the capstone project
-        return (new CapstoneApplication($row['ca_id']))
+        $app = (new CapstoneApplication($row['ca_id']))
             ->setStudent(UsersDao::ExtractUserFromRow($row))
             ->setJustification($row['ca_justification'])
             ->setTimeAvailable($row['ca_time_available'])
@@ -205,6 +217,10 @@ class CapstoneApplicationsDao {
             ->setDateCreated(new \DateTime($row['ca_date_created']))
             ->setDateUpdated(new \DateTime($row['ca_date_updated']))
             ->setDateSubmitted(new \DateTime($row['ca_date_submitted']));
+            if($includeProject) {
+                $app->setCapstoneProject(CapstoneProjectsDao::ExtractCapstoneProjectFromRow($row));
+            }
+            return $app;
     }
 
     /**
