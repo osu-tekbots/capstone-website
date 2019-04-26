@@ -101,23 +101,22 @@ CREATE TABLE IF NOT EXISTS capstone_project_image (
     FOREIGN KEY (cpi_cp_id) REFERENCES capstone_project (cp_id)
 );
 
-CREATE TABLE IF NOT EXISTS capstone_tag (
-    ct_id INT NOT NULL AUTO_INCREMENT,
-    ct_name VARCHAR(128) NOT NULL,
-    ct_parent_ct_id INT,
-    ct_approved BOOLEAN NOT NULL,
+CREATE TABLE IF NOT EXISTS capstone_keyword (
+    ck_id INT NOT NULL AUTO_INCREMENT,
+    ck_name VARCHAR(128) NOT NULL,
+    ck_parent_ct_id INT,
+    ck_approved BOOLEAN NOT NULL,
 
-    PRIMARY KEY (ct_id),
-    FOREIGN KEY (ct_parent_ct_id) REFERENCES capstone_tag (ct_id)
+    PRIMARY KEY (ck_id),
+    FOREIGN KEY (ck_parent_ck_id) REFERENCES capstone_keyword (ck_id)
 );
 
-CREATE TABLE IF NOT EXISTS capstone_tag_for (
-    ctf_ct_id INT NOT NULL,
-    ctf_cp_id CHAR(16) NOT NULL,
+CREATE TABLE IF NOT EXISTS capstone_keyword_for (
+    ctk_ct_id INT NOT NULL,
+    ctk_entity_id CHAR(16) NOT NULL,
 
-    PRIMARY KEY (ctf_ct_id, ctf_cp_id),
-    FOREIGN KEY (ctf_ct_id) REFERENCES capstone_tag (ct_id),
-    FOREIGN KEY (ctf_cp_id) REFERENCES capstone_project (cp_id)
+    PRIMARY KEY (ctk_ct_id, ctf_cp_id),
+    FOREIGN KEY (ctk_ct_id) REFERENCES capstone_keyword (ct_id)
 );
 
 CREATE TABLE IF NOT EXISTS capstone_project_group (
