@@ -2,6 +2,10 @@
 namespace Model;
 
 class UserAuthProvider {
+    const NONE = 1;
+    const ONID = 2;
+    const GOOGLE = 3;
+    const MICROSOFT = 4;
 
     /** @var integer */
     private $id;
