@@ -11,6 +11,9 @@ use Model\CapstoneProjectType;
 use Model\CapstoneProject;
 use Model\CapstoneProjectImage;
 
+/**
+ * Handles all of the logic related to queries on capstone project resources in the database.
+ */
 class CapstoneProjectsDao {
 
     /** @var DatabaseConnection */
@@ -37,30 +40,26 @@ class CapstoneProjectsDao {
      * @param integer $limit the max number of results to fetch in this batch
      * @return \Model\CapstoneProject[]|boolean an array of projects on success, false otherwise
      */
-    public function getManyCapstoneProjects($offset = 0, $limit = -1) {
+    public function getBrowsableCapstoneProjects($offset = 0, $limit = -1) {
         try {
             $sql = 'SELECT * FROM capstone_project, capstone_project_compensation, capstone_project_category, ';
             $sql .= 'capstone_project_type, capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, ';
             $sql .= 'capstone_project_status, user ';
             $sql .= 'WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id ';
             $sql .= 'AND cp_cpf_id = cpf_id AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id ';
-            $sql .= 'AND cp_cps_id = cps_id AND cp_u_id = u_id ';
+            $sql .= 'AND cp_cps_id = cps_id AND cp_u_id = u_id AND cp_is_hidden = :hidden AND cp_cps_id = :status';
             // TODO: enable pagination with the offset and limit
-            $results = $this->conn->query($sql);
-
-            if(!$results) {
-                return false;
-            }
+            $params = array(':hidden' => false, ':status' => CapstoneProjectStatus::ACCEPTING_APPLICANTS);
+            $results = $this->conn->query($sql, $params);
 
             $projects = array();
-            foreach($results as $row) {
+            foreach ($results as $row) {
                 $project = self::ExtractCapstoneProjectFromRow($row, true);
                 $this->getCapstoneProjectImages($project, true);
                 $projects[] = $project;
             }
 
             return $projects;
-
         } catch (\Exception $e) {
             $this->logger->error('Failed to get many projects: ' . $e->getMessage());
             return false;
@@ -84,16 +83,53 @@ class CapstoneProjectsDao {
             $params = array(':uid' => $userId);
             $results = $this->conn->query($sql, $params);
 
-            $projects = \array_map('self::ExtractCapstoneProjectFromRow', $results);
-
-            // Now fetch any images for all the projects
-            foreach ($projects as $project) {
-                $images = $this->getCapstoneProjectImages($project, true);
+            $projects = array();
+            foreach ($results as $row) {
+                $project = self::ExtractCapstoneProjectFromRow($row, true);
+                $this->getCapstoneProjectImages($project, true);
+                $projects[] = $project;
             }
            
             return $projects;
         } catch (\Exception $e) {
             $this->logger->error("Failed to get capstone project for user '$userId': " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Fetches capstone projects relevent for an admin to view.
+     *
+     * @return \Model\CapstoneProject[]|boolean an array of projects on success, false otherwise
+     */
+    public function getCapstoneProjectsForAdmin() {
+        try {
+            $sql = '
+            SELECT * 
+            FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+                capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status
+            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+                AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id 
+                AND (cp_cps_id = :pending OR cp_cps_id = :rejected OR cp_cps_id = :accepting)
+            ';
+            $params = array(
+                ':pending' => CapstoneProjectStatus::PENDING_APPROVAL,
+                ':rejected' => CapstoneProjectStatus::REJECTED,
+                ':accepting' => CapstoneProjectStatus::ACCEPTING_APPLICANTS
+            );
+            $results = $this->conn->query($sql, $params);
+
+            $projects = array();
+            foreach ($results as $row) {
+                $project = self::ExtractCapstoneProjectFromRow($row, true);
+                $this->getCapstoneProjectImages($project, true);
+                $projects[] = $project;
+            }
+
+            return $projects;
+
+        } catch(\Exception $e) {
+            $this->logger->error('Failed to get projects for admin: ' . $e->getMessage());
             return false;
         }
     }
@@ -114,16 +150,44 @@ class CapstoneProjectsDao {
             $params = array(':status' => CapstoneProjectStatus::PENDING_APPROVAL);
             $results = $this->conn->query($sql, $params);
 
-            $projects = \array_map('self::ExtractCapstoneProjectFromRow', $results);
-
-            // Now fetch any images for all the projects
-            foreach ($projects as $project) {
+            $projects = array();
+            foreach ($results as $row) {
+                $project = self::ExtractCapstoneProjectFromRow($row, true);
                 $this->getCapstoneProjectImages($project, true);
+                $projects[] = $project;
             }
            
             return $projects;
         } catch (\Exception $e) {
             $this->logger->error('Failed to get pending capstone projects: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Fetches various statistical information about the types of capstone projects in the database and their status.
+     * 
+     * Currently the resulting returned associative array will have the following keys:
+     * - projectsPending
+     * - projectsNeedingCategoryPlacement
+     *
+     * @return mixed[]|boolean an associative array of statistics on success, false otherwise
+     */
+    public function getCapstoneProjectStats() {
+        try {
+            $sql = "
+            SELECT 
+                (SELECT COUNT(*) FROM capstone_project WHERE cp_cps_id = :pending) AS projectsPending,
+                (SELECT COUNT(*) FROM capstone_project WHERE cp_cpc_id = :category) AS projectsNeedingCategoryPlacement
+            ";
+            $params = array(
+                ':pending' => CapstoneProjectStatus::PENDING_APPROVAL,
+                ':category' => CapstoneProjectCategory::NONE
+            );
+            $results = $this->conn->query($sql, $params);
+            return $results[0];
+        } catch(\Exception $e) {
+            $this->logger->error('Failed to get capstone project statistics: ' . $e->getMessage());
             return false;
         }
     }
@@ -155,7 +219,7 @@ class CapstoneProjectsDao {
             $sql .= 'AND cp_cps_id = cps_id AND cp_u_id = u_id AND cp_id = :id';
             $params = array(':id' => $id);
             $results = $this->conn->query($sql, $params);
-            if (!$results || \count($results) == 0) {
+            if (\count($results) == 0) {
                 return false;
             }
 
@@ -204,7 +268,6 @@ class CapstoneProjectsDao {
                 :cpcopid,
                 :cpniid,
                 :website,
-                :image,
                 :video,
                 :hidden,
                 :comments,
@@ -233,7 +296,6 @@ class CapstoneProjectsDao {
                 ':cpcopid' => $project->getCop()->getId(),
                 ':cpniid' => $project->getNdaIp()->getId(),
                 ':website' => $project->getWebsiteLink(),
-                ':image' => $project->getImageLink(),
                 ':video' => $project->getVideoLink(),
                 ':hidden' => $project->getIsHidden(),
                 ':comments' => $project->getProposerComments(),
@@ -361,7 +423,7 @@ class CapstoneProjectsDao {
             $sql = 'SELECT * FROM capstone_project_image WHERE cpi_id = :id';
             $params = array(':id' => $id);
             $results = $this->conn->query($sql, $params);
-            if (!$results || \count($results) == 0) {
+            if (\count($results) == 0) {
                 return false;
             }
 
@@ -421,11 +483,13 @@ class CapstoneProjectsDao {
         try {
             $sql = 'SELECT * FROM capstone_project_category';
             $results = $this->conn->query($sql);
-            if (!$results || \count($results) == 0) {
-                return false;
+
+            $categories = array();
+            foreach ($results as $row) {
+                $categories[] = self::ExtractCapstoneProjectCategoryFromRow($row);
             }
 
-            return \array_map('self::ExtractCapstoneProjectCategoryFromRow', $results);
+            return $categories;
         } catch (\Exception $e) {
             $this->logger->error('Failed to get project categories: ' . $e->getMessage());
             return false;
@@ -441,11 +505,12 @@ class CapstoneProjectsDao {
         try {
             $sql = 'SELECT * FROM capstone_project_type';
             $results = $this->conn->query($sql);
-            if (!$results || \count($results) == 0) {
-                return false;
-            }
 
-            return \array_map('self::ExtractCapstoneProjectTypeFromRow', $results);
+            $types = array();
+            foreach ($results as $row) {
+                $types[] = self::ExtractCapstoneProjectTypeFromRow($row);
+            }
+            return $types;
         } catch (\Exception $e) {
             $this->logger->error('Failed to get project types: ' . $e->getMessage());
             return false;
@@ -461,11 +526,13 @@ class CapstoneProjectsDao {
         try {
             $sql = 'SELECT * FROM capstone_project_focus';
             $results = $this->conn->query($sql);
-            if (!$results || \count($results) == 0) {
-                return false;
+
+            $focuses = array();
+            foreach ($results as $row) {
+                $focuses[] = self::ExtractCapstoneProjectFocusFromRow($row);
             }
 
-            return \array_map('self::ExtractCapstoneProjectFocusFromRow', $results);
+            return $focuses;
         } catch (\Exception $e) {
             $this->logger->error('Failed to get project focuses: ' . $e->getMessage());
             return false;
@@ -481,11 +548,13 @@ class CapstoneProjectsDao {
         try {
             $sql = 'SELECT * FROM capstone_project_compensation';
             $results = $this->conn->query($sql);
-            if (!$results || \count($results) == 0) {
-                return false;
+
+            $comps = array();
+            foreach ($results as $row) {
+                $comps[] = self::ExtractCapstoneProjectCompensationFromRow($row);
             }
 
-            return \array_map('self::ExtractCapstoneProjectCompensationFromRow', $results);
+            return $comps;
         } catch (\Exception $e) {
             $this->logger->error('Failed to get project compensations: ' . $e->getMessage());
             return false;
@@ -501,11 +570,13 @@ class CapstoneProjectsDao {
         try {
             $sql = 'SELECT * FROM capstone_project_nda_ip';
             $results = $this->conn->query($sql);
-            if (!$results || \count($results) == 0) {
-                return false;
+
+            $nips = array();
+            foreach ($results as $row) {
+                $nips[] = self::ExtractCapstoneProjectNdaIpFromRow($row);
             }
 
-            return \array_map('self::ExtractCapstoneProjectNdaIpFromRow', $results);
+            return $nips;
         } catch (\Exception $e) {
             $this->logger->error('Failed to get project NDA/IPs: ' . $e->getMessage());
             return false;
@@ -525,22 +596,18 @@ class CapstoneProjectsDao {
             $sql = 'SELECT * FROM capstone_project_image WHERE cpi_cp_id = :id';
             $params = array(':id' => $project->getId());
             $results = $this->conn->query($sql, $params);
-            if ($results) {
-                $images = array();
-                foreach ($results as $r) {
-                    $image = self::ExtractCapstoneProjectImageFromRow($r);
-                    $image->setProject($project);
-                    $images[] = $image;
-                }
-
-                if($setImages) {
-                    $project->setImages($images);
-                }
-
-                return $images;
-            } else {
-                return false;
+            $images = array();
+            foreach ($results as $r) {
+                $image = self::ExtractCapstoneProjectImageFromRow($r);
+                $image->setProject($project);
+                $images[] = $image;
             }
+
+            if ($setImages) {
+                $project->setImages($images);
+            }
+
+            return $images;
         } catch (\Exception $e) {
             $pid = $project->getId();
             $this->logger->error("Failed to get image metadata for project with ID '$pid':" . $e->getMessage());
@@ -556,6 +623,7 @@ class CapstoneProjectsDao {
      */
     public static function ExtractCapstoneProjectFromRow($row, $userInRow = false) {
         $project = (new CapstoneProject($row['cp_id']))
+            ->setProposerId($row['cp_u_id'])
             ->setTitle($row['cp_title'])
             ->setMotivation($row['cp_motivation'])
             ->setDescription($row['cp_description'])
@@ -608,7 +676,8 @@ class CapstoneProjectsDao {
      */
     public static function ExtractCapstoneProjectCategoryFromRow($row, $projectInRow = false) {
         $id = $projectInRow ? 'cp_cpc_id' : 'cpc_id';
-        return new CapstoneProjectCategory($row[$id], $row['cpc_name']);
+        $name = isset($row['cpc_name']) ? $row['cpc_name'] : null;
+        return new CapstoneProjectCategory($row[$id], $name);
     }
 
     /**
@@ -620,7 +689,8 @@ class CapstoneProjectsDao {
      */
     public static function ExtractCapstoneProjectCompensationFromRow($row, $projectInRow = false) {
         $id = $projectInRow ? 'cp_cpcmp_id' : 'cpcmp_id';
-        return new CapstoneProjectCompensation($row[$id], $row['cpcmp_name']);
+        $name = isset($row['cpcmp_name']) ? $row['cpcmp_name'] : null;
+        return new CapstoneProjectCompensation($row[$id], $name);
     }
 
     /**
@@ -632,7 +702,8 @@ class CapstoneProjectsDao {
      */
     public static function ExtractCapstoneProjectCopFromRow($row, $projectInRow = false) {
         $id = $projectInRow ? 'cp_cpcop_id' : 'cpcop_id';
-        return new CapstoneProjectCop($row[$id], $row['cpcop_name']);
+        $name = isset($row['cpcop_name']) ? $row['cpcop_name'] : null;
+        return new CapstoneProjectCop($row[$id], $name);
     }
 
     /**
@@ -644,7 +715,8 @@ class CapstoneProjectsDao {
      */
     public static function ExtractCapstoneProjectFocusFromRow($row, $projectInRow = false) {
         $id = $projectInRow ? 'cp_cpf_id' : 'cpf_id';
-        return new CapstoneProjectFocus($row[$id], $row['cpf_name']);
+        $name = isset($row['cpf_name']) ? $row['cpf_name'] : null;
+        return new CapstoneProjectFocus($row[$id], $name);
     }
 
     /**
@@ -656,7 +728,8 @@ class CapstoneProjectsDao {
      */
     public static function ExtractCapstoneProjectNdaIpFromRow($row, $projectInRow = false) {
         $id = $projectInRow ? 'cp_cpni_id' : 'cpni_id';
-        return new CapstoneProjectNDAIP($row[$id], $row['cpni_name']);
+        $name = isset($row['cpni_name']) ? $row['cpni_name'] : null;
+        return new CapstoneProjectNDAIP($row[$id], $name);
     }
 
     /**
@@ -668,7 +741,8 @@ class CapstoneProjectsDao {
      */
     public static function ExtractCapstoneProjectStatusFromRow($row, $projectInRow = false) {
         $id = $projectInRow ? 'cp_cps_id' : 'cps_id';
-        return new CapstoneProjectStatus($row[$id], $row['cps_name']);
+        $name = isset( $row['cps_name']) ?  $row['cps_name'] : null;
+        return new CapstoneProjectStatus($row[$id], $name);
     }
 
     /**
@@ -680,6 +754,7 @@ class CapstoneProjectsDao {
      */
     public static function ExtractCapstoneProjectTypeFromRow($row, $projectInRow = false) {
         $id = $projectInRow ? 'cp_cpt_id' : 'cpt_id';
-        return new CapstoneProjectType($row[$id], $row['cpt_name']);
+        $name = isset($row['cpt_name']) ? $row['cpt_name'] : null;
+        return new CapstoneProjectType($row[$id], $name);
     }
 }

@@ -3,6 +3,7 @@ namespace DataAccess;
 
 use Model\CapstoneApplication;
 use Model\CapstoneApplicationStatus;
+use Model\CapstoneInterestLevel;
 
 /**
  * Contains logic for database interactions with capstone project application data in the database. 
@@ -31,18 +32,30 @@ class CapstoneApplicationsDao {
     /**
      * Fetches all of the applications in the database.
      *
+     * @param boolean $includeUser indicates whether to also fetch the user and create an associated User object.
+     * Defaults to true.
+     * @param boolean $includeProject indicates whether to also fetch the project and create an associated
+     * CapstoneProject object. Defaults to true.
      * @return \Model\CapstoneApplication|boolean an array of the resulting applications, or false if the fetch fails
      */
-    public function getAllApplications() {
+    public function getAllApplications($includeUser = true, $includeProject = true) {
         try {
-            $sql = 'SELECT * FROM capstone_application, capstone_application_status ';
-            $sql .= 'WHERE ca_cas_id = cas_id';
+            $userTable = $includeUser ? ', user ' : '';
+            $userAnd = $includeUser ? 'AND ca_u_id = u_id' : '';
+            $projectTable = $includeProject ? ', capstone_project ' : '';
+            $projectAnd = $includeProject ? 'AND ca_cp_id = cp_id' : '';
+            $sql = "
+            SELECT * FROM capstone_application, capstone_application_status $userTable $projectTable
+            WHERE ca_cas_id = cas_id $userAnd $projectAnd
+            ";
             $results = $this->conn->query($sql);
-            if (!$results) {
-                return false;
+
+            $applications = array();
+            foreach ($results as $row) {
+                $applications[] = self::ExtractApplicationFromRow($row, true);
             }
 
-            return \array_map('self::ExtractApplicationFromRow', $results);
+            return $applications;
         } catch (\Exception $e) {
             $this->logError('Failed to get all applications: ' . $e->getMessage());
             return false;
@@ -56,7 +69,7 @@ class CapstoneApplicationsDao {
      * @param boolean $submitted indicates whether to only fetch submitted applications
      * @return \Model\CapstoneApplication|boolean an array of the resulting applications, or false if the fetch fails
      */
-    public function getAllApplicationForProject($projectId, $submitted = false) {
+    public function getAllApplicationsForProject($projectId, $submitted = false) {
         try {
             $sql = 'SELECT * FROM capstone_application, capstone_application_status, capstone_project, user ';
             $sql .= 'WHERE ca_cp_id = :id AND ca_cp_id = cp_id AND ca_cas_id = cas_id AND ca_u_id = u_id';
@@ -67,7 +80,12 @@ class CapstoneApplicationsDao {
             }
             $results = $this->conn->query($sql, $params);
 
-            return \array_map('self::ExtractApplicationFromRowWithProject', $results);
+            $applications = array();
+            foreach ($results as $row) {
+                $applications[] = self::ExtractApplicationFromRow($row, true);
+            }
+
+            return $applications;
         } catch (\Exception $e) {
             $this->logError('Failed to get applications for project with id "' . $projectId . '": ' . $e->getMessage());
             return false;
@@ -86,11 +104,13 @@ class CapstoneApplicationsDao {
             $sql .= 'WHERE ca_u_id = :id AND ca_cas_id = cas_id AND ca_u_id = u_id AND ca_cp_id = cp_id';
             $params = array(':id' => $userId);
             $results = $this->conn->query($sql, $params);
-            if (!$results || \count($results) == 0) {
-                return false;
+
+            $applications = array();
+            foreach ($results as $row) {
+                $applications[] = self::ExtractApplicationFromRow($row, true);
             }
 
-            return \array_map('self::ExtractApplicationFromRowWithProject', $results);
+            return $applications;
         } catch (\Exception $e) {
             $this->logError('Failed to get applications for user with id "' . $userId . '": ' . $e->getMessage());
             return false;
@@ -115,7 +135,7 @@ class CapstoneApplicationsDao {
             $params = array(':id' => $id);
             
             $results = $this->conn->query($sql, $params);
-            if (!$results || \count($results) == 0) {
+            if (\count($results) == 0) {
                 return false;
             }
 
@@ -137,9 +157,15 @@ class CapstoneApplicationsDao {
             $this->conn->startTransaction();
 
             // First create the application entry
-            $sql = 'INSERT INTO capstone_application (ca_id, ca_cp_id, ca_u_id, ca_justification, ca_time_available, ';
-            $sql .= 'ca_skill_set, ca_portfolio_link, ca_cas_id, ca_date_created, ca_date_updated, ca_date_submitted) ';
-            $sql .= 'VALUES(:id, :projid, :userid, :just, :timeav, :skills, :port, :statid, :datec, :dateu, :dates)';
+            $sql = '
+            INSERT INTO capstone_application (
+                ca_id, ca_cp_id, ca_u_id, ca_justification, ca_time_available, ca_skill_set, ca_portfolio_link, 
+                ca_cas_id, ca_review_cil_id, ca_review_proposer_comments, ca_date_created, ca_date_updated, 
+                ca_date_submitted
+            ) VALUES (
+                :id, :projid, :userid, :just, :timeav, :skills, :port, :statid, :rilid, rilpc, :datec, :dateu, :dates
+            )
+            ';
             $params = array(
                 ':id' => $application->getId(),
                 ':projid' => $application->getCapstoneProject()->getId(),
@@ -149,6 +175,8 @@ class CapstoneApplicationsDao {
                 ':skills' => $application->getSkillSet(),
                 ':port' => $application->getPortfolioLink(),
                 ':statid' => $application->getStatus()->getId(),
+                ':rilid' =>$application->getInterestLevel()->getId(),
+                ':rilpc' => $application->getProposerComments(),
                 ':datec' => QueryUtils::FormatDate($application->getDateCreated()),
                 ':dateu' => QueryUtils::FormatDate($application->getDateUpdated()),
                 ':dates' => QueryUtils::FormatDate($application->getDateSubmitted())
@@ -182,15 +210,19 @@ class CapstoneApplicationsDao {
      */
     public function updateApplication($application) {
         try {
-            $sql = 'UPDATE capstone_application SET ';
-            $sql .= 'ca_justification = :just, ';
-            $sql .= 'ca_time_available = :timeav, ';
-            $sql .= 'ca_skill_set = :skills, ';
-            $sql .= 'ca_portfolio_link = :port, ';
-            $sql .= 'ca_cas_id = :statid, ';
-            $sql .= 'ca_date_updated = :dateu, ';
-            $sql .= 'ca_date_submitted = :dates ';
-            $sql .= 'WHERE ca_id = :id';
+            $sql = '
+            UPDATE capstone_application SET 
+                ca_justification = :just,
+                ca_time_available = :timeav,
+                ca_skill_set = :skills,
+                ca_portfolio_link = :port,
+                ca_cas_id = :statid,
+                ca_review_cil_id = :rilid,
+                ca_review_proposer_comments = :rilpc,
+                ca_date_updated = :dateu,
+                ca_date_submitted = :dates
+            WHERE ca_id = :id
+            ';
             $params = array(
                 ':id' => $application->getId(),
                 ':just' => $application->getJustification(),
@@ -198,6 +230,8 @@ class CapstoneApplicationsDao {
                 ':skills' => $application->getSkillSet(),
                 ':port' => $application->getPortfolioLink(),
                 ':statid' => $application->getStatus()->getId(),
+                ':rilid' => $application->getInterestLevel()->getId(),
+                ':rilpc' => $application->getProposerComments(),
                 ':dateu' => QueryUtils::FormatDate($application->getDateUpdated()),
                 ':dates' => QueryUtils::FormatDate($application->getDateSubmitted())
             );
@@ -210,15 +244,27 @@ class CapstoneApplicationsDao {
     }
 
     /**
-     * Creates a new capstone application object using data from a database row.
-     * 
-     * The row is assumed to also have project information that we also want to extract.
-     * 
-     * @param mixed[] $row the database row being used to create the capstone application
-     * @return \Model\CapstoneApplication the extracted application
+     * Fetches the enumerated interest level values for indicating how interested a proposer is in the user that
+     * submitted the application
+     *
+     * @return \Model\CapstoneInterestLevel[]|boolean an array if interest levels on success, false otherwise
      */
-    public static function ExtractApplicationFromRowWithProject($row) {
-        return self::ExtractApplicationFromRow($row, true);
+    public function getApplicationReviewInterestLevels() {
+        try {
+            $sql = 'SELECT * FROM capstone_interest_level';
+            $results = $this->conn->query($sql);
+
+            $levels = array();
+            foreach($results as $row) {
+                $levels[] = self::ExtractCapstoneInterestLevelFromRow($row);
+            }
+
+            return $levels;
+
+        } catch(\Exception $e) {
+            $this->logError('Failed to get application review interest levels: ' . $e->getMessage());
+            return false;
+        }
     }
 
     /**
@@ -229,14 +275,17 @@ class CapstoneApplicationsDao {
      * @return \Model\CapstoneApplication the extracted application
      */
     public static function ExtractApplicationFromRow($row, $includeProject = false) {
-        // TODO: also set the capstone project
         $app = (new CapstoneApplication($row['ca_id']))
+            ->setStudentId($row['ca_u_id'])
+            ->setCapstoneProjectId($row['ca_cp_id'])
             ->setStudent(UsersDao::ExtractUserFromRow($row))
             ->setJustification($row['ca_justification'])
             ->setTimeAvailable($row['ca_time_available'])
             ->setSkillSet($row['ca_skill_set'])
             ->setPortfolioLink($row['ca_portfolio_link'])
-            ->setStatus(self::ExtractApplicationStatusFromRow($row))
+            ->setStatus(self::ExtractApplicationStatusFromRow($row, true))
+            ->setInterestLevel(self::ExtractCapstoneInterestLevelFromRow($row, true))
+            ->setProposerComments($row['ca_review_proposer_comments'])
             ->setDateCreated(new \DateTime($row['ca_date_created']))
             ->setDateUpdated(new \DateTime($row['ca_date_updated']))
             ->setDateSubmitted(new \DateTime($row['ca_date_submitted']));
@@ -255,7 +304,21 @@ class CapstoneApplicationsDao {
      */
     public static function ExtractApplicationStatusFromRow($row, $applicationInRow = false) {
         $idKey = $applicationInRow ? 'ca_cas_id' : 'cas_id';
-        return new CapstoneApplicationStatus($row[$idKey], $row['cas_name']);
+        $name = isset($row['cas_name']) ? $row['cas_name'] : null;
+        return new CapstoneApplicationStatus($row[$idKey], $name);
+    }
+
+    /**
+     * Creates a new capstone application interest level enumeration object from a row in the database.
+     *
+     * @param mixed[] $row the row from the database
+     * @param boolean $applicationInRow indicating whether entries from the capstone application table are in the row
+     * @return \Model\CapstoneInterestLevel the extracted interest level
+     */
+    public static function ExtractCapstoneInterestLevelFromRow($row, $applicationInRow = false) {
+        $idKey = $applicationInRow ? 'ca_review_cil_id' : 'cil_id';
+        $name = isset($row['cil_name']) ? $row['cil_name'] : null;
+        return new CapstoneInterestLevel($row[$idKey], $name);
     }
 
 
