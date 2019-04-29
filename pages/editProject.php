@@ -1,5 +1,6 @@
 <?php
 use DataAccess\CapstoneProjectsDao;
+use Model\CapstoneProjectStatus;
 
 if (!session_id()) {
     session_start();
@@ -9,6 +10,7 @@ if (!session_id()) {
 include PUBLIC_FILES . '/lib/shared/authorize.php';
 
 $isAdmin = $_SESSION['accessLevel'] == 'Admin';
+$isProposer = $_SESSION['accessLevel'] == 'Proposer';
 
 $pId = $_GET['id'];
 
@@ -160,21 +162,18 @@ var availableTags = [
                     
                     <?php 
                     // Display the following only when the user is the proposer
-                    if (!$isAdmin): ?>
-
-                        <button name="submitButtonPressed" id="submitForApprovalBtn" 
-                            class="btn btn-primary capstone-nav-btn" type="button" data-toggle="tooltip" 
-                            data-placement="bottom" title="<?php echo $tooltipSubmitForApprovalBtn; ?>">
+                    if ($isProposer || $isAdmin) {
+                        if ($pStatusId == CapstoneProjectStatus::PENDING_APPROVAL) {
+                            echo '<p>Your project is pending approval</p>';
+                        } else {
+                            echo "
+							<button name='submitButtonPressed' id='submitForApprovalBtn' 
+                            class='btn btn-primary capstone-nav-btn' type='button' data-toggle='tooltip' 
+                            data-placement='bottom' title='$tooltipSubmitForApprovalBtn'>
                             Submit for Approval</button>
-                        <div id="errorTextDiv" style="color:red;"></div>
-                        <div id="successText" class="successText" style="display:none;">
-                            Successfully submitted project!
-                        </div>
-
-                    <?php endif; ?>
-                    
-                    <div id="errorTextDiv" style="color:red;"></div>
-
+							";
+                        }
+                    }?>
                 </div>
             </div>
         </div>
@@ -224,7 +223,7 @@ var availableTags = [
                     <script type="text/javascript">
 						$("#defaultImageSelect").imagepicker();
 						$("#defaultImageSelect").data('picker').sync_picker_with_select();
-						<?php if (isset($defaultImage)) {
+						<?php if (isset($defaultImageName)) {
                             echo "$('#nameOfImageInput').val('$defaultImageName');";
                         } ?>
                     </script>
