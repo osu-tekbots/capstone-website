@@ -64,6 +64,10 @@ class User {
         if ($id == null) {
             $id = IdGenerator::generateSecureUniqueId();
             $this->setId($id);
+            $this->setType(new UserType());
+            $this->setAuthProvider(new UserAuthProvider());
+            $this->setSalutation(new UserSalutation());
+            $this->setDateCreated(new \DateTime());
         } else {
             $this->setId($id);
         }

@@ -5,7 +5,6 @@ namespace Model;
  * Data class representing a user type enumeration.
  */
 class UserType {
-
     const USER = 1;
     const PROPOSER = 2;
     const ADMIN = 3;
@@ -22,16 +21,20 @@ class UserType {
      * @param integer $id the ID of the UserType. This should come directly from the database.
      * @param string $name the name of the type
      */
-    public function __construct($id, $name) {
-        $this->setId($id);
-        $this->setName($name);
+    public function __construct($id = null, $name = null) {
+        if ($id == null && $name == null) {
+            $this->setId(self::USER);
+            $this->setName('User');
+        } else {
+            $this->setId($id);
+            $this->setName($name);
+        }
     }
 
     /**
      * Get the value of name
      */ 
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
 
@@ -40,8 +43,7 @@ class UserType {
      *
      * @return  self
      */ 
-    public function setName($name)
-    {
+    public function setName($name) {
         $this->name = $name;
 
         return $this;
@@ -50,8 +52,7 @@ class UserType {
     /**
      * Get the value of id
      */ 
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -60,8 +61,7 @@ class UserType {
      *
      * @return  self
      */ 
-    public function setId($id)
-    {
+    public function setId($id) {
         $this->id = $id;
 
         return $this;
