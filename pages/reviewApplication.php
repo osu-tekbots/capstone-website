@@ -19,9 +19,6 @@ allowIf($aid != '' && $isLoggedIn && ($isProposer || $isAdmin));
 $dao = new CapstoneApplicationsDao($dbConn, $logger);
 $application = $dao->getApplication($aid);
 
-$reviewDao = new CapstoneApplicationReviewsDao($dbConn, $logger);
-$review = $reviewDao->getApplicationReviewForApplication($application->getId());
-
 $title = 'Review Application';
 include_once PUBLIC_FILES . '/modules/header.php';
 
@@ -39,8 +36,8 @@ $minQualifications = $application->getCapstoneProject()->getMinQualifications();
 $prefQualifications = $application->getCapstoneProject()->getPreferredQualifications();
 $firstName = $application->getStudent()->getFirstName();
 $lastName = $application->getStudent()->getLastName();
-$reviewInterest = $review->getInterestLevel()->getId();
-$comments = $review->getComments();
+$reviewInterest = $application->getInterestLevel()->getId();
+$comments = $application->getProposerComments();
 switch($reviewInterest){
 	case CapstoneApplicationReviewInterestLevel::DESIREABLE:
 		$desirableBtnClass = "btn-success";
