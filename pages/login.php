@@ -93,8 +93,8 @@ $isLoggedIn = isset($_SESSION['userID']) && !empty($_SESSION['userID']);
             <div class='form-group'>
                 <label for='accessLevelSelect'>I am a...</label>
                 <select class='form-control' id='accessLevelSelect'>
-                    <option val='$studentId'>Student</option>
-                    <option val='$proposerId'>Proposer</option>
+                    <option value='$studentId'>Student</option>
+                    <option value='$proposerId'>Proposer</option>
                 </select>
             </div>
             <button id='accessLevelSaveBtn' type='button' style='float:right;' class='btn btn-success'>Save</button>
