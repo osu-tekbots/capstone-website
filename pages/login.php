@@ -1,4 +1,6 @@
 <?php
+use Model\UserType;
+
 session_start();
 
 //$queryDict is populated from URL arguments.
@@ -82,29 +84,31 @@ $isLoggedIn = isset($_SESSION['userID']) && !empty($_SESSION['userID']);
         //Renders a new user portal. Only shown after first-time authentication.
         $isNewUser = $isLoggedIn && isset($_SESSION['newUser']) && $_SESSION['newUser'];
 		if ($isNewUser) {
-		    echo '
+            $studentId = UserType::STUDENT;
+            $proposerId = UserType::PROPOSER;
+		    echo "
             <h2>Welcome to Senior Design Capstone!</h2>
-            <hr class="my-4">
+            <hr class='my-4'>
             <p>Specify below whether you are a student or a proposer.</p>
-            <div class="form-group">
-                <label for="accessLevelSelect">I am a...</label>
-                <select class="form-control" id="accessLevelSelect">
-                    <option>Student</option>
-                    <option>Proposer</option>
+            <div class='form-group'>
+                <label for='accessLevelSelect'>I am a...</label>
+                <select class='form-control' id='accessLevelSelect'>
+                    <option val='$studentId'>Student</option>
+                    <option val='$proposerId'>Proposer</option>
                 </select>
             </div>
-            <button id="accessLevelSaveBtn" type="button" style="float:right;" class="btn btn-success">Save</button>
+            <button id='accessLevelSaveBtn' type='button' style='float:right;' class='btn btn-success'>Save</button>
             <br>
-            <hr class="my-4">
+            <hr class='my-4'>
             <h2>Below are some quick links to get started!</h2>
-            <a href="pages/info.php">Click here</a> to <b>learn more about this application</b>.
+            <a href='pages/info.php'>Click here</a> to <b>learn more about this application</b>.
             <br>
-            <a href="pages/myProfile.php">Click here</a> to <b>edit your profile</b>.
+            <a href='pages/myProfile.php'>Click here</a> to <b>edit your profile</b>.
             <br>
-            <a href="pages/myProjects.php">Click here</a> to <b>create a new project</b>.
+            <a href='pages/myProjects.php'>Click here</a> to <b>create a new project</b>.
             <br>
-            <a href="pages/myProjects.php">Click here</a> to <b>browse for projects</b>.
-			';
+            <a href='pages/myProjects.php'>Click here</a> to <b>browse for projects</b>.
+			";
 		} else {
 		    echo '
             <center>
@@ -131,6 +135,7 @@ $isLoggedIn = isset($_SESSION['userID']) && !empty($_SESSION['userID']);
 function onUpdateUserType() {
 
     let body = {
+        action: 'updateUserType',
         userId: $('#userIDHeader').val(),
         typeId: $('#accessLevelSelect').val()
     };
