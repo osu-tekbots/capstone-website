@@ -25,7 +25,7 @@ include_once PUBLIC_FILES . '/modules/admin-review.php';
 $dao = new CapstoneProjectsDao($dbConn, $logger);
 $project = $dao->getCapstoneProject($pid);
 
-allowIf($project);
+allowIf($project && !$project->getIsHidden());
 
 $title = $project->getTitle();
 $type = $project->getType()->getName();
