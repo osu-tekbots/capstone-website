@@ -47,11 +47,8 @@ class UsersDao {
             $sql = 'SELECT * FROM user, user_type, user_salutation, user_auth_provider ';
             $sql .= 'WHERE u_ut_id = ut_id AND u_us_id = us_id AND u_uap_id = uap_id';
             $result = $this->conn->query($sql);
-            if (!$result) {
-                return false;
-            }
 
-            return \array_map(array('self::ExtractUserFromRow'), $result);
+            return \array_map('self::ExtractUserFromRow', $result);
         } catch (\Exception $e) {
             $this->logError('Failed to fetch users: ' . $e->getMessage());
 
@@ -302,7 +299,8 @@ class UsersDao {
      */
     public static function ExtractUserTypeFromRow($row, $userInRow = false) {
         $idKey = $userInRow ? 'u_ut_id' : 'ut_id';
-        return new UserType(\intval($row[$idKey]), $row['ut_name']);
+        $name = isset($row['ut_name']) ? $row['ut_name'] : null;
+        return new UserType(\intval($row[$idKey]), $name);
     }
 
     /**
@@ -317,7 +315,8 @@ class UsersDao {
      */
     public static function ExtractUserSalutationFromRow($row, $userInRow = false) {
         $idKey = $userInRow ? 'u_us_id' : 'us_id';
-        return new UserSalutation(\intval($row[$idKey]), $row['us_name']);
+        $name = isset($row['us_name']) ? $row['us_name'] : null;
+        return new UserSalutation(\intval($row[$idKey]), $name);
     }
 
     /**
@@ -332,7 +331,8 @@ class UsersDao {
      */
     public static function ExtractUserAuthProviderFromRow($row, $userInRow = false) {
         $idKey = $userInRow ? 'u_uap_id' : 'uap_id';
-        return new UserAuthProvider(\intval($row[$idKey]), $row['uap_name']);
+        $name = isset($row['uap_name']) ? $row['uap_name'] : null;
+        return new UserAuthProvider(\intval($row[$idKey]), $name);
     }
 
     /**
