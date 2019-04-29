@@ -93,11 +93,14 @@ class UsersDao {
      */
     public function getUserByAuthProviderProvidedId($id) {
         try {
-            $sql = 'SELECT * FROM user, user_type, user_salutation, user_auth_provider ';
-            $sql .= 'WHERE u_uap_provided_id = :id AND u_ut_id = ut_id AND u_us_id = us_id AND u_uap_id = uap_id';
+            $sql = '
+            SELECT * 
+            FROM user, user_type, user_salutation, user_auth_provider
+            WHERE u_uap_provided_id = :id AND u_ut_id = ut_id AND u_us_id = us_id AND u_uap_id = uap_id
+            ';
             $params = array(':id' => $id);
             $result = $this->conn->query($sql, $params);
-            if (!$result || \count($result) == 0) {
+            if (\count($result) == 0) {
                 return false;
             }
 

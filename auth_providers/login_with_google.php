@@ -3,6 +3,8 @@ use DataAccess\UsersDao;
 use Model\User;
 use Model\UserAuthProvider;
 
+session_start();
+
 require('http.php');
 require('oauth_client.php');
 
@@ -81,6 +83,10 @@ if ($success) {
             ->setEmail($user->email);
         $ok = $dao->addNewUser($u);
         // TODO: handle error
+
+        $_SESSION['userID'] = $u->getId();
+        $_SESSION['accessLevel'] = $u->getType()->getName();
+        $_SESSION['newUser'] = true;
 
         // Redirect to login page, which will now have a new user portal.
         echo "<script>window.location.replace('../pages/login.php')</script>";
