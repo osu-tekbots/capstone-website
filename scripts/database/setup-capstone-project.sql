@@ -96,6 +96,8 @@ CREATE TABLE IF NOT EXISTS capstone_project_image (
     cpi_cp_id CHAR(16) NOT NULL,
     cpi_name VARCHAR(128) NOT NULL,
     cpi_is_default BOOLEAN NOT NULL,
+    cpi_is_provided BOOLEAN NOT NULL,
+    cpi_provided_image_name VARCHAR(128),
 
     PRIMARY KEY (cpi_id),
     FOREIGN KEY (cpi_cp_id) REFERENCES capstone_project (cp_id)

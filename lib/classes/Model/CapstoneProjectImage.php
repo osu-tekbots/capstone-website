@@ -19,13 +19,18 @@ class CapstoneProjectImage {
     private $name;
     /** @var boolean */
     private $isDefault;
+    /** @var boolean */
+    private $isProvided;
+    /** @var string */
+    private $providedImageName;
 
     public function __construct($id = null) {
         if ($id == null) {
             $id = IdGenerator::generateSecureUniqueId();
+            $this->setIsDefault(false);
+            $this->setIsProvided(false);
         }
         $this->setId($id);
-        $this->setIsDefault(false);
     }
 
     /**
@@ -122,6 +127,42 @@ class CapstoneProjectImage {
      */ 
     public function setProjectId($projectId) {
         $this->projectId = $projectId;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of isProvided
+     */ 
+    public function getIsProvided() {
+        return $this->isProvided;
+    }
+
+    /**
+     * Set the value of isProvided
+     *
+     * @return  self
+     */ 
+    public function setIsProvided($isProvided) {
+        $this->isProvided = $isProvided;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of providedImageName
+     */ 
+    public function getProvidedImageName() {
+        return $this->providedImageName;
+    }
+
+    /**
+     * Set the value of providedImageName
+     *
+     * @return  self
+     */ 
+    public function setProvidedImageName($providedImageName) {
+        $this->providedImageName = $providedImageName;
 
         return $this;
     }

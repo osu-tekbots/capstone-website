@@ -127,8 +127,7 @@ class CapstoneProjectsDao {
             }
 
             return $projects;
-
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error('Failed to get projects for admin: ' . $e->getMessage());
             return false;
         }
@@ -175,18 +174,18 @@ class CapstoneProjectsDao {
      */
     public function getCapstoneProjectStats() {
         try {
-            $sql = "
+            $sql = '
             SELECT 
                 (SELECT COUNT(*) FROM capstone_project WHERE cp_cps_id = :pending) AS projectsPending,
                 (SELECT COUNT(*) FROM capstone_project WHERE cp_cpc_id = :category) AS projectsNeedingCategoryPlacement
-            ";
+            ';
             $params = array(
                 ':pending' => CapstoneProjectStatus::PENDING_APPROVAL,
                 ':category' => CapstoneProjectCategory::NONE
             );
             $results = $this->conn->query($sql, $params);
             return $results[0];
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error('Failed to get capstone project statistics: ' . $e->getMessage());
             return false;
         }
@@ -664,7 +663,10 @@ class CapstoneProjectsDao {
     public static function ExtractCapstoneProjectImageFromRow($row) {
         $image = new CapstoneProjectImage($row['cpi_id']);
         $image->setName($row['cpi_name'])
-            ->setIsDefault($row['cpi_is_default'] ? true : false);
+            ->setIsDefault($row['cpi_is_default'] ? true : false)
+            ->setIsProvided($row['cpi_is_provided'] ? true : false)
+            ->setProvidedImageName($row['cpi_provided_image_name']);
+        return $image;
     }
 
     /**
