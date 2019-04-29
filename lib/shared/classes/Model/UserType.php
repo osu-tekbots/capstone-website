@@ -5,7 +5,7 @@ namespace Model;
  * Data class representing a user type enumeration.
  */
 class UserType {
-    const USER = 1;
+    const STUDENT = 1;
     const PROPOSER = 2;
     const ADMIN = 3;
 
@@ -23,8 +23,8 @@ class UserType {
      */
     public function __construct($id = null, $name = null) {
         if ($id == null && $name == null) {
-            $this->setId(self::USER);
-            $this->setName('User');
+            $this->setId(self::STUDENT);
+            $this->setName('Student');
         } else {
             $this->setId($id);
             $this->setName($name);
