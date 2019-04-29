@@ -6,8 +6,12 @@ use Util\IdGenerator;
 class CapstoneApplication {
     /** @var string */
     private $id;
+    /** @var string */
+    private $capstoneProjectId;
     /** @var CapstoneProject */
     private $capstoneProject;
+    /** @var string */
+    private $studentId;
     /** @var User */
     private $student;
     /** @var string */
@@ -20,6 +24,10 @@ class CapstoneApplication {
     private $portfolioLink;
     /** @var  CapstoneApplicationStatus */
     private $status;
+    /** @var CapstoneInterestLevel */
+    private $interestLevel;
+    /** @var string */
+    private $proposerComments;
     /** @var \DateTime */
     private $dateCreated;
     /** @var \DateTime */
@@ -43,6 +51,7 @@ class CapstoneApplication {
             $this->setId($id);
             $this->setStatus(new CapstoneApplicationStatus());
             $this->setReview(new CapstoneApplicationReview());
+            $this->setInterestLevel(new CapstoneInterestLevel());
             $this->setDateCreated(new \DateTime());
         } else {
             $this->setId($id);
@@ -261,6 +270,78 @@ class CapstoneApplication {
      */ 
     public function setReview($review) {
         $this->review = $review;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of interestLevel
+     */ 
+    public function getInterestLevel() {
+        return $this->interestLevel;
+    }
+
+    /**
+     * Set the value of interestLevel
+     *
+     * @return  self
+     */ 
+    public function setInterestLevel($interestLevel) {
+        $this->interestLevel = $interestLevel;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of proposerComments
+     */ 
+    public function getProposerComments() {
+        return $this->proposerComments;
+    }
+
+    /**
+     * Set the value of proposerComments
+     *
+     * @return  self
+     */ 
+    public function setProposerComments($proposerComments) {
+        $this->proposerComments = $proposerComments;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of studentId
+     */ 
+    public function getStudentId() {
+        return $this->studentId;
+    }
+
+    /**
+     * Set the value of studentId
+     *
+     * @return  self
+     */ 
+    public function setStudentId($studentId) {
+        $this->studentId = $studentId;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of capstoneProjectId
+     */ 
+    public function getCapstoneProjectId() {
+        return $this->capstoneProjectId;
+    }
+
+    /**
+     * Set the value of capstoneProjectId
+     *
+     * @return  self
+     */ 
+    public function setCapstoneProjectId($capstoneProjectId) {
+        $this->capstoneProjectId = $capstoneProjectId;
 
         return $this;
     }

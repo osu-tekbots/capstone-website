@@ -4,10 +4,11 @@ namespace Model;
 /**
  * Represent an interest level enumeration from the database
  */
-class CapstoneApplicationReviewInterestLevel {
-    const DESIREABLE = 1;
-    const UNDESIREABLE = 2;
-    const IMPARTIAL = 3;
+class CapstoneInterestLevel {
+    const NOT_SPECIFIED = 1;
+    const IMPARTIAL = 2;
+    const DESIREABLE = 3;
+    const UNDESIREABLE = 4;
 
     /** @var string */
     private $id;
@@ -16,8 +17,8 @@ class CapstoneApplicationReviewInterestLevel {
 
     public function __construct($id = null, $name = null) {
         if ($id == null && $name == null) {
-            $this->setId(self::IMPARTIAL);
-            $this->setName('Impartial');
+            $this->setId(self::NOT_SPECIFIED);
+            $this->setName('Not Specified');
         } else {
             $this->setId($id);
             $this->setName($name);

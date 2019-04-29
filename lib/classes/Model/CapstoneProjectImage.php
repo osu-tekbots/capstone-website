@@ -11,6 +11,8 @@ class CapstoneProjectImage {
 
     /** @var string */
     private $id;
+    /** @var string */
+    private $projectId;
     /** @var CapstoneProject */
     private $project;
     /** @var string */
@@ -104,5 +106,23 @@ class CapstoneProjectImage {
      */
     public function getIsDefault() {
         return $this->isDefault;
+    }
+
+    /**
+     * Get the value of projectId
+     */ 
+    public function getProjectId() {
+        return $this->projectId;
+    }
+
+    /**
+     * Set the value of projectId
+     *
+     * @return  self
+     */ 
+    public function setProjectId($projectId) {
+        $this->projectId = $projectId;
+
+        return $this;
     }
 }

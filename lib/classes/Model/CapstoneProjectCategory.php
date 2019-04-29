@@ -5,6 +5,10 @@ namespace Model;
  * Data class representing an CapstoneProjectCategory enumeration
  */
 class CapstoneProjectCategory {
+    const NONE = 1;
+    const ELECTRICAL_ENG = 2;
+    const COMP_SCI = 3;
+    const EECS = 4;
     
     /** @var integer */
     private $id;
@@ -18,17 +22,21 @@ class CapstoneProjectCategory {
      * @param integer $id the ID of the CapstoneProjectCategory. This should come directly from the database.
      * @param string $name the name associated with the CapstoneProjectCategory
      */
-    public function __construct($id, $name) {
-        $this->setId($id);
-        $this->setName($name);
+    public function __construct($id = null, $name = null) {
+        if ($id == null && $name == null) {
+            $this->setId(self::NONE);
+            $this->setName('None');
+        } else {
+            $this->setId($id);
+            $this->setName($name);
+        }
     }
     
 
     /**
      * Get the value of id
      */ 
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -37,8 +45,7 @@ class CapstoneProjectCategory {
      *
      * @return  self
      */ 
-    public function setId($id)
-    {
+    public function setId($id) {
         $this->id = $id;
 
         return $this;
@@ -47,8 +54,7 @@ class CapstoneProjectCategory {
     /**
      * Get the value of name
      */ 
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
 
@@ -57,8 +63,7 @@ class CapstoneProjectCategory {
      *
      * @return  self
      */ 
-    public function setName($name)
-    {
+    public function setName($name) {
         $this->name = $name;
 
         return $this;

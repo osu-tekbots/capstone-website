@@ -10,7 +10,10 @@ class CapstoneProject {
 
     /** @var string */
     private $id;
-	
+    
+    /** @var string */
+    private $proposerId;
+
     /** @var User */
     private $proposer;
 	
@@ -94,18 +97,18 @@ class CapstoneProject {
     public function __construct($id = null) {
         if ($id == null) {
             $id = IdGenerator::generateSecureUniqueId();
+            $this->setCompensation(new CapstoneProjectCompensation());
+            $this->setCategory(new CapstoneProjectCategory());
+            $this->setType(new CapstoneProjectType());
+            $this->setFocus(new CapstoneProjectFocus());
+            $this->setCop(new CapstoneProjectCop());
+            $this->setNdaIp(new CapstoneProjectNDAIP());
+            $this->setStatus( new CapstoneProjectStatus());
+            $this->setDateCreated(new \DateTime());
+            $this->setIsHidden(true);
+            $this->setArchived(false);
         }
         $this->setId($id);
-        $this->setCompensation(new CapstoneProjectCompensation(1, 'None'));
-        $this->setCategory(new CapstoneProjectCategory(3, 'EECS'));
-        $this->setType(new CapstoneProjectType(1, 'Capstone'));
-        $this->setFocus(new CapstoneProjectFocus(1, 'Research'));
-        $this->setCop(new CapstoneProjectCop(1, 'None'));
-        $this->setNdaIp(new CapstoneProjectNDAIP(1, 'No Agreement Required'));
-        $this->setStatus( new CapstoneProjectStatus(1, 'Created'));
-        $this->setDateCreated(new \DateTime());
-        $this->setIsHidden(true);
-        $this->setArchived(false);
     }
 
     /**
@@ -572,6 +575,24 @@ class CapstoneProject {
      */ 
     public function setDateUpdated($dateUpdated) {
         $this->dateUpdated = $dateUpdated;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of proposerId
+     */ 
+    public function getProposerId() {
+        return $this->proposerId;
+    }
+
+    /**
+     * Set the value of proposerId
+     *
+     * @return  self
+     */ 
+    public function setProposerId($proposerId) {
+        $this->proposerId = $proposerId;
 
         return $this;
     }
