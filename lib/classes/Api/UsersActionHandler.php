@@ -72,6 +72,29 @@ class UsersActionHandler extends ActionHandler {
     }
 
     /**
+     * Request handler for updating the user type after a user has logged in for the first time.
+     *
+     * @return void
+     */
+    function handleUpdateUserType() {
+        $userId = $this->getFromBody('userId');
+        $typeId = $this->getFromBody('typeId');
+
+        $user = $this->dao->getUser($userId);
+        // TODO: handle case when user is not found
+
+        $user->getType()->setId($typeId);
+
+        $ok = $this->dao->updateUser($user);
+        if(!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to set user type'));
+        }
+
+        $this->respond(new Response(Response::OK, 'Successfully set user type'));
+
+    }
+
+    /**
      * Handles the HTTP request on the API resource. 
      * 
      * This effectively will invoke the correct action based on the `action` parameter value in the request body. If
@@ -89,6 +112,9 @@ class UsersActionHandler extends ActionHandler {
 
             case 'saveProfile':
                 $this->saveUserProfile();
+
+            case 'updateUserType':
+                $this->handleUpdateUserType();
 
             default:
                 $this->respond(new Response(Response::BAD_REQUEST, 'Invalid action on user resource'));
