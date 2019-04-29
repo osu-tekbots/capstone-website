@@ -19,7 +19,7 @@ if ($masqerading) {
     $user = $dao->getUser($_SESSION['userID']);
 }
 
-$action = $_POST['action'];
+$action = isset($_POST['action']) ? $_POST['action'] : '';
 
 switch ($action) {
     case 'start':
