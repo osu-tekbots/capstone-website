@@ -103,44 +103,44 @@ class ProjectsActionHandler extends ActionHandler {
      * @return void
      */
     public function handleSaveProject() {
-        $this->requireParam('id');
-        $this->requireParam('typeId');
-        $this->requireParam('compensationId');
-        $this->requireParam('focusId');
-        $this->requireParam('ndaIpId');
-        $this->requireParam('additionalEmails');
-        $this->requireParam('comments');
-        $this->requireParam('dateStart');
-        $this->requireParam('dateEnd');
-        $this->requireParam('description');
-        $this->requireParam('motivation');
-        $this->requireParam('objectives');
-        $this->requireParam('videoLink');
-        $this->requireParam('websiteLink');
+        $id = $this->getFromBody('id');
+        $title = $this->getFromBody('title');
+        $typeId = $this->getFromBody('typeId');
+        $compensationId = $this->getFromBody('compensationId');
+        $focusId = $this->getFromBody('focusId');
+        $ndaIpId = $this->getFromBody('ndaIpId');
+        $additionalEmails = $this->getFromBody('additionalEmails');
+        $comments = $this->getFromBody('comments');
+        $dateStart = $this->getFromBody('dateStart');
+        $dateEnd = $this->getFromBody('dateEnd');
+        $description = $this->getFromBody('description');
+        $motivation = $this->getFromBody('motivation');
+        $objectives = $this->getFromBody('objectives');
+        $videoLink = $this->getFromBody('videoLink');
+        $websiteLink = $this->getFromBody('websiteLink');
         // TODO: handle keywords
 
-        $body = $this->requestBody;
-
-        $project = $this->projectsDao->getCapstoneProject($body['id']);
+        $project = $this->projectsDao->getCapstoneProject($id);
         // TODO: handle case when project is not found
 
-        $dateStart = $body['dateStart'] != '' ? new \DateTime($body['dateStart']) : null;
-        $dateEnd = $body['dateEnd'] != '' ? new \DateTime($body['dateEnd']) : null;
+        $dateStart = $dateStart != '' ? new \DateTime($dateStart) : null;
+        $dateEnd = $dateEnd != '' ? new \DateTime($dateEnd) : null;
 
-        $project->setAdditionalEmails($body['additionalEmails'])
-            ->setProposerComments($body['comments'])
+        $project->setTitle($title)
+            ->setAdditionalEmails($additionalEmails)
+            ->setProposerComments($comments)
             ->setDateStart($dateStart)
             ->setDateEnd($dateEnd)
-            ->setDescription($body['description'])
-            ->setMotivation($body['motivation'])
-            ->setObjectives($body['objectives'])
-            ->setVideoLink($body['videoLink'])
-            ->setWebsiteLink($body['websiteLink']);
+            ->setDescription($description)
+            ->setMotivation($motivation)
+            ->setObjectives($objectives)
+            ->setVideoLink($videoLink)
+            ->setWebsiteLink($websiteLink);
 
-        $project->getCompensation()->setId($body['compensationId']);
-        $project->getFocus()->setId($body['focusId']);
-        $project->getNdaIp()->setId($body['ndaIpId']);
-        $project->getType()->setId($body['typeId']);
+        $project->getCompensation()->setId($compensationId);
+        $project->getFocus()->setId($focusId);
+        $project->getNdaIp()->setId($ndaIpId);
+        $project->getType()->setId($typeId);
 
         $project->setDateUpdated(new \DateTime());
 
