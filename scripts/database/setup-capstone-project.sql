@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS capstone_project_image (
 CREATE TABLE IF NOT EXISTS capstone_keyword (
     ck_id INT NOT NULL AUTO_INCREMENT,
     ck_name VARCHAR(128) NOT NULL,
-    ck_parent_ct_id INT,
+    ck_parent_ck_id INT,
     ck_approved BOOLEAN NOT NULL,
 
     PRIMARY KEY (ck_id),
@@ -112,11 +112,11 @@ CREATE TABLE IF NOT EXISTS capstone_keyword (
 );
 
 CREATE TABLE IF NOT EXISTS capstone_keyword_for (
-    ctk_ct_id INT NOT NULL,
-    ctk_entity_id CHAR(16) NOT NULL,
+    ckf_ck_id INT NOT NULL,
+    ckf_entity_id CHAR(16) NOT NULL,
 
-    PRIMARY KEY (ctk_ct_id, ctf_cp_id),
-    FOREIGN KEY (ctk_ct_id) REFERENCES capstone_keyword (ct_id)
+    PRIMARY KEY (ckf_ck_id, ckf_entity_id),
+    FOREIGN KEY (ckf_ck_id) REFERENCES capstone_keyword (ck_id)
 );
 
 CREATE TABLE IF NOT EXISTS capstone_project_group (

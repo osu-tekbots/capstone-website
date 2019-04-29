@@ -15,7 +15,7 @@ INSERT INTO user_auth_provider (uap_id, uap_name) VALUES
     (1, 'None'), (2, 'ONID'), (3, 'Google'), (4, 'Microsoft');
 
 INSERT INTO capstone_interest_level (cil_id, cil_name) VALUES 
-    (1, 'Desireable'), (2, 'Undesireable'), (3, 'Impartial');
+    (1, 'Not Specified'), (2, 'Impartial'), (3, 'Desireable'), (4, 'Undesireable');
 
 INSERT INTO capstone_application_status (cas_id, cas_name) VALUES 
     (1, 'Started'), (2, 'Submitted'), (3, 'Accepted'), (4, 'Closed');
@@ -30,7 +30,7 @@ INSERT INTO capstone_project_type (cpt_id, cpt_name) VALUES
     (1, 'Capstone'), (2, 'Long-term'), (3, 'Student Club Project');
 
 INSERT INTO capstone_project_focus (cpf_id, cpf_name) VALUES 
-    (1, 'Research'), (2, 'Development'), (3, 'Research & Development');
+    (1, 'None'), (2, 'Research'), (3, 'Development'), (4, 'Research & Development');
 
 -- TODO: get additional seeds for the communities of practice
 INSERT INTO capstone_project_cop (cpcop_id, cpcop_name) VALUES  
