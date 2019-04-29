@@ -1,34 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-
-
-	<?php include_once('../includes/header.php'); ?>
-
-	<!-- Custom styles for this template-->
-  <link href="../assets/css/sb-admin.css" rel="stylesheet">
-	<title>Admin Control Users</title>
-</head>
-
-<?php require_once('../db/dbManager.php'); ?>
-<?php require_once('../modules/createCards.php'); ?>
-<?php //require_once('../modules/redirect.php'); ?>
-
 <?php
-if($_SESSION['accessLevel'] != 'Admin'){
-	echo('<script type="text/javascript">alert("You are not authorized to be here!")</script>');
-	header("Location: ./index.php"); /* Redirect Browser */
-}
-?>
+use DataAccess\CapstoneProjectsDao;
 
-<body style="background-color:silver">
-	<?php include_once("../modules/navbar.php"); ?>
+session_start();
+
+include_once PUBLIC_FILES . '/lib/shared/authorize.php';
+
+$isAdmin = isset($_SESSION['userID']) && !empty($_SESSION['userID']) 
+	&& isset($_SESSION['accessLevel']) && $_SESSION['accessLevel'] == 'Admin';
+
+allowIf($isAdmin);
+
+$projectsDao = new CapstoneProjectsDao($dbConn, $logger);
+
+include_once PUBLIC_FILES . '/modules/cards.php';
+
+$title = 'Admin Project Control';
+$css = array(
+    'assets/css/sb-admin.css'
+);
+include_once PUBLIC_FILES . '/modules/header.php';
+
+?>
+<br/>
+<div style="background-color:silver">
 
 	<div id="wrapper">
 	<!-- Sidebar -->
 	<ul class="sidebar navbar-nav">
 		<li class="nav-item">
-			<a class="nav-link" href="adminInterface.php">
+			<a class="nav-link" href="pages/adminInterface.php">
 				<i class="fas fa-fw fa-tachometer-alt"></i>
 				<span>Dashboard</span>
 			</a>
@@ -54,17 +54,17 @@ if($_SESSION['accessLevel'] != 'Admin'){
                      -->
 
 		<li class="nav-item active">
-			<a class="nav-link" href="adminProject.php">
+			<a class="nav-link" href="pages/adminProject.php">
 				<i class="fas fa-fw fa-chart-area"></i>
 				<span>Projects</span></a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" href="adminUser.php">
+			<a class="nav-link" href="pages/adminUser.php">
 				<i class="fas fa-fw fa-table"></i>
 				<span>Users</span></a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" href="adminApplication.php">
+			<a class="nav-link" href="pages/adminApplication.php">
 				<i class="fas fa-fw fa-file-invoice"></i>
 				<span>Applications</span></a>
 		</li>
@@ -107,10 +107,11 @@ if($_SESSION['accessLevel'] != 'Admin'){
 							<select class="form-control" id="keywordFilterSelect" onchange="filterSelectChanged(this)">
 								<option></option>
 								<?php
-									$result = getKeywords();
-									while($row = $result->fetch_assoc()){
-										echo '<option>' . $row['name'] . '</option>';
-									}
+								// TODO: fix keywords
+								// $result = getKeywords();
+								// while ($row = $result->fetch_assoc()) {
+								//     echo '<option>' . $row['name'] . '</option>';
+								// }
 								?>
 							</select>
 						</div>
@@ -120,23 +121,27 @@ if($_SESSION['accessLevel'] != 'Admin'){
 						<div class="form-group">
 							<label for="projectTypeFilterSelect">Filter by Project Type</label>
 							<select class="form-control" id="projectTypeFilterSelect" onchange="filterSelectChanged(this)">
-								<option></option>
-								<option>Capstone</option>
-								<option>Internship</option>
-								<option>Long Term</option>
-								<option>Other</option>
+								<?php
+								$types = $projectsDao->getCapstoneProjectTypes();
+								if ($types) {
+								    foreach ($types as $t) {
+								        $name = $t->getName();
+								        echo "<option>$name</option>";
+								    }
+								}
+								?>
 							</select>
 						</div>
 						<div class="form-group">
 							<label for="yearFilterSelect">Filter by Year</label>
 							<select class="form-control" id="yearFilterSelect" onchange="filterSelectChanged(this)">
 								<option></option>
-								<option><?php echo date("Y"); ?></option>
-								<option><?php echo date("Y") - 1; ?></option>
-								<option><?php echo date("Y") - 2; ?></option>
-								<option><?php echo date("Y") - 3; ?></option>
-								<option><?php echo date("Y") - 4; ?></option>
-								<option><?php echo date("Y") - 5; echo " and earlier"; ?></option>
+								<option><?php echo date('Y'); ?></option>
+								<option><?php echo date('Y') - 1; ?></option>
+								<option><?php echo date('Y') - 2; ?></option>
+								<option><?php echo date('Y') - 3; ?></option>
+								<option><?php echo date('Y') - 4; ?></option>
+								<option><?php echo date('Y') - 5; echo ' and earlier'; ?></option>
 							</select>
 						</div>
 					</div>
@@ -145,11 +150,11 @@ if($_SESSION['accessLevel'] != 'Admin'){
 						Sort By...
 						<div class="custom-control custom-radio">
 						  <input type="radio" id="sortTitleAscRadio" value="sortTitleAsc" name="sortRadio" class="custom-control-input">
-						  <label class="custom-control-label" for="sortTitleAscRadio">Title ASC (A..Z)</label>
+						  <label class="custom-control-label" for="sortTitleAscRadio">Title (A..Z)</label>
 						</div>
 						<div class="custom-control custom-radio">
 						  <input type="radio" id="sortTitleDescRadio" value="sortTitleDesc" name="sortRadio" class="custom-control-input">
-						  <label class="custom-control-label" for="sortTitleDescRadio">Title DESC (Z..A)</label>
+						  <label class="custom-control-label" for="sortTitleDescRadio">Title (Z..A)</label>
 						</div>
 						<div class="custom-control custom-radio">
 						  <input type="radio" id="sortDateDescRadio" value="sortDateDesc" name="sortRadio" class="custom-control-input">
@@ -160,15 +165,16 @@ if($_SESSION['accessLevel'] != 'Admin'){
 						  <label class="custom-control-label" for="sortDateAscRadio">Date (Oldest)</label>
 						</div>
 					</div>
-						<button class="btn btn-lg btn-outline-danger capstone-nav-btn" type="button" data-toggle="modal" id="toggleDeleteProjectBtn">Toggle Delete Project Button</button>
-						<div id="deleteText" class="adminText" style="color: red;">Project Deleted: </div>
 				</div>
 			</div>
 
 			<div class="col-sm-9 scroll jumbotron capstoneJumbotron">
 				<div class="card-columns capstoneCardColumns" id="projectCardGroup">
 					<!-- createCardGroup() is found in ../modules/createCards.php -->
-					<?php createCardGroup(false, true); ?>
+					<?php 
+					$projects = $projectsDao->getCapstoneProjectsForAdmin();
+					renderProjectCardGroup($projects, false); 
+					?>
 				</div>
 			</div>
 
@@ -176,16 +182,10 @@ if($_SESSION['accessLevel'] != 'Admin'){
 
 	</div>
 	</div>
-	<?php include_once("../modules/footer.php"); ?>
 
-</body>
+</div>
 
 <script type="text/javascript">
-
-$('#toggleDeleteProjectBtn').on('click', function(){
-	$(".deleteProjectBtn").toggle();
-
-});
 
 
 
@@ -355,5 +355,7 @@ function filterSelectChanged(filterObject){
 
 </script>
 
+<?php 
+include_once PUBLIC_FILES . '/modules/footer.php'; 
+?>
 
-</html>
