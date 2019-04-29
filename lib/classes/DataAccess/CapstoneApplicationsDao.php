@@ -275,8 +275,8 @@ class CapstoneApplicationsDao {
      * @return \Model\CapstoneApplication the extracted application
      */
     public static function ExtractApplicationFromRow($row, $includeProject = false) {
-        $app = (new CapstoneApplication($row['ca_id']))
-            ->setStudentId($row['ca_u_id'])
+        $app = new CapstoneApplication($row['ca_id']);
+        $app->setStudentId($row['ca_u_id'])
             ->setCapstoneProjectId($row['ca_cp_id'])
             ->setStudent(UsersDao::ExtractUserFromRow($row))
             ->setJustification($row['ca_justification'])

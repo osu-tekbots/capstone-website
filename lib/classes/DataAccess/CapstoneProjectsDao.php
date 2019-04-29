@@ -622,8 +622,8 @@ class CapstoneProjectsDao {
      * @return \Model\CapstoneProject
      */
     public static function ExtractCapstoneProjectFromRow($row, $userInRow = false) {
-        $project = (new CapstoneProject($row['cp_id']))
-            ->setProposerId($row['cp_u_id'])
+        $project = new CapstoneProject($row['cp_id']);
+        $project->setProposerId($row['cp_u_id'])
             ->setTitle($row['cp_title'])
             ->setMotivation($row['cp_motivation'])
             ->setDescription($row['cp_description'])
@@ -662,8 +662,8 @@ class CapstoneProjectsDao {
      * @return \Model\CapstoneProjectImage the image extracted from the information
      */
     public static function ExtractCapstoneProjectImageFromRow($row) {
-        return (new CapstoneProjectImage($row['cpi_id']))
-            ->setName($row['cpi_name'])
+        $image = new CapstoneProjectImage($row['cpi_id']);
+        $image->setName($row['cpi_name'])
             ->setIsDefault($row['cpi_is_default'] ? true : false);
     }
 

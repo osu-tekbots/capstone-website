@@ -270,8 +270,8 @@ class UsersDao {
      * @return \Model\User
      */
     public static function ExtractUserFromRow($row) {
-        return (new User($row['u_id']))
-            ->setType(self::ExtractUserTypeFromRow($row, true))
+        $user = new User($row['u_id']);
+        $user->setType(self::ExtractUserTypeFromRow($row, true))
             ->setFirstName($row['u_fname'])
             ->setLastName($row['u_lname'])
             ->setSalutation(self::ExtractUserSalutationFromRow($row, true))
