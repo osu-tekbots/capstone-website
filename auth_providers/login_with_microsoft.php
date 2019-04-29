@@ -3,6 +3,8 @@ use DataAccess\UsersDao;
 use Model\User;
 use Model\UserAuthProvider;
 
+session_start();
+
 require('http.php');
 require('oauth_client.php');
 
@@ -31,52 +33,56 @@ $client->client_secret = $authProviders['microsoft']['secret'];
 
 $client->scope = 'wl.basic wl.emails';
 if (($success = $client->Initialize())) {
-	if (($success = $client->Process())) {
-		if (strlen($client->authorization_error)) {
-			$client->error = $client->authorization_error;
-			$success = false;
-		} elseif (strlen($client->access_token)) {
-			$success = $client->CallAPI(
+    if (($success = $client->Process())) {
+        if (strlen($client->authorization_error)) {
+            $client->error = $client->authorization_error;
+            $success = false;
+        } elseif (strlen($client->access_token)) {
+            $success = $client->CallAPI(
 				'https://apis.live.net/v5.0/me',
 				'GET', array(), array('FailOnAccessError'=>true), $user);
-		}
-	}
-	$success = $client->Finalize($success);
+        }
+    }
+    $success = $client->Finalize($success);
 }
 if ($client->exit) {
-	exit;
+    exit;
 }
 if ($success) {
-	$authProviderProvidedId = $user->id;
+    $authProviderProvidedId = $user->id;
 
-	$dao = new UsersDao($dbConn, $logger);
+    $dao = new UsersDao($dbConn, $logger);
 
-	$u = $dao->getUserByAuthProviderProvidedId($authProviderProvidedId);
-	if ($u) {
-		$_SESSION['userID'] = $u->getId();
-		$_SESSION['accessLevel'] = $u->getType()->getName();
-		$_SESSION['newUser'] = false;
-		// Redirect to the projects page
-		echo "<script>window.location.replace('../pages/myProjects.php')</script>";
-		die();
-	} else {
-		$nameSegments = explode(' ', $user->name);
-		$nameSegmentsCount = count($nameSegments);
-		$u = new User();
-		$u->setAuthProvider(new UserAuthProvider(UserAuthProvider::MICROSOFT, 'Microsoft'))
-		->setAuthProviderId($authProviderProvidedId)
-		->setFirstName($nameSegments[0])
-		->setLastName($nameSegments[$nameSegmentsCount - 1])
-		->setEmail($user->email);
-		$ok = $dao->addNewUser($u);
-		// TODO: handle error
+    $u = $dao->getUserByAuthProviderProvidedId($authProviderProvidedId);
+    if ($u) {
+        $_SESSION['userID'] = $u->getId();
+        $_SESSION['accessLevel'] = $u->getType()->getName();
+        $_SESSION['newUser'] = false;
+        // Redirect to the projects page
+        echo "<script>window.location.replace('../pages/myProjects.php')</script>";
+        die();
+    } else {
+        $nameSegments = explode(' ', $user->name);
+        $nameSegmentsCount = count($nameSegments);
+        $u = new User();
+        $u->setAuthProvider(new UserAuthProvider(UserAuthProvider::MICROSOFT, 'Microsoft'))
+			->setAuthProviderId($authProviderProvidedId)
+			->setFirstName($nameSegments[0])
+			->setLastName($nameSegments[$nameSegmentsCount - 1])
+			->setEmail($user->email);
+        $ok = $dao->addNewUser($u);
+        // TODO: handle error
 
-		// Redirect to login page, which will now have a new user portal.
-		echo "<script>window.location.replace('../pages/login.php')</script>";
-		die();
-	}
+        $_SESSION['userID'] = $u->getId();
+        $_SESSION['accessLevel'] = $u->getType()->getName();
+        $_SESSION['newUser'] = true;
+
+        // Redirect to login page, which will now have a new user portal.
+        echo "<script>window.location.replace('../pages/login.php')</script>";
+        die();
+    }
 } else {
-	?>
+    ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
@@ -88,6 +94,6 @@ if ($success) {
 </body>
 </html>
 <?php
-	}
+}
 
 ?>
