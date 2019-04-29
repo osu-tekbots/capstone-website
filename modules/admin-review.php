@@ -9,6 +9,7 @@
  */
 function renderAdminReviewPanel($project, $categories) {
 
+    $pId = $project->getId();
     $pStatusName = $project->getStatus()->getName();
     $pCategoryId = $project->getCategory()->getId();
     $pCategoryName = $project->getCategory()->getName();
@@ -41,6 +42,8 @@ function renderAdminReviewPanel($project, $categories) {
         $options .= "<option $selected value='$id'>$name</option>";
     }
 
+    $viewButtonStyle = $pIsHidden ? 'display: none;' : '';
+
     echo "
     <br/>
     <div class='row'>
@@ -57,18 +60,25 @@ function renderAdminReviewPanel($project, $categories) {
                 $options
             </select>
             <center>
-                <button class='btn btn-lg btn-primary admin-btn' type='button' 
-                    id='adminViewProjectBtn'>View Project &raquo</button>
+                <a href='pages/viewSingleProject.php?id=$pId'>
+                    <button class='btn btn-lg btn-primary admin-btn' type='button' style='$viewButtonStyle' 
+                        id='adminViewProjectBtn'>
+                        View Project &raquo
+                    </button>
+                </a>
                 <button class='btn btn-lg btn-success admin-btn' type='button' 
                     id='adminApproveProjectBtn'>Approve Project</button>
                 <button class='btn btn-lg btn-danger admin-btn' type='button' 
                     id='adminUnapproveProjectBtn'>Reject/Unapprove Project</button>
+                <br/>
                 <button class='btn btn-lg btn-outline-danger admin-btn' type='button' 
                     id='adminMakeProjectPrivateBtn'>Make Project Private</button>
                 <button class='btn btn-lg btn-outline-info admin-btn' type='button' 
                     id='adminMakeProjectNotPrivateBtn'>Make Project Public</button>
-                <button class='btn btn-lg btn-primary admin-btn' type='button' 
-                    id='adminReturnBtn'>Return &raquo</button>
+                <a href='pages/adminProject.php'>
+                    <button class='btn btn-lg btn-primary admin-btn' type='button' 
+                        id='adminReturnBtn'>Return &raquo</button>
+                </a>
             </center>
             <div id='approvedText' class='adminText' 
                 style='color: green;'>Project Approved!</div>

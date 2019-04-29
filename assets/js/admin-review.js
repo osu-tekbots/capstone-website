@@ -30,18 +30,6 @@ function onProjectCategorySelect() {
 }
 $('#projectCategorySelect').change(onProjectCategorySelect);
 
-$('#adminViewProjectBtn').on('click', function() {
-    projectID = getProjectId();
-
-    url = './viewSingleProject.php?id=' + projectID;
-    window.location.replace(url);
-});
-
-$('#adminReturnBtn').on('click', function() {
-    url = './adminProject.php';
-    window.location.replace(url);
-});
-
 /**
  * Handler for click event on the 'Approve Project' button for admin project views.
  */
@@ -98,6 +86,7 @@ function onMakeProjectPublic() {
     api.post('/projects.php', body)
         .then(res => {
             snackbar(res.message, 'success');
+            $('#adminViewProjectBtn').show();
         })
         .catch(err => {
             snackbar(err.message, 'error');
@@ -117,6 +106,7 @@ function onMakeProjectPrivate() {
     api.post('/projects.php', body)
         .then(res => {
             snackbar(res.message, 'success');
+            $('#adminViewProjectBtn').hide();
         })
         .catch(err => {
             snackbar(err.message, 'error');
