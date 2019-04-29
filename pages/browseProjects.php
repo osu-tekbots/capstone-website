@@ -7,7 +7,7 @@ include_once PUBLIC_FILES . '/modules/cards.php';
 
 $dao = new CapstoneProjectsDao($dbConn, $logger);
 
-$projects = $dao->getManyCapstoneProjects();
+$projects = $dao->getBrowsableCapstoneProjects();
 
 ?> 
 <br /><br />
