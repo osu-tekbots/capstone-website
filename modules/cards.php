@@ -63,9 +63,12 @@ function renderProjectCardGroup($projects, $browsing = false) {
         }
 
         $dateUpdated = $p->getDateUpdated()->format('Y-m-d');
-        $lastUpdated = "<br/>Last Updated: $dateUpdated";
+		$lastUpdated = "<br/>Last Updated: $dateUpdated";
 		
-        renderProjectCard($id, $title, $description, $details, $image, $status, $category, $lastUpdated, $numCardsCreated, $browsing);
+		$published = !$p->getIsHidden();
+		
+		renderProjectCard($id, $title, $description, $details, $image, $status, $category, $lastUpdated, 
+			$numCardsCreated, $browsing, $published);
 
         $numCardsCreated++;
     }
@@ -86,9 +89,9 @@ function renderProjectCardGroup($projects, $browsing = false) {
  * @param boolean $browsing whether to hide or show the edit and delete buttons. A value of true hides.
  * @return void
  */
-function renderProjectCard($id, $title, $description, $details, $imageLink, $status, $category, $lastUpdated, $num, $browsing) {
+function renderProjectCard($id, $title, $description, $details, $imageLink, $status, $category, $lastUpdated, $num, $browsing, $published) {
     $statusColor = ($status == 'Awaiting Approval' || $status == 'Rejected') ? 'red' : 'inherit';
-    $viewButton = createLinkButton("pages/viewSingleProject.php?id=$id", 'View');
+    $viewButton = $published ? createLinkButton("pages/viewSingleProject.php?id=$id", 'View') : '';
 	$editButton = !$browsing ? createLinkButton("pages/editProject.php?id=$id", 'Edit') : '';
 	$deleteButton = !$browsing ? createProjectDeleteButton($id, $num) : '';
 
