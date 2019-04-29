@@ -77,7 +77,8 @@ class ActionHandler {
     public function respond($response) {
         $this->logger->info('Sending HTTP response: ' . $response->getCode() . ': ' . $response->getMessage());
         \header('Content-Type: application/json; charset=UTF-8');
-        \http_response_code($response->getCode());
+        $code = $response->getCode();
+        header("X-PHP-Response-Code: $code", true, $code);
         echo $response->serialize();
         exit(0);
     }
