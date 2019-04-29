@@ -69,7 +69,7 @@ class UsersDao {
             $sql .= 'WHERE u_id = :id AND u_ut_id = ut_id AND u_us_id = us_id AND u_uap_id = uap_id';
             $params = array(':id' => $id);
             $result = $this->conn->query($sql, $params);
-            if (!$result || \count($result) == 0) {
+            if (\count($result) == 0) {
                 return false;
             }
 
@@ -288,6 +288,8 @@ class UsersDao {
             ->setDateCreated(new \DateTime($row['u_date_created']))
             ->setDateUpdated(new \DateTime($row['u_date_updated']))
             ->setDateLastLogin(new \DateTime($row['u_date_last_login']));
+        
+        return $user;
     }
 
     /**
