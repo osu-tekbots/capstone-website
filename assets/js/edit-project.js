@@ -90,13 +90,14 @@ updateEditProjectLayout();
  * 'Upload Image' file input on the edit project page.
  */
 function uploadProjectImage() {
-    console.log('Uploading image');
     let data = new FormData();
     data.append('action', 'uploadImage');
     data.append('id', getProjectId());
     data.append('image', $('#imgInp').prop('files')[0]);
 
-    api.post('/upload.php', data, true).catch(err => {
+    api.post('/upload.php', data, true).then(res => {
+        // TODO: display newly uploaded image in image picker
+    }).catch(err => {
         snackbar(err.message, 'error');
     });
 }
