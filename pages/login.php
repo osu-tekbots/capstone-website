@@ -115,7 +115,6 @@ $isLoggedIn = isset($_SESSION['userID']) && !empty($_SESSION['userID']);
                 <br>
                 <img src="assets/img/loginImage.jpg" alt="icon" />
                 <br/>
-                <a href="pages/myProfile.php">Edit your profile</a>.
             </center>
 			';
 		}
