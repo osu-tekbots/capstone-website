@@ -2,6 +2,10 @@
 namespace Model;
 
 class UserAuthProvider {
+    const NONE = 1;
+    const ONID = 2;
+    const GOOGLE = 3;
+    const MICROSOFT = 4;
 
     /** @var integer */
     private $id;
@@ -9,16 +13,20 @@ class UserAuthProvider {
     /** @var string */
     private $name;
 
-    public function __construct($id, $name) {
-        $this->setId($id);
-        $this->setName($name);
+    public function __construct($id = null, $name = null) {
+        if ($id == null && $name == null) {
+            $this->setId(self::NONE);
+            $this->setName('None');
+        } else {
+            $this->setId($id);
+            $this->setName($name);
+        }
     }
 
     /**
      * Get the value of id
      */ 
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -27,8 +35,7 @@ class UserAuthProvider {
      *
      * @return  self
      */ 
-    public function setId($id)
-    {
+    public function setId($id) {
         $this->id = $id;
 
         return $this;
@@ -37,8 +44,7 @@ class UserAuthProvider {
     /**
      * Get the value of name
      */ 
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
 
@@ -47,8 +53,7 @@ class UserAuthProvider {
      *
      * @return  self
      */ 
-    public function setName($name)
-    {
+    public function setName($name) {
         $this->name = $name;
 
         return $this;

@@ -197,4 +197,70 @@ class ConfigManager {
     public function getConfig() {
         return $this->config;
     }
+
+    /**
+     * Fetches an optional subject tag to prefix to email subjects.
+     *
+     * @return string|null the email address on success, null otherwise
+     */
+    public function getEmailSubjectTag() {
+        if(\array_key_exists('email', $this->config)) {
+            return $this->config['email']['subject_tag'];
+        }
+        return null;
+    }
+
+    /**
+     * Fetches the from address for emails sent from this server.
+     *
+     * @return string|boolean the email address on success, false otherwise
+     */
+    public function getEmailFromAddress() {
+        if(\array_key_exists('email', $this->config)) {
+            return $this->config['email']['from_address'];
+        }
+        return false;
+    }
+
+    /**
+     * Fetches the admin email addresses for the server.
+     *
+     * @return string|boolean the email address on success, false otherwise
+     */
+    public function getEmailAdminAddresses() {
+        if(\array_key_exists('email', $this->config)) {
+            return $this->config['email']['admin_addresses'];
+        }
+        return false;
+    }
+
+    /**
+     * Fetches the configuration associated with the provided key.
+     * 
+     * This function allows for nested keys. The keys must be separated by a period (.). If there is not value for
+     * the provided key, then null is returned.
+     *
+     * @param string $key the key of the value. Can be a nested key separated by periods (.)
+     * @return mixed[]|null the value if it exists, null otherwise
+     */
+    public function get($key) {
+        $parts = explode('.', $key);
+
+        $result = null;
+        if(isset($this->config[$parts[0]])) {
+            $result = $this->config[$parts[0]];
+        } else {
+            return null;
+        }
+        for($i = 1; $i < \count($parts); $i++) {
+            if(isset($result[$parts[$i]])) {
+                $result = $result[$parts[$i]];
+            } else {
+                return null;
+            }
+        }
+
+        return $result;
+
+    }
 }
