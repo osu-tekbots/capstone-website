@@ -22,7 +22,13 @@ function request(method, url, data, encoded) {
     return new Promise((resolve, reject) => {
         let xhr = new XMLHttpRequest();
         xhr.onload = function () {
-            let data = JSON.parse(this.response);
+            let data;
+            try {        
+                data = JSON.parse(this.response);
+            } catch(err) {
+                console.log(err);
+                reject(new Error('Failed to parse response from server'));
+            }
             if (this.status >= 200 && this.status < 300) {
                 return resolve(data);
             } else {
