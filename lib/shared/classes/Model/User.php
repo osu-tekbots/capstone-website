@@ -146,6 +146,15 @@ class User {
     }
 
     /**
+     * Returns the combination of the user's first and last name.
+     *
+     * @return string
+     */
+    public function getFullName() {
+        return $this->getFirstName() . ' ' . $this->getLastName();
+    }
+
+    /**
      * Get the value of salutation
      */ 
     public function getSalutation() {

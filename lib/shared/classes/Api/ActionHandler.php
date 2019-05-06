@@ -8,7 +8,7 @@ namespace Api;
 class ActionHandler {
 
     /** @var \Util\Logger */
-    private $logger;
+    protected $logger;
 
     /** @var mixed[] */
     protected $queryString;
@@ -62,8 +62,12 @@ class ActionHandler {
     public function getFromBody($param, $require = true, $message = null) {
         if($require) {
             $this->requireParam($param);
+            return $this->requestBody[$param];
+        } else {
+            // Still check so that we don't get an error
+            return isset($this->requestBody[$param]) ? $this->requestBody[$param] : null;
         }
-        return $this->requestBody[$param];
+        
     }
 
     /**
