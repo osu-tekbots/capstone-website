@@ -25,17 +25,15 @@ class CapstoneApplication {
     /** @var  CapstoneApplicationStatus */
     private $status;
     /** @var CapstoneInterestLevel */
-    private $interestLevel;
+    private $reviewInterestLevel;
     /** @var string */
-    private $proposerComments;
+    private $reviewProposerComments;
     /** @var \DateTime */
     private $dateCreated;
     /** @var \DateTime */
     private $dateUpdated;
     /** @var \DateTime */
     private $dateSubmitted;
-    /** @var CapstoneApplicationReview */
-    private $review;
 
     /**
      * Creates a new instance of a capstone application.
@@ -50,8 +48,7 @@ class CapstoneApplication {
             $id = IdGenerator::generateSecureUniqueId();
             $this->setId($id);
             $this->setStatus(new CapstoneApplicationStatus());
-            $this->setReview(new CapstoneApplicationReview());
-            $this->setInterestLevel(new CapstoneInterestLevel());
+            $this->setReviewInterestLevel(new CapstoneInterestLevel());
             $this->setDateCreated(new \DateTime());
         } else {
             $this->setId($id);
@@ -257,60 +254,6 @@ class CapstoneApplication {
     }
 
     /**
-     * Get the value of review
-     */ 
-    public function getReview() {
-        return $this->review;
-    }
-
-    /**
-     * Set the value of review
-     *
-     * @return  self
-     */ 
-    public function setReview($review) {
-        $this->review = $review;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of interestLevel
-     */ 
-    public function getInterestLevel() {
-        return $this->interestLevel;
-    }
-
-    /**
-     * Set the value of interestLevel
-     *
-     * @return  self
-     */ 
-    public function setInterestLevel($interestLevel) {
-        $this->interestLevel = $interestLevel;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of proposerComments
-     */ 
-    public function getProposerComments() {
-        return $this->proposerComments;
-    }
-
-    /**
-     * Set the value of proposerComments
-     *
-     * @return  self
-     */ 
-    public function setProposerComments($proposerComments) {
-        $this->proposerComments = $proposerComments;
-
-        return $this;
-    }
-
-    /**
      * Get the value of studentId
      */ 
     public function getStudentId() {
@@ -342,6 +285,42 @@ class CapstoneApplication {
      */ 
     public function setCapstoneProjectId($capstoneProjectId) {
         $this->capstoneProjectId = $capstoneProjectId;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of reviewInterestLevel
+     */ 
+    public function getReviewInterestLevel() {
+        return $this->reviewInterestLevel;
+    }
+
+    /**
+     * Set the value of reviewInterestLevel
+     *
+     * @return  self
+     */ 
+    public function setReviewInterestLevel($reviewInterestLevel) {
+        $this->reviewInterestLevel = $reviewInterestLevel;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of reviewProposerComments
+     */ 
+    public function getReviewProposerComments() {
+        return $this->reviewProposerComments;
+    }
+
+    /**
+     * Set the value of reviewProposerComments
+     *
+     * @return  self
+     */ 
+    public function setReviewProposerComments($reviewProposerComments) {
+        $this->reviewProposerComments = $reviewProposerComments;
 
         return $this;
     }

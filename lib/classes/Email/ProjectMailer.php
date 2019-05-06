@@ -26,6 +26,8 @@ class ProjectMailer extends Mailer {
         $pid = $project->getId();
         $title = $project->getTitle();
 
+        $subject = "Project Submitted for Approval";
+
         $NDA_message = $project->getNdaIp()->getId() == CapstoneProjectNDAIP::NO_AGREEMENT_REQUIRED ? '' : '
         If your project requires an NDA and/or IP agreement, it must be indicated at the time the students select the 
         projects.
@@ -68,7 +70,7 @@ class ProjectMailer extends Mailer {
         Oregon State University
         ";
 
-        return $this->sendEmail($project->getProposer()->getEmail(), $subject, $content);
+        return $this->sendEmail($project->getProposer()->getEmail(), $subject, $message);
     }
 
     /**

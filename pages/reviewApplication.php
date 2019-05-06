@@ -1,7 +1,6 @@
 <?php
 use DataAccess\CapstoneApplicationsDao;
-use DataAccess\CapstoneApplicationReviewsDao;
-use Model\CapstoneApplicationReviewInterestLevel;
+use Model\CapstoneInterestLevel;
 
 if(!session_id()) {
 	session_start();
@@ -36,20 +35,20 @@ $minQualifications = $application->getCapstoneProject()->getMinQualifications();
 $prefQualifications = $application->getCapstoneProject()->getPreferredQualifications();
 $firstName = $application->getStudent()->getFirstName();
 $lastName = $application->getStudent()->getLastName();
-$reviewInterest = $application->getInterestLevel()->getId();
-$comments = $application->getProposerComments();
+$reviewInterest = $application->getReviewInterestLevel()->getId();
+$comments = $application->getReviewProposerComments();
 switch($reviewInterest){
-	case CapstoneApplicationReviewInterestLevel::DESIREABLE:
+	case CapstoneInterestLevel::DESIREABLE:
 		$desirableBtnClass = "btn-success";
 		$impartialBtnClass = "btn-outline-secondary";
 		$undesirableBtnClass = "btn-outline-warning";
 		break;
-	case CapstoneApplicationReviewInterestLevel::IMPARTIAL:
+	case CapstoneInterestLevel::IMPARTIAL:
 		$desirableBtnClass = "btn-outline-success";
 		$impartialBtnClass = "btn-secondary";
 		$undesirableBtnClass = "btn-outline-warning";
 		break;
-	case CapstoneApplicationReviewInterestLevel::UNDESIREABLE:
+	case CapstoneInterestLevel::UNDESIREABLE:
 		$desirableBtnClass = "btn-outline-success";
 		$impartialBtnClass = "btn-outline-secondary";
 		$undesirableBtnClass = "btn-warning";
@@ -118,7 +117,7 @@ if($isAdmin) {
 
 					echo "
 					<div style='float: left;'>
-						<h6>Other Projects Applicant has Applied For Additional Projects</h6>
+						<h6>Other Projects Applicant has Applied For</h6>
 						<ul>$projects</ul>
 					</div>
 					";

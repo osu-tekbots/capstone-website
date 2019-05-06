@@ -19,8 +19,6 @@ class ApplicationsActionHandler extends ActionHandler {
     private $mailer;
     /** @var \Util\ConfigManager */
     private $config;
-    /** @var \Util\Logger */
-    private $logger;
 
     /**
      * Constructs a new instance of the action handler for requests on project resources.
@@ -39,7 +37,6 @@ class ApplicationsActionHandler extends ActionHandler {
         $this->usersDao = $usersDao;
         $this->mailer = $mailer;
         $this->config = $config;
-        $this->logger = $logger;
     }
 
     /**

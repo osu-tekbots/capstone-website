@@ -49,10 +49,10 @@ function renderApplicationTable($applications, $isProposer) {
         $appID = $app->getId();
 		
         //Gather relevant application review data.
-        $interestLevel = $isProposer ? $app->getInterestLevel()->getName() : '';
+        $interestLevel = $isProposer ? $app->getReviewInterestLevel()->getName() : '';
         
         //The interestLevel must be selected for an application to have been reviewed.
-        $isReviewed = $app->getInterestLevel()->getId() != CapstoneInterestLevel::NOT_SPECIFIED ? 'Yes' : 'No';
+        $isReviewed = $app->getReviewInterestLevel()->getId() != CapstoneInterestLevel::NOT_SPECIFIED ? 'Yes' : 'No';
         
         if ($isProposer) {
             $title = $appID;
