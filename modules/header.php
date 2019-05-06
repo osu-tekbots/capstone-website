@@ -78,9 +78,15 @@ $buttons = array(
 );
 // Signed in users
 if ($loggedIn) {
-    $buttons['My Projects'] = 'pages/myProjects.php';
+    //Proposer or Admin only
+	if (isset($_SESSION['accessLevel']) && ($_SESSION['accessLevel'] == 'Proposer') || ($_SESSION['accessLevel'] == 'Admin') {
+        $buttons['My Projects'] = 'pages/myProjects.php';
+    }
+	
+	//All user types can view these pages
     $buttons['My Applications'] = 'pages/myApplications.php';
-    $buttons['My Profile'] = 'pages/myProfile.php';
+    $buttons['My Profile'] = 'pages/myProfile.php';\
+    
     // Admin only
     if (isset($_SESSION['accessLevel']) && $_SESSION['accessLevel'] == 'Admin') {
         $buttons['Admin'] = 'pages/adminInterface.php';

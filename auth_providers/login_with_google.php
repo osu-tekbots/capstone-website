@@ -70,7 +70,7 @@ if ($success) {
         $_SESSION['accessLevel'] = $u->getType()->getName();
         $_SESSION['newUser'] = false;
         // Redirect to the projects page
-        echo "<script>window.location.replace('../pages/myProjects.php')</script>";
+        echo "<script>window.location.replace('../pages/browseProjects.php')</script>";
         die();
     } else {
         $nameSegments = explode(' ', $user->name);
