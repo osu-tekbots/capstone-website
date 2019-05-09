@@ -48,7 +48,7 @@ $isLoggedIn = isset($_SESSION['userID']) && !empty($_SESSION['userID']);
       <div class="col-sm-4">
 		<?php
 		//Only show buttons if the user is not logged in.
-		if (!$isLoggedIn) {
+		if ($isLoggedIn) {
 		    echo '
 			<br>
             <hr class="my-4">
