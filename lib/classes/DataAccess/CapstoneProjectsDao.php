@@ -42,14 +42,20 @@ class CapstoneProjectsDao {
      */
     public function getBrowsableCapstoneProjects($offset = 0, $limit = -1) {
         try {
-            $sql = 'SELECT * FROM capstone_project, capstone_project_compensation, capstone_project_category, ';
-            $sql .= 'capstone_project_type, capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, ';
-            $sql .= 'capstone_project_status, user ';
-            $sql .= 'WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id ';
-            $sql .= 'AND cp_cpf_id = cpf_id AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id ';
-            $sql .= 'AND cp_cps_id = cps_id AND cp_u_id = u_id AND cp_is_hidden = :hidden AND cp_cps_id = :status';
+            $sql = '
+            SELECT * 
+            FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+                capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
+            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id 
+                AND cp_cpf_id = cpf_id AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id 
+                AND cp_cps_id = cps_id AND cp_u_id = u_id AND cp_is_hidden = :hidden AND cp_cps_id = :status
+                AND cp_archived = :archived
+            ';
             // TODO: enable pagination with the offset and limit
-            $params = array(':hidden' => false, ':status' => CapstoneProjectStatus::ACCEPTING_APPLICANTS);
+            $params = array(
+                ':hidden' => false, 
+                ':status' => CapstoneProjectStatus::ACCEPTING_APPLICANTS,
+                ':archived' => false);
             $results = $this->conn->query($sql, $params);
 
             $projects = array();
@@ -74,13 +80,15 @@ class CapstoneProjectsDao {
      */
     public function getCapstoneProjectsForUser($userId) {
         try {
-            $sql = 'SELECT * FROM capstone_project, capstone_project_compensation, capstone_project_category, ';
-            $sql .= 'capstone_project_type, capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, ';
-            $sql .= 'capstone_project_status, user ';
-            $sql .= 'WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id ';
-            $sql .= 'AND cp_cpf_id = cpf_id AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id ';
-            $sql .= 'AND cp_cps_id = cps_id AND cp_u_id = u_id AND cp_u_id = :uid';
-            $params = array(':uid' => $userId);
+            $sql = '
+            SELECT * 
+            FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+                capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
+            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+                AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND cp_u_id = u_id 
+                AND cp_u_id = :uid AND cp_archived = :archived
+            ';
+            $params = array(':uid' => $userId, ':archived' => false);
             $results = $this->conn->query($sql, $params);
 
             $projects = array();
@@ -111,12 +119,14 @@ class CapstoneProjectsDao {
             WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
                 AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id
                 AND (u_id = :uid OR (cp_cps_id = :pending OR cp_cps_id = :rejected OR cp_cps_id = :accepting))
+                AND cp_archived = :archived
             ';
             $params = array(
                 ':uid' => $userId,
                 ':pending' => CapstoneProjectStatus::PENDING_APPROVAL,
                 ':rejected' => CapstoneProjectStatus::REJECTED,
-                ':accepting' => CapstoneProjectStatus::ACCEPTING_APPLICANTS
+                ':accepting' => CapstoneProjectStatus::ACCEPTING_APPLICANTS,
+                ':archived' => false
             );
             $results = $this->conn->query($sql, $params);
 
@@ -141,13 +151,18 @@ class CapstoneProjectsDao {
      */
     public function getPendingCapstoneProjects() {
         try {
-            $sql = 'SELECT * FROM capstone_project, capstone_project_compensation, capstone_project_category, ';
-            $sql .= 'capstone_project_type, capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, ';
-            $sql .= 'capstone_project_status, user ';
-            $sql .= 'WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id ';
-            $sql .= 'AND cp_cpf_id = cpf_id AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id ';
-            $sql .= 'AND cp_cps_id = cps_id AND cp_cps_id = :status AND u_id = cp_u_id';
-            $params = array(':status' => CapstoneProjectStatus::PENDING_APPROVAL);
+            $sql = '
+            SELECT * 
+            FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+                capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
+            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+                AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND cp_cps_id = :status 
+                AND u_id = cp_u_id AND cp_archived = :archived
+            ';
+            $params = array(
+                ':status' => CapstoneProjectStatus::PENDING_APPROVAL, 
+                ':archived' => false
+            );
             $results = $this->conn->query($sql, $params);
 
             $projects = array();
@@ -176,13 +191,21 @@ class CapstoneProjectsDao {
     public function getCapstoneProjectStats() {
         try {
             $sql = '
-            SELECT 
-                (SELECT COUNT(*) FROM capstone_project WHERE cp_cps_id = :pending) AS projectsPending,
-                (SELECT COUNT(*) FROM capstone_project WHERE cp_cpc_id = :category) AS projectsNeedingCategoryPlacement
+            SELECT (   
+                SELECT COUNT(*) 
+                FROM capstone_project 
+                WHERE cp_cps_id = :pending AND cp_archived = :archived
+            ) AS projectsPending,
+                (
+                SELECT COUNT(*) 
+                FROM capstone_project 
+                WHERE cp_cpc_id = :category AND cp_archived = :archived
+            ) AS projectsNeedingCategoryPlacement
             ';
             $params = array(
                 ':pending' => CapstoneProjectStatus::PENDING_APPROVAL,
-                ':category' => CapstoneProjectCategory::NONE
+                ':category' => CapstoneProjectCategory::NONE,
+                ':archived' => false
             );
             $results = $this->conn->query($sql, $params);
             return $results[0];
@@ -211,13 +234,16 @@ class CapstoneProjectsDao {
     public function getCapstoneProject($id) {
         try {
             // First fetch the project
-            $sql = 'SELECT * FROM capstone_project, capstone_project_compensation, capstone_project_category, ';
-            $sql .= 'capstone_project_type, capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, ';
-            $sql .= 'capstone_project_status, user ';
-            $sql .= 'WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id ';
-            $sql .= 'AND cp_cpf_id = cpf_id AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id ';
-            $sql .= 'AND cp_cps_id = cps_id AND cp_u_id = u_id AND cp_id = :id';
-            $params = array(':id' => $id);
+            $sql = '
+            SELECT * 
+            FROM capstone_project, capstone_project_compensation, capstone_project_category,
+                capstone_project_type, capstone_project_focus, capstone_project_cop, capstone_project_nda_ip,
+                capstone_project_status, user 
+            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+                AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND cp_u_id = u_id 
+                AND cp_id = :id AND cp_archived = :archived
+            ';
+            $params = array(':id' => $id, ':archived' => false);
             $results = $this->conn->query($sql, $params);
             if (\count($results) == 0) {
                 return false;
