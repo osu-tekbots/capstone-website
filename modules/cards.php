@@ -178,10 +178,12 @@ function createProjectDeleteButton($projectId, $cardNumber) {
 	
 	<script type='text/javascript'>
 		$('#deleteProjectBtn$projectId').on('click', function() {
+			let res = confirm('You are about to delete a project. This action cannot be undone.');
+			if(!res) return false;
 			let projectId = '$projectId';
 			let data = {
-				action: 'deleteProject',
-				projectId: projectId,
+				action: 'archiveProject',
+				id: projectId,
 			};
 			api.post('/projects.php', data).then(res => {
 				$('#projectCard$cardNumber').remove();

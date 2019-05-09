@@ -415,6 +415,9 @@ class ProjectsActionHandler extends ActionHandler {
             case 'unpublishProject':
                 $this->handleUnpublishProject();
 
+            case 'archiveProject':
+                $this->handleArchiveProject();
+
             default:
                 $this->respond(new Response(Response::BAD_REQUEST, 'Invalid action on project resource'));
         }

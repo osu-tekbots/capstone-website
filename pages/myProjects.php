@@ -10,9 +10,12 @@ allowIf($_SESSION['userID'] . '' != '');
 
 $userId = $_SESSION['userID'];
 
+$isAdmin = isset($_SESSION['accessLevel']) && $_SESSION['accessLevel'] == 'Admin';
+$isProposer = isset($_SESSION['accessLevel']) && $_SESSION['accessLevel'] == 'Proposer';
+
 // Get all the projects that need to be displayed on this page
 $dao = new CapstoneProjectsDao($dbConn, $logger);
-if($_SESSION['accessLevel'] == 'Admin') {
+if($isAdmin) {
 	$projects = $dao->getCapstoneProjectsForAdmin($userId);
 } else {
 	$projects = $dao->getCapstoneProjectsForUser($userId);
@@ -20,7 +23,6 @@ if($_SESSION['accessLevel'] == 'Admin') {
 
 $title = 'My Projects';
 include_once PUBLIC_FILES . '/modules/header.php';
-
 include_once PUBLIC_FILES . '/modules/cards.php';
 
 ?>
@@ -29,9 +31,12 @@ include_once PUBLIC_FILES . '/modules/cards.php';
 	<h1>My Projects</h1>
 	<div class="row">
 		<div class="col-sm-3">
-			<button class="btn btn-lg btn-outline-primary capstone-nav-btn" type="button" data-toggle="modal"
-				data-target="#newProjectModal" id="openNewProjectModalBtn">Create New Project</button>
-			<div id="deleteText" class="adminText" style="color: red;">Project Deleted</div>
+			<?php 
+			if($isAdmin || $isProposer): ?>
+				<button class="btn btn-lg btn-outline-primary capstone-nav-btn" type="button" data-toggle="modal"
+					data-target="#newProjectModal" id="openNewProjectModalBtn">Create New Project</button>
+			<?php
+			endif; ?>
 		</div>
 
 		<div class="col-sm-9 scroll jumbotron capstoneJumbotron">
@@ -42,25 +47,32 @@ include_once PUBLIC_FILES . '/modules/cards.php';
 
 	</div>
 
-	<?php include PUBLIC_FILES . '/modules/newProjectModal.php'; ?>
+	<?php 
+	if ($isAdmin || $isProposer) {
+	    include_once PUBLIC_FILES . '/modules/newProjectModal.php'; ?>
 
-	<script type="text/javascript">
-		$('#createProjectBtn').on('click', function () {
-			// Capture the data we need
-			let data = {
-				action: 'createProject',
-				title: $('#projectTitleInput').val(),
-				uid: $('#proposerIDHeader').val()
-			};
+		<script type="text/javascript">
+			$('#createProjectBtn').on('click', function () {
+				// Capture the data we need
+				let data = {
+					action: 'createProject',
+					title: $('#projectTitleInput').val(),
+					uid: $('#proposerIDHeader').val()
+				};
 
-			// Send our request to the API endpoint
-			api.post('/projects.php', data).then(res => {
-				window.location.replace('pages/editProject.php?id=' + res.content.id);
-			}).catch(err => {
-				snackbar(err.message, 'error');
+				// Send our request to the API endpoint
+				api.post('/projects.php', data).then(res => {
+					window.location.replace('pages/editProject.php?id=' + res.content.id);
+				}).catch(err => {
+					snackbar(err.message, 'error');
+				});
 			});
-		});
-	</script>
+		</script>
+
+	<?php
+	} ?>
+
 </div>
+
 <?php echo '<input id="proposerIDHeader" style="display:none;" value="' . $_SESSION['userID'] . '"></input>'; ?>
 <?php include_once PUBLIC_FILES . '/modules/footer.php'; ?>
