@@ -178,7 +178,7 @@ class CapstoneProject {
      * @return  self
      */ 
     public function setTitle($title) {
-        $this->title = $title;
+        $this->title = \htmlspecialchars($title);
 
         return $this;
     }
@@ -196,7 +196,7 @@ class CapstoneProject {
      * @return  self
      */ 
     public function setMotivation($motivation) {
-        $this->motivation = $motivation;
+        $this->motivation = \htmlspecialchars($motivation);
 
         return $this;
     }
@@ -214,7 +214,7 @@ class CapstoneProject {
      * @return  self
      */ 
     public function setDescription($description) {
-        $this->description = $description;
+        $this->description = \htmlspecialchars($description);
 
         return $this;
     }
@@ -232,7 +232,7 @@ class CapstoneProject {
      * @return  self
      */ 
     public function setObjectives($objectives) {
-        $this->objectives = $objectives;
+        $this->objectives = \htmlspecialchars($objectives);
 
         return $this;
     }
@@ -286,7 +286,7 @@ class CapstoneProject {
      * @return  self
      */ 
     public function setMinQualifications($minQualifications) {
-        $this->minQualifications = $minQualifications;
+        $this->minQualifications = \htmlspecialchars($minQualifications);
 
         return $this;
     }
@@ -304,7 +304,7 @@ class CapstoneProject {
      * @return  self
      */ 
     public function setPreferredQualifications($preferredQualifications) {
-        $this->preferredQualifications = $preferredQualifications;
+        $this->preferredQualifications = \htmlspecialchars($preferredQualifications);
 
         return $this;
     }
@@ -340,7 +340,7 @@ class CapstoneProject {
      * @return  self
      */ 
     public function setAdditionalEmails($additionalEmails) {
-        $this->additionalEmails = $additionalEmails;
+        $this->additionalEmails = \htmlspecialchars($additionalEmails);
 
         return $this;
     }
@@ -430,7 +430,7 @@ class CapstoneProject {
      * @return  self
      */ 
     public function setWebsiteLink($websiteLink) {
-        $this->websiteLink = $websiteLink;
+        $this->websiteLink = \urlencode($websiteLink);
 
         return $this;
     }
@@ -466,7 +466,7 @@ class CapstoneProject {
      * @return  self
      */ 
     public function setVideoLink($videoLink) {
-        $this->videoLink = $videoLink;
+        $this->videoLink = \urlencode($videoLink);
 
         return $this;
     }
@@ -502,7 +502,7 @@ class CapstoneProject {
      * @return  self
      */ 
     public function setProposerComments($proposerComments) {
-        $this->proposerComments = $proposerComments;
+        $this->proposerComments = \htmlspecialchars($proposerComments);
 
         return $this;
     }
