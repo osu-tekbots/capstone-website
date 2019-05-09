@@ -40,8 +40,16 @@ function renderProjectCardGroup($projects, $browsing = false) {
         if (!$browsing) {
             $details .= "Status: $status";
         }
-        $details .= "<h6>NDA: $nda</h6>";
-        // TODO: show the keywords
+		
+		if($nda == 'No Agreement Required'){
+			$details .= "<h6>NDA: $nda</h6>";
+		}
+		//NDA is "NDA Required" or "NDA/IP Required"
+		else{
+			$details .= "<h6>$nda</h6";
+		}
+        
+		// TODO: show the keywords
         // foreach
         // $extra .= '<span class="badge badge-light keywordBadge">' . $key . '</span>';
 

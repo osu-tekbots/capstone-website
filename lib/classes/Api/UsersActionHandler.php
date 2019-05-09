@@ -79,11 +79,13 @@ class UsersActionHandler extends ActionHandler {
     function handleUpdateUserType() {
         $userId = $this->getFromBody('userId');
         $typeId = $this->getFromBody('typeId');
+		$onidId = $this->getFromBody('onidId');
 
         $user = $this->dao->getUser($userId);
         // TODO: handle case when user is not found
 
         $user->getType()->setId($typeId);
+		$user->setOnid($onidId);
 
         $ok = $this->dao->updateUser($user);
         if(!$ok) {

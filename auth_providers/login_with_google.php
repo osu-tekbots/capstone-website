@@ -87,7 +87,7 @@ if ($success) {
         $_SESSION['userID'] = $u->getId();
         $_SESSION['accessLevel'] = $u->getType()->getName();
         $_SESSION['newUser'] = true;
-
+		
         // Redirect to login page, which will now have a new user portal.
         echo "<script>window.location.replace('../pages/login.php')</script>";
         die();
