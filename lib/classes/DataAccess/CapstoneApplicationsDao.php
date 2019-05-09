@@ -101,7 +101,8 @@ class CapstoneApplicationsDao {
     public function getAllApplicationsForUser($userId) {
         try {
             $sql = 'SELECT * FROM capstone_application, capstone_application_status, capstone_project, user ';
-            $sql .= 'WHERE ca_u_id = :id AND ca_cas_id = cas_id AND ca_u_id = u_id AND ca_cp_id = cp_id';
+            $sql .= 'WHERE ca_u_id = :id AND ca_cas_id = cas_id AND ca_u_id = u_id AND ca_cp_id = cp_id ';
+            $sql .= 'ORDER BY ca_date_created DESC';
             $params = array(':id' => $userId);
             $results = $this->conn->query($sql, $params);
 

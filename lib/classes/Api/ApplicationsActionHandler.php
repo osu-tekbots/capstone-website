@@ -79,6 +79,7 @@ class ApplicationsActionHandler extends ActionHandler {
         $justification = $this->getFromBody('justification');
         $skillSet = $this->getFromBody('skillSet');
         $timeAvailable = $this->getFromBody('timeAvailable');
+        $portfolioLink = $this->getFromBody('portfolioLink');
 
         $application = $this->applicationsDao->getApplication($applicationId);
         // TODO: handle case when application is not found
@@ -86,6 +87,7 @@ class ApplicationsActionHandler extends ActionHandler {
         $application->setJustification($justification)
             ->setSkillSet($skillSet)
             ->setTimeAvailable($timeAvailable)
+            ->setPortfolioLink($portfolioLink)
             ->setDateUpdated(new \DateTime());
 
         $ok = $this->applicationsDao->updateApplication($application);
@@ -106,6 +108,10 @@ class ApplicationsActionHandler extends ActionHandler {
      */
     public function handleSubmitApplication() {
         $applicationId = $this->getFromBody('applicationId');
+        $justification = $this->getFromBody('justification');
+        $skillSet = $this->getFromBody('skillSet');
+        $timeAvailable = $this->getFromBody('timeAvailable');
+        $portfolioLink = $this->getFromBody('portfolioLink');
 
         $application = $this->applicationsDao->getApplication($applicationId);
         // TODO: handle case when application is not found
@@ -113,6 +119,17 @@ class ApplicationsActionHandler extends ActionHandler {
         // Fetch the project to so we can get propopser information
         $project = $this->projectsDao->getCapstoneProject($application->getCapstoneProject()->getId());
         $application->setCapstoneProject($project);
+
+        $application->setJustification($justification)
+            ->setSkillSet($skillSet)
+            ->setTimeAvailable($timeAvailable)
+            ->setPortfolioLink($portfolioLink)
+            ->setDateUpdated(new \DateTime());
+
+        $ok = $this->applicationsDao->updateApplication($application);
+        if (!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to save application before submitting'));
+        }
 
         $application->getStatus()->setId(CapstoneApplicationStatus::SUBMITTED);
 
@@ -130,6 +147,33 @@ class ApplicationsActionHandler extends ActionHandler {
         $this->respond(new Response(
             Response::OK,
             'Successfully submitted application'
+        ));
+    }
+
+    /**
+     * Handles a request to review a project application.
+     *
+     * @return void
+     */
+    public function handleReviewApplication() {
+        $applicationId = $this->getFromBody('applicationId');
+        $interestLevelId = $this->getFromBody('interestLevelId');
+        $comments = $this->getFromBody('comments');
+
+        $application = $this->applicationsDao->getApplication($applicationId);
+        // TODO: handle case when not found
+
+        $application->getReviewInterestLevel()->setId($interestLevelId);
+        $application->setReviewProposerComments($comments);
+
+        $ok = $this->applicationsDao->updateApplication($application);
+        if (!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to save application review'));
+        }
+
+        $this->respond(new Response(
+            Response::OK,
+            'Successfully saved application review'
         ));
     }
 
@@ -157,6 +201,9 @@ class ApplicationsActionHandler extends ActionHandler {
 
             case 'submitApplication':
                 $this->handleSubmitApplication();
+
+            case 'reviewApplication':
+                $this->handleReviewApplication();
 
             default:
                 $this->respond(new Response(Response::BAD_REQUEST, 'Invalid action on application resource'));

@@ -29,7 +29,6 @@ function renderApplicationTable($applications, $isProposer) {
 	
     //Create table column headers based on the user's access level.
     if ($isProposer) {
-        echo '<th>Application ID</th>';
         echo '<th>Applicant</th>';
         echo '<th>Reviewed?</th>';
         echo '<th>Interest Level</th>';
@@ -55,7 +54,6 @@ function renderApplicationTable($applications, $isProposer) {
         $isReviewed = $app->getReviewInterestLevel()->getId() != CapstoneInterestLevel::NOT_SPECIFIED ? 'Yes' : 'No';
         
         if ($isProposer) {
-            $title = $appID;
             //Display the name of the applicant for proposers.
             $name = $app->getStudent()->getFirstName() . ' ' . $app->getStudent()->getLastName();
         } else {
@@ -72,7 +70,9 @@ function renderApplicationTable($applications, $isProposer) {
             
         //Generate table rows for each application.
         echo '<tr>';
-        echo '<td>' . $title . '</td>';
+        if(!$isProposer) {   
+            echo '<td>' . $title . '</td>';
+        }
             
         if ($isProposer) {
             echo '<td>' . $name . '</td>';

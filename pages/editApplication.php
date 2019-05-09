@@ -28,11 +28,16 @@ $project = $projectsDao->getCapstoneProject($application->getCapstoneProject()->
 // Redirect the user if the application is not found or if the user does not own the application
 allowIf($application && ($application->getStudent()->getId() == $userId || $isAdmin));
 
+// Get application information
 $justification = $application->getJustification();
 $time_available = $application->getTimeAvailable();
 $skill_set = $application->getSkillSet();
 $external_link = $application->getPortfolioLink();
+$applicationStatusId = $application->getStatus()->getId();
+$submitted = $applicationStatusId == CapstoneApplicationStatus::SUBMITTED;
+$readOnly = $submitted ? 'readonly' : '';
 
+// Get Project Information
 $projectTitle = $project->getTitle();
 $description = $project->getDescription();
 $motivation = $project->getMotivation();
@@ -40,109 +45,103 @@ $objectives = $project->getObjectives();
 $minQualifications = $project->getMinQualifications();
 $prefQualifications = $project->getPreferredQualifications();
 
-$firstName = $project->getProposer()->getFirstName();
-$lastName = $project->getProposer()->getLastName();
-
-$submitted = $application->getStatus()->getId() == CapstoneApplicationStatus::SUBMITTED;
+$buttonsHtml = $submitted ? "
+    <div class='alert alert-success'>
+        Submitted
+    </div>
+" : "
+    <button class='btn btn-light mr-3' type='button' id='btnSaveApplicationDraft'>
+        Save Draft
+    </button>
+    <button class='btn btn-outline-primary' type='submit'>
+        Submit Application
+    </button>
+";
 
 $title = 'Edit Application';
 include_once PUBLIC_FILES . '/modules/header.php';
 
 ?>
 
-<br>
-<div class="container-fluid">
+<br/>
+<br/>
+<div class="container">
     <div class="row">
-        <div class="col-sm-1">
-        </div>
-        <div class="col-sm-6 jumbotron scroll">
-            <form id="formApplication" onsubmit="return onSaveApplicationDraft();">
-                <input type="hidden" name="applicationId" value="<?php echo $applicationId; ?>" />
-                <div class="row">
-                    <div class="col-sm-7">
-                        <h2>Application for <?php echo $projectTitle; ?></h4>
-                        <h5>By: <?php echo $firstName . ' ' . $lastName; ?></h5>
-                    </div>
-                    <div id="cssloader" class="col-sm-1">
-                    </div>
-                    <div class="col-sm-4">
-                    <?php
-                        if(!$submitted): ?>
-                        <button id="saveApplicationDraftBtn" class="btn btn-success capstone-nav-btn" 
-                            type="submit" >Save Draft</button>
-                            <button name="submitButtonPressed" id="submitBtn" class="btn btn-primary capstone-nav-btn"
-                                type="button">Submit</button>
-                        <?php
-                        else: ?>
-
-                            <h5>Submitted</h5>
-
-                        <?php
-                        endif; ?>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-6"> 
-                        <div class="form-group">
-                            <label for="justificationText">
-                                Justification <font size="2" style="color:red;">*required</font>
-                            </label>
-                            <textarea <?php if($submitted) echo 'readonly'; ?> 
-                                class="form-control" id="justificationText" name="justification" rows="6"><?php 
-                                echo $justification; ?></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="externalLinkText">External Link</label>
-                            <textarea <?php if($submitted) echo 'readonly'; ?>  
-                                class="form-control" id="externalLinkText" name="portfolioLink" rows="1"><?php 
-                                echo $external_link; ?></textarea>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label for="skillSetText">
-                                Skill Set <font size="2" style="color:red;">*required</font>
-                            </label>
-                            <textarea <?php if($submitted) echo 'readonly'; ?>  
-                                class="form-control" id="skillSetText" name="skillSet" rows="5"><?php 
-                                echo $skill_set; ?></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="timeAvailableText">
-                                Time Available <font size="2" style="color:red;">*required</font>
-                            </label>
-                            <textarea <?php if($submitted) echo 'readonly'; ?> c
-                                class="form-control" id="timeAvailableText" name="timeAvailable" rows="3"><?php 
-                                echo $time_available; ?></textarea>
-                        </div>
-
-                    </div>
-                </div>
-            </form>
-        </div>
-        <div class="col-sm-1">
-        </div>
-        <div class="col-sm-4 scroll jumbotron capstoneJumbotron">
-            <?php
-            echo "
-                <br>
-                <h2>$projectTitle</h2> 
-                <p>$description</p>
-                <br><br>
-                <h5>Motivation:</h5>
-                <p>$motivation</p>
-                <h5>Objectives:</h5>
-                <p>$objectives</p>
-                <h5>Minimum Qualifications:</h5>
-                <p>$minQualifications</p>
-                <h5>Preferred Qualifications:</h5>
-                <p>$prefQualifications</p>
-            ";
-            ?>
+        <div class="col">
+            <h1>Student Application for <?php echo $projectTitle; ?></h1>
         </div>
     </div>
+    <form id="formApplication">
+        <input type="hidden" name="applicationId" value="<?php echo $applicationId; ?>" />
+        <div class="form-group row">
+            <div class="col-12">
+                <label>Justification</label>
+                <textarea required <?php echo $readOnly; ?> name="justification" class="form-control" rows="4"><?php 
+                    echo $justification; ?></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label>Skill Set</label>
+                <textarea required <?php echo $readOnly; ?> name="skillSet" class="form-control" rows="5"><?php 
+                    echo $skill_set; ?></textarea>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group ">
+                    <label>Time Available</label>
+                    <input required <?php echo $readOnly; ?> name="timeAvailable" class="form-control" max="256" 
+                        value="<?php echo $time_available; ?>">
+                </div>
+                <div class="form-group ">
+                    <label>Portfolio Link</label>
+                    <input <?php echo $readOnly; ?> name="portfolioLink" class="form-control" max="512" 
+                        value="<?php echo $external_link; ?>">
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col" id="formActions">
+                <?php echo $buttonsHtml; ?>
+            </div>
+        </div>
+    </form>
+    <hr/>
+	<div class="row project-summary">
+		<div class="col">
+			<h3>Project Summary</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<h4>Description</h4>
+			<p><?php echo $description; ?></p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<h4>Motivation</h4>
+			<p><?php echo $motivation; ?></p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<h4>Objectives</h4>
+			<p><?php echo $objectives; ?></p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<h4>Preferred Qualifications</h4>
+			<p><?php echo $prefQualifications; ?></p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<h4>Minimum Qualifications</h4>
+			<p><?php echo $minQualifications; ?></p>
+		</div>
+	</div>
 </div>
-
 
 <script type="text/javascript">
 
@@ -190,9 +189,6 @@ function onSaveApplicationDraft() {
     let body = getApplicationAsJson();
     body.action = 'saveApplication';
 
-    // Validate
-    if(!validateForm(body)) return false;;
-
     // Make the request
     api.post('/applications.php', body).then(res => {
         snackbar(res.message, 'success');
@@ -203,29 +199,48 @@ function onSaveApplicationDraft() {
     return false;
 
 }
-$('#saveApplicationDraftBtn').on('click', onSaveApplicationDraft);
+$('#btnSaveApplicationDraft').click(onSaveApplicationDraft);
 
 /**
  * Event handler for submitting an application
  */
 function onSubmitApplication() {
 
+    if(!confirm('You are about to submit your application. You will not be able to make changes to it after submission.'))
+        return false;
+
     // Ensure the form is valid
     let form = getApplicationAsJson();
     if(!validateForm(form)) return;
 
     // Make the request to submit the application
-    let body = {
-        action: 'submitApplication',
-        applicationId: form.applicationId
-    };
+    let body = getApplicationAsJson();
+    body.action = 'submitApplication';
+
     api.post('/applications.php', body).then(res => {
         snackbar(res.message, 'success');
+        onSubmitApplicationSuccess();
     }).catch(err => {
         snackbar(err.message, 'error');
     });
+
+    return false;
 }
-$('#submitBtn').on('click', onSubmitApplication);
+$('#formApplication').submit(onSubmitApplication);
+
+/**
+ * Event handler for when the submission is successful. We need to change some of the HTML so that the user can't
+ * resubmit or otherwise modify the review without the need to refresh the page
+ */
+function onSubmitApplicationSuccess() {
+    $('#formApplication .form-control').attr('readonly', true);
+    $('#formActions').html(`
+        <div class='alert alert-success'>
+            Submitted
+        </div>
+    `);
+
+}
 
 </script>
 
