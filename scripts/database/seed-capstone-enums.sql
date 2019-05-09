@@ -6,7 +6,7 @@
 -- executed and that the corresponding tables exist in the database
 --
 INSERT INTO user_type (ut_id, ut_name) VALUES 
-    (1, 'User'), (2, 'Proposer'), (3, 'Admin');
+    (1, 'Student'), (2, 'Proposer'), (3, 'Admin');
 
 INSERT INTO user_salutation (us_id, us_name) VALUES 
     (1, 'None'), (2, 'Mr.'), (3, 'Mrs.'), (4, 'Miss'), (5, 'Ms.'), (6, 'Dr.'), (7, 'Prof.');

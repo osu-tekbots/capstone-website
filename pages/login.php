@@ -48,7 +48,7 @@ $isLoggedIn = isset($_SESSION['userID']) && !empty($_SESSION['userID']);
       <div class="col-sm-4">
 		<?php
 		//Only show buttons if the user is not logged in.
-		if (!$isLoggedIn) {
+		if ($isLoggedIn) {
 		    echo '
 			<br>
             <hr class="my-4">
@@ -83,7 +83,7 @@ $isLoggedIn = isset($_SESSION['userID']) && !empty($_SESSION['userID']);
 	  <?php
         //Renders a new user portal. Only shown after first-time authentication.
         $isNewUser = $isLoggedIn && isset($_SESSION['newUser']) && $_SESSION['newUser'];
-		if ($isNewUser) {
+		if (!$isNewUser) {
             $studentId = UserType::STUDENT;
             $proposerId = UserType::PROPOSER;
 		    echo "
@@ -96,6 +96,10 @@ $isLoggedIn = isset($_SESSION['userID']) && !empty($_SESSION['userID']);
                     <option value='$studentId'>Student</option>
                     <option value='$proposerId'>Proposer</option>
                 </select>
+				<br>
+				<div id='onidInputDiv'>
+					ONID Username: <input class='form-control' id='onidInput'>
+				</div>
             </div>
             <button id='accessLevelSaveBtn' type='button' style='float:right;' class='btn btn-success'>Save</button>
             <br>
@@ -115,7 +119,6 @@ $isLoggedIn = isset($_SESSION['userID']) && !empty($_SESSION['userID']);
                 <br>
                 <img src="assets/img/loginImage.jpg" alt="icon" />
                 <br/>
-                <a href="pages/myProfile.php">Edit your profile</a>.
             </center>
 			';
 		}
@@ -128,16 +131,30 @@ $isLoggedIn = isset($_SESSION['userID']) && !empty($_SESSION['userID']);
 
 
 <script type="text/javascript">
+
+$('#accessLevelSelect').on('change', function(){
+	var studentId = '<?php echo $studentId; ?>';
+	var proposerId = '<?php echo $proposerId; ?>';
+	
+	if($('#accessLevelSelect').val() == studentId){
+		$('#onidInputDiv').show();
+	}
+	else if($('#accessLevelSelect').val() == proposerId){
+		$('#onidInputDiv').hide();
+	}
+});
+
 /**
  * Event handler for after a user selects their type from the login page. They are able to select their type the
  * first time they log in.
  */
 function onUpdateUserType() {
-
+	
     let body = {
         action: 'updateUserType',
         userId: $('#userIDHeader').val(),
-        typeId: $('#accessLevelSelect').val()
+        typeId: $('#accessLevelSelect').val(),
+		onidId: $('#onidInput').val()
     };
 
     api.post('/users.php', body).then(res => {
