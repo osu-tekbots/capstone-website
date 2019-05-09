@@ -8,15 +8,14 @@ if (!session_id()) {
 include_once PUBLIC_FILES . '/lib/shared/authorize.php';
 allowIf($_SESSION['userID'] . '' != '');
 
+$userId = $_SESSION['userID'];
+
 // Get all the projects that need to be displayed on this page
 $dao = new CapstoneProjectsDao($dbConn, $logger);
 if($_SESSION['accessLevel'] == 'Admin') {
-	$projects = array_merge(
-		$dao->getPendingCapstoneProjects(),
-		$dao->getCapstoneProjectsForUser($_SESSION['userID'])
-	);
+	$projects = $dao->getCapstoneProjectsForAdmin($userId);
 } else {
-	$projects = $dao->getCapstoneProjectsForUser($_SESSION['userID']);
+	$projects = $dao->getCapstoneProjectsForUser($userId);
 }
 
 $title = 'My Projects';

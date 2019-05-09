@@ -17,8 +17,6 @@ class ProjectsActionHandler extends ActionHandler {
     private $mailer;
     /** @var \Util\ConfigManager */
     private $config;
-    /** @var \Util\Logger */
-    private $logger;
 
     /**
      * Constructs a new instance of the action handler for requests on project resources.
@@ -35,7 +33,6 @@ class ProjectsActionHandler extends ActionHandler {
         $this->usersDao = $usersDao;
         $this->mailer = $mailer;
         $this->config = $config;
-        $this->logger = $logger;
     }
 
     /**
@@ -162,9 +159,50 @@ class ProjectsActionHandler extends ActionHandler {
      */
     public function handleSubmitForApproval() {
         $id = $this->getFromBody('id');
+        $title = $this->getFromBody('title');
+        $typeId = $this->getFromBody('typeId');
+        $compensationId = $this->getFromBody('compensationId');
+        $focusId = $this->getFromBody('focusId');
+        $ndaIpId = $this->getFromBody('ndaIpId');
+        $additionalEmails = $this->getFromBody('additionalEmails');
+        $comments = $this->getFromBody('comments');
+        $dateStart = $this->getFromBody('dateStart');
+        $dateEnd = $this->getFromBody('dateEnd');
+        $description = $this->getFromBody('description');
+        $motivation = $this->getFromBody('motivation');
+        $objectives = $this->getFromBody('objectives');
+        $videoLink = $this->getFromBody('videoLink');
+        $websiteLink = $this->getFromBody('websiteLink');
 
         $project = $this->projectsDao->getCapstoneProject($id);
         // TODO: handle case when project is not found
+
+        // Save any changes
+        $dateStart = $dateStart != '' ? new \DateTime($dateStart) : null;
+        $dateEnd = $dateEnd != '' ? new \DateTime($dateEnd) : null;
+
+        $project->setTitle($title)
+            ->setAdditionalEmails($additionalEmails)
+            ->setProposerComments($comments)
+            ->setDateStart($dateStart)
+            ->setDateEnd($dateEnd)
+            ->setDescription($description)
+            ->setMotivation($motivation)
+            ->setObjectives($objectives)
+            ->setVideoLink($videoLink)
+            ->setWebsiteLink($websiteLink);
+
+        $project->getCompensation()->setId($compensationId);
+        $project->getFocus()->setId($focusId);
+        $project->getNdaIp()->setId($ndaIpId);
+        $project->getType()->setId($typeId);
+
+        $project->setDateUpdated(new \DateTime());
+
+        $ok = $this->projectsDao->updateCapstoneProject($project);
+        if (!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to save project before submission'));
+        }
 
         $project->getStatus()->setId(CapstoneProjectStatus::PENDING_APPROVAL);
 

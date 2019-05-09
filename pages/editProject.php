@@ -60,6 +60,8 @@ $focuses = $dao->getCapstoneProjectFocuses();
 $compensations = $dao->getCapstoneProjectCompensations();
 $ndaips = $dao->getCapstoneProjectNdaIps();
 
+$submitted = $pStatusId >= CapstoneProjectStatus::PENDING_APPROVAL && $pStatusId != CapstoneProjectStatus::REJECTED;
+
 allowIf($authorizedToProceed, 'pages/index.php');
 
 include_once PUBLIC_FILES . '/modules/admin-review.php';
@@ -154,23 +156,26 @@ var availableTags = [
             <div class="row">
                 <div class="col-sm-1"></div>
                 <div id="cssloader" class="col-sm-2"></div>
-                <div class="col-sm-9">
-                    <button id="saveProjectDraftBtn" class="btn btn-success capstone-nav-btn" type="button" 
-                        data-toggle="tooltip" data-placement="bottom" 
-                        title="<?php echo $tooltipSaveProjectDraftBtn; ?>">
-                        Save Project Draft</button>
-                    
+                <div class="col-sm-9" id="formActions">                   
                     <?php 
                     // Display the following only when the user is the proposer
                     if ($isProposer || $isAdmin) {
-                        if ($pStatusId == CapstoneProjectStatus::PENDING_APPROVAL) {
-                            echo '<p>Your project is pending approval</p>';
+                        if ($submitted) {
+                            echo "
+							<div class='alert alert-success'>
+								Submitted. Your project is pending approval.
+							</div>
+							";
                         } else {
                             echo "
+							<button id='saveProjectDraftBtn' class='btn btn-success capstone-nav-btn' type='button' 
+								data-toggle='tooltip' data-placement='bottom' 
+								title='$tooltipSaveProjectDraftBtn'>
+								Save Project Draft</button>
 							<button name='submitButtonPressed' id='submitForApprovalBtn' 
-                            class='btn btn-primary capstone-nav-btn' type='button' data-toggle='tooltip' 
-                            data-placement='bottom' title='$tooltipSubmitForApprovalBtn'>
-                            Submit for Approval</button>
+								class='btn btn-primary capstone-nav-btn' type='button' data-toggle='tooltip' 
+								data-placement='bottom' title='$tooltipSubmitForApprovalBtn'>
+								Submit for Approval</button>
 							";
                         }
                     }?>
@@ -261,7 +266,7 @@ var availableTags = [
 					<div class="col-sm-4">
 						<div class="form-group">
 							<label for="projectTypeSelect">Project Type</label>
-							<select class="form-control" id="projectTypeSelect" name="typeId" data-toggle="tooltip" 
+							<select class="form-control input" id="projectTypeSelect" name="typeId" data-toggle="tooltip" 
 								data-placement="bottom" title="<?php echo $tooltipProjectTypeSelect?>">
 								<?php
 								foreach ($types as $t) {
@@ -277,7 +282,7 @@ var availableTags = [
 					<div class="col-sm-4">
 						<div class="form-group">
 							<label for="projectFocusSelect">Project Focus</label>
-							<select class="form-control" id="projectFocusSelect" name="focusId" data-toggle="tooltip" 
+							<select class="form-control input" id="projectFocusSelect" name="focusId" data-toggle="tooltip" 
 								data-placement="bottom"
 								title="<?php echo $tooltipProjectFocusSelect; ?>">
 								<?php
@@ -294,7 +299,7 @@ var availableTags = [
 					<div class="col-sm-4" id="compensationDiv">
 						<div class="form-group">
 							<label for="compensationSelect">Compensation</label>
-							<select class="form-control" id="compensationSelect" name="compensationId" 
+							<select class="form-control input" id="compensationSelect" name="compensationId" 
 								data-toggle="tooltip" data-placement="bottom"
 								title="<?php echo $tooltipCompensationSelect; ?>">
 								<?php
@@ -315,7 +320,7 @@ var availableTags = [
 							<label for="projectDescriptionText">
 								Project Description <font size="2" style="color:red;">*required</font>
 							</label>
-							<textarea class="form-control" id="projectDescriptionText" name="description"
+							<textarea class="form-control input" id="projectDescriptionText" name="description"
 								rows="3" data-toggle="tooltip" 
 								data-placement="top" 
 								title="<?php echo $tooltipProjectDescriptionText?>"><?php 
@@ -330,7 +335,7 @@ var availableTags = [
 							<label for="motivationText">
 								Motivation <font size="2" style="color:red;">*required</font>
 							</label>
-							<textarea class="form-control" id="motivationText" name="motivation"
+							<textarea class="form-control input" id="motivationText" name="motivation"
 								rows="4" data-toggle="tooltip" 
 								data-placement="top" title="<?php echo $tooltipMotivationText; ?>"><?php
 									echo $pMotivation;
@@ -342,7 +347,7 @@ var availableTags = [
 							<label for="objectivesText">
 								Objectives/Deliverables <font size="2" style="color:red;">*required</font>
 							</label>
-							<textarea class="form-control" id="objectivesText" name="objectives" 
+							<textarea class="form-control input" id="objectivesText" name="objectives" 
 								rows="4" data-toggle="tooltip" 
 								data-placement="top" title="<?php echo $tooltipObjectivesText; ?>"><?php
 									echo $pObjectives;
@@ -356,7 +361,7 @@ var availableTags = [
 									Add Keywords to Project: <font size="2" style="color:red;">*required</font><br>
 									<font size="2">Press Enter after each keyword.</font>
 								</label>
-								<input id="keywordsInput" name="keywords" class="form-control">
+								<input id="keywordsInput" name="keywords" class="form-control input">
 							</div>
 							<div id="keywordsDiv">
 								<?php
@@ -381,7 +386,7 @@ var availableTags = [
 							Start By
 							<div class="input-group date" id="startbydate" data-target-input="nearest">
 									<input type="text" id="startByText" name="dateStart" 
-										class="form-control datetimepicker-input" 
+										class="form-control datetimepicker-input input" 
 										value="<?php echo $pDateStart; ?>" data-target="#startbydate" data-toggle="tooltip" 
 										data-placement="top" title="<?php echo $tooltipStartByText; ?>"/>
 									<div class="input-group-append" data-target="#startbydate" 
@@ -394,7 +399,7 @@ var availableTags = [
 							Complete By
 							<div class="input-group date" id="endbydate" data-target-input="nearest">
 								<input type="text" id="completeByText"  name="dateEnd"
-									class="form-control datetimepicker-input" 
+									class="form-control datetimepicker-input input" 
 									value="<?php echo $pDateEnd; ?>" data-target="#endbydate" data-toggle="tooltip" 
 									data-placement="top" title="<?php echo $tooltipCompleteByText; ?>"/>
 								<div class="input-group-append" data-target="#endbydate" data-toggle="datetimepicker">
@@ -434,7 +439,7 @@ var availableTags = [
 								title="<?php echo $tooltipNdaSelect; ?>">
 								NDA/IP <font size="2" style="color:red;">*required</font>
 							</label>
-							<select class="form-control" id="ndaSelect" name="ndaIpId">
+							<select class="form-control input" id="ndaSelect" name="ndaIpId">
 								<?php
 								foreach ($ndaips as $n) {
 								    $id = $n->getId();
@@ -451,7 +456,7 @@ var availableTags = [
 					<div class="col-sm-12">
 						<div class="form-group">
 							<label for="commentsText">Special Comments</label>
-							<textarea class="form-control" id="commentsText" name="comments" rows="3" data-toggle="tooltip" 
+							<textarea class="form-control input" id="commentsText" name="comments" rows="3" data-toggle="tooltip" 
 								data-placement="top" title='<?php echo $tooltipCommentsText; ?>'><?php
 									echo $pComments; 
 								?></textarea>
@@ -460,7 +465,7 @@ var availableTags = [
 					<div class="col-sm-12">
 						<div class="form-group">
 							<label for="websiteText">Website</label>
-							<textarea class="form-control" id="websiteText" name="websiteLink" 
+							<textarea class="form-control input" id="websiteText" name="websiteLink" 
 								rows="1" data-toggle="tooltip" 
 								data-placement="top" title="<?php echo $tooltipWebsiteText; ?>"><?php 
 									echo $pWebsiteLink; 
@@ -470,7 +475,7 @@ var availableTags = [
 					<div class="col-sm-12"> 
 						<div class="form-group">
 							<label for="videoText">Video</label>
-							<textarea class="form-control" id="videoText" name="videoLink" 
+							<textarea class="form-control input" id="videoText" name="videoLink" 
 								rows="1" data-toggle="tooltip" 
 								data-placement="top" title="<?php echo $tooltipVideoText; ?>"><?php 
 									echo $pVideoLink; 
@@ -480,7 +485,7 @@ var availableTags = [
 					<div class="col-sm-12">
 						<div class="form-group">
 							<label for="additionalEmailsText">Additional Emails</label>
-							<textarea class="form-control" id="additionalEmailsText" name="additionalEmails"
+							<textarea class="form-control input" id="additionalEmailsText" name="additionalEmails"
 								rows="1" data-toggle="tooltip" 
 								data-placement="top" title="<?php echo $tooltipAdditionalEmailsText; ?>"><?php
 									echo $pAdditionalEmails;
@@ -493,5 +498,13 @@ var availableTags = [
 	</div>
 </div>
 
-<?php include_once PUBLIC_FILES . '/modules/footer.php'; ?>
+<?php 
+
+if($submitted) {
+	echo "<script>$('#formProject .input').attr('readonly', true);</script>";
+}
+
+include_once PUBLIC_FILES . '/modules/footer.php'; 
+
+?>
 

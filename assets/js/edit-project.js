@@ -186,12 +186,13 @@ function onSubmitForApprovalClick() {
 
     // Validation completed. Make the request.
     let body = {
-        action: 'submitForApproval',
-        id: project.id
+        ...project,
+        action: 'submitForApproval'
     };
     api.post('/projects.php', body)
         .then(res => {
             snackbar(res.message, 'success');
+            onProjectSubmissionSuccess();
         })
         .catch(err => {
             snackbar(err.message, 'error');
@@ -202,3 +203,15 @@ $('#submitForApprovalBtn').on('click', onSubmitForApprovalClick);
 $('#keywordsInput').autocomplete({
     source: availableTags
 });
+
+/**
+ * Handles changing the DOM when the AJAX request to submit the project is successful.
+ */
+function onProjectSubmissionSuccess() {
+    $('#formProject .input').attr('readonly', true);
+    $('#formActions').html(`
+        <div class='alert alert-success'>
+            Submitted. Your project is pending approval.
+        </div>
+    `);
+}

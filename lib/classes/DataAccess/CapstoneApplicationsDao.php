@@ -101,7 +101,8 @@ class CapstoneApplicationsDao {
     public function getAllApplicationsForUser($userId) {
         try {
             $sql = 'SELECT * FROM capstone_application, capstone_application_status, capstone_project, user ';
-            $sql .= 'WHERE ca_u_id = :id AND ca_cas_id = cas_id AND ca_u_id = u_id AND ca_cp_id = cp_id';
+            $sql .= 'WHERE ca_u_id = :id AND ca_cas_id = cas_id AND ca_u_id = u_id AND ca_cp_id = cp_id ';
+            $sql .= 'ORDER BY ca_date_created DESC';
             $params = array(':id' => $userId);
             $results = $this->conn->query($sql, $params);
 
@@ -163,7 +164,7 @@ class CapstoneApplicationsDao {
                 ca_cas_id, ca_review_cil_id, ca_review_proposer_comments, ca_date_created, ca_date_updated, 
                 ca_date_submitted
             ) VALUES (
-                :id, :projid, :userid, :just, :timeav, :skills, :port, :statid, :rilid, rilpc, :datec, :dateu, :dates
+                :id, :projid, :userid, :just, :timeav, :skills, :port, :statid, :rilid, :rilpc, :datec, :dateu, :dates
             )
             ';
             $params = array(
@@ -175,20 +176,11 @@ class CapstoneApplicationsDao {
                 ':skills' => $application->getSkillSet(),
                 ':port' => $application->getPortfolioLink(),
                 ':statid' => $application->getStatus()->getId(),
-                ':rilid' =>$application->getInterestLevel()->getId(),
-                ':rilpc' => $application->getProposerComments(),
+                ':rilid' =>$application->getReviewInterestLevel()->getId(),
+                ':rilpc' => $application->getReviewProposerComments(),
                 ':datec' => QueryUtils::FormatDate($application->getDateCreated()),
                 ':dateu' => QueryUtils::FormatDate($application->getDateUpdated()),
                 ':dates' => QueryUtils::FormatDate($application->getDateSubmitted())
-            );
-            $this->conn->execute($sql, $params);
-
-            // Then create the application review entry
-            $sql = 'INSERT INTO capstone_application_review (car_id, car_ca_id, car_cil_id) VALUES (:id, :caid, :cil)';
-            $params = array(
-                ':id' => $application->getReview()->getId(),
-                ':caid' => $application->getId(),
-                ':cil' => $application->getReview()->getInterestLevel()->getId()
             );
             $this->conn->execute($sql, $params);
 
@@ -230,8 +222,8 @@ class CapstoneApplicationsDao {
                 ':skills' => $application->getSkillSet(),
                 ':port' => $application->getPortfolioLink(),
                 ':statid' => $application->getStatus()->getId(),
-                ':rilid' => $application->getInterestLevel()->getId(),
-                ':rilpc' => $application->getProposerComments(),
+                ':rilid' => $application->getReviewInterestLevel()->getId(),
+                ':rilpc' => $application->getReviewProposerComments(),
                 ':dateu' => QueryUtils::FormatDate($application->getDateUpdated()),
                 ':dates' => QueryUtils::FormatDate($application->getDateSubmitted())
             );
@@ -284,8 +276,8 @@ class CapstoneApplicationsDao {
             ->setSkillSet($row['ca_skill_set'])
             ->setPortfolioLink($row['ca_portfolio_link'])
             ->setStatus(self::ExtractApplicationStatusFromRow($row, true))
-            ->setInterestLevel(self::ExtractCapstoneInterestLevelFromRow($row, true))
-            ->setProposerComments($row['ca_review_proposer_comments'])
+            ->setReviewInterestLevel(self::ExtractCapstoneInterestLevelFromRow($row, true))
+            ->setReviewProposerComments($row['ca_review_proposer_comments'])
             ->setDateCreated(new \DateTime($row['ca_date_created']))
             ->setDateUpdated(new \DateTime($row['ca_date_updated']))
             ->setDateSubmitted(new \DateTime($row['ca_date_submitted']));

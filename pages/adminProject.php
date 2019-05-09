@@ -8,6 +8,8 @@ include_once PUBLIC_FILES . '/lib/shared/authorize.php';
 $isAdmin = isset($_SESSION['userID']) && !empty($_SESSION['userID']) 
 	&& isset($_SESSION['accessLevel']) && $_SESSION['accessLevel'] == 'Admin';
 
+$userId = $_SESSION['userID'];
+
 allowIf($isAdmin);
 
 $projectsDao = new CapstoneProjectsDao($dbConn, $logger);
@@ -172,7 +174,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 				<div class="card-columns capstoneCardColumns" id="projectCardGroup">
 					<!-- createCardGroup() is found in ../modules/createCards.php -->
 					<?php 
-					$projects = $projectsDao->getCapstoneProjectsForAdmin();
+					$projects = $projectsDao->getCapstoneProjectsForAdmin($userId);
 					renderProjectCardGroup($projects, false); 
 					?>
 				</div>

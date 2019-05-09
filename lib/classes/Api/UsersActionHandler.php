@@ -10,8 +10,6 @@ class UsersActionHandler extends ActionHandler {
 
     /** @var \DataAccess\UsersDao */
     private $dao;
-    /** @var \Util\Logger */
-    private $logger;
 
     /**
      * Constructs a new instance of the action handler for requests on user resources.
@@ -23,7 +21,6 @@ class UsersActionHandler extends ActionHandler {
     {
         parent::__construct($logger);
         $this->dao = $dao;
-        $this->logger = $logger;
     }
 
     /**
