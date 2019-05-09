@@ -353,6 +353,25 @@ class ProjectsActionHandler extends ActionHandler {
         ));
     }
 
+    public function handleArchiveProject() {
+        $id = $this->getFromBody('id');
+
+        $project = $this->projectsDao->getCapstoneProject($id);
+        // TODO: handle when not found
+
+        $project->setArchived(true);
+
+        $ok = $this->projectsDao->updateCapstoneProject($project);
+        if (!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to remove project'));
+        }
+
+        $this->respond(new Response(
+            Response::OK,
+            'Successfully removed project.'
+        ));
+    }
+
     /**
      * Handles the HTTP request on the API resource. 
      * 
