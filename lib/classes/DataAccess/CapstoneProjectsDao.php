@@ -102,17 +102,18 @@ class CapstoneProjectsDao {
      *
      * @return \Model\CapstoneProject[]|boolean an array of projects on success, false otherwise
      */
-    public function getCapstoneProjectsForAdmin() {
+    public function getCapstoneProjectsForAdmin($userId) {
         try {
             $sql = '
             SELECT * 
             FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
-                capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status
+                capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
             WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
-                AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id 
-                AND (cp_cps_id = :pending OR cp_cps_id = :rejected OR cp_cps_id = :accepting)
+                AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id
+                AND (u_id = :uid OR (cp_cps_id = :pending OR cp_cps_id = :rejected OR cp_cps_id = :accepting))
             ';
             $params = array(
+                ':uid' => $userId,
                 ':pending' => CapstoneProjectStatus::PENDING_APPROVAL,
                 ':rejected' => CapstoneProjectStatus::REJECTED,
                 ':accepting' => CapstoneProjectStatus::ACCEPTING_APPLICANTS
@@ -142,10 +143,10 @@ class CapstoneProjectsDao {
         try {
             $sql = 'SELECT * FROM capstone_project, capstone_project_compensation, capstone_project_category, ';
             $sql .= 'capstone_project_type, capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, ';
-            $sql .= 'capstone_project_status ';
+            $sql .= 'capstone_project_status, user ';
             $sql .= 'WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id ';
             $sql .= 'AND cp_cpf_id = cpf_id AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id ';
-            $sql .= 'AND cp_cps_id = cps_id AND cp_cps_id = :status';
+            $sql .= 'AND cp_cps_id = cps_id AND cp_cps_id = :status AND u_id = cp_u_id';
             $params = array(':status' => CapstoneProjectStatus::PENDING_APPROVAL);
             $results = $this->conn->query($sql, $params);
 
