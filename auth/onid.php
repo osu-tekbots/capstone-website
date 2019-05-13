@@ -5,9 +5,22 @@ if (!isset($_SESSION)) {
 }
 
 /**
- * Authenticate a user using Oregon State University's CAS server, requiring the user's ONID username and password.
+ * Authenticate a user using Oregon State University's CAS server.
+ * 
+ * This will require the user's ONID username and password. If a there are query string parameters present in the URL
+ * of the page making the authentication request, they will not be properly handled by the CAS server. Instead, it
+ * is recommended that you save any required query string paramters in a session variable during authentication and
+ * read them back out once it is successful.
+ * 
+ * This function will, on successfuly authentication, set the `$_SESSION['auth']` variable to an associative array with
+ * the following keys:
+ * - `method`: `'onid'`
+ * - `id`: the ONID of the user
+ * - `firstName`: the first name of the user
+ * - `lastName`: the last name of the user
+ * - `email`: the email address of the user
  *
- * @return void
+ * @return string the ONID for the user
  */
 function authenticateWithONID() {
     if (isset($_SESSION['auth']['id'])) {
@@ -15,18 +28,16 @@ function authenticateWithONID() {
     }
 
     $pageURL = 'http';
-    if ($_SERVER['HTTPS'] == 'on') {
+    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
         $pageURL .= 's';
     }
     $pageURL .= '://';
 
-    if ($_SERVER['SERVER_PORT'] != '80') {
+    if (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] != '80') {
         $pageURL .= $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['SCRIPT_NAME'];
     } else {
         $pageURL .= $_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'];
     }
-
-    $pageURL .= '?provider=onid';
 
     $ticket = $_REQUEST['ticket'];
 
@@ -50,6 +61,15 @@ function authenticateWithONID() {
     }
 }
 
+/**
+ * Fetches the value of the key from the XML structure.
+ * 
+ * Text-based search, not tree based.
+ *
+ * @param string $key the XML tag name to search for
+ * @param string $xml the XML to search
+ * @return string the contents of the XML tag with the provided key name
+ */
 function extractFromXml($key, $xml) {
     $pattern = '/\\<' . $key . '\\>([a-zA-Z0-9@\.]+)\\<\\/' . $key . '\\>/';
     preg_match($pattern, $xml, $matches);

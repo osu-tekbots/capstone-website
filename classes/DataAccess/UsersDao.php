@@ -191,6 +191,7 @@ class UsersDao {
             $sql .= 'u_lname = :lname, ';
             $sql .= 'u_us_id = :salu, ';
             $sql .= 'u_email = :email, ';
+			$sql .= 'u_onid = :onid, ';
             $sql .= 'u_phone = :phone, ';
             $sql .= 'u_major = :maj, ';
             $sql .= 'u_affiliation = :affil, ';
@@ -202,6 +203,7 @@ class UsersDao {
                 ':lname' => $user->getLastName(),
                 ':salu' => $user->getSalutation()->getId(),
                 ':email' => $user->getEmail(),
+				':onid' => $user->getOnid(),
                 ':phone' => $user->getPhone(),
                 ':maj' => $user->getMajor(),
                 ':affil' => $user->getAffiliation(),

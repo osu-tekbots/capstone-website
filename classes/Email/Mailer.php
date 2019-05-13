@@ -60,12 +60,13 @@ class Mailer {
             ";
 
             $headers[] = 'MIME-Version: 1.0';
-            $headers[] = 'Content-Type: text/html;charset=UTF-8';
+            $headers[] = 'Content-type: text/html;charset=UTF-8';
         }
 
         $headers[] = "From: $from";
 
-        $headersStr = \implode('\r\n', $headers);
+        $headersStr = \implode("\r\n", $headers);
+        $headersStr .= "\r\n";
         
         if (\is_array($to)) {
             $to = \implode(',', $to);
@@ -73,8 +74,9 @@ class Mailer {
 
         $accepted = \mail($to, $subject, $message, $headersStr);
         if (!$accepted) {
+            $lastError = error_get_last();
             if ($this->logger != null) {
-                $this->logger->error("Failed to send email to $to from $from: " . error_get_last()['message']);
+                $this->logger->error("Failed to send email to $to from $from: " . $lastError['message']);
                 $this->logger->error($message);
             }
             return false;
