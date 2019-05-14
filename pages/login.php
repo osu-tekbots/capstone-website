@@ -25,26 +25,26 @@ include_once PUBLIC_FILES . '/modules/header.php';
         <hr class="my-4">
         <h4 class="text-center">Student Login</h4>
         <a class="login" href="auth/index.php?provider=onid" style="text-decoration:none;">
-            <button id="onidBtn" class="btn btn-lg btn-onid btn-block text-uppercase" type="submit">
+            <button id="onidBtn" class="btn btn-lg btn-warning btn-block text-uppercase" type="submit">
                 <i class="fas fa-book mr-2"></i> Login with ONID
             </button>
         </a>
         <hr class="my-4">
         <h4 class="text-center">Project Proposer Login</h4>
         <a class="login" href="auth/index.php?provider=google" style="text-decoration:none;">
-            <button id="googleBtn" class="btn btn-lg btn-google btn-block text-uppercase" type="submit">
+            <button id="googleBtn" class="btn btn-lg btn-danger btn-block text-uppercase" type="submit">
                 <i class="fab fa-google mr-2"></i> Login with Google
             </button>
         </a>
         <br/>
         <a class="login" href="auth/index.php?provider=microsoft" style="text-decoration:none;">
-            <button id="microsoftBtn" class="btn btn-lg btn-microsoft btn-block text-uppercase" type="submit">
+            <button id="microsoftBtn" class="btn btn-lg btn-success btn-block text-uppercase" type="submit">
                 <i class="fab fa-microsoft mr-2"></i> Login with Microsoft
             </button>
         </a>
         <br/>
         <a class="login" href="auth/index.php?provider=github" style="text-decoration:none;">
-            <button id="microsoftBtn" class="btn btn-lg btn-microsoft btn-block text-uppercase" type="submit">
+            <button id="microsoftBtn" class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">
                 <i class="fab fa-github mr-2"></i> Login with GitHub
             </button>
         </a>
