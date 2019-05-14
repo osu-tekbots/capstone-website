@@ -6,6 +6,7 @@ class UserAuthProvider {
     const ONID = 2;
     const GOOGLE = 3;
     const MICROSOFT = 4;
+    const GITHUB = 5;
 
     /** @var integer */
     private $id;
