@@ -12,7 +12,7 @@ INSERT INTO user_salutation (us_id, us_name) VALUES
     (1, 'None'), (2, 'Mr.'), (3, 'Mrs.'), (4, 'Miss'), (5, 'Ms.'), (6, 'Dr.'), (7, 'Prof.');
 
 INSERT INTO user_auth_provider (uap_id, uap_name) VALUES 
-    (1, 'None'), (2, 'ONID'), (3, 'Google'), (4, 'Microsoft');
+    (1, 'None'), (2, 'ONID'), (3, 'Google'), (4, 'Microsoft'), (5, 'GitHub');
 
 INSERT INTO capstone_interest_level (cil_id, cil_name) VALUES 
     (1, 'Not Specified'), (2, 'Impartial'), (3, 'Desireable'), (4, 'Undesireable');

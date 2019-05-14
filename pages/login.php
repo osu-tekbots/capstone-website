@@ -1,47 +1,22 @@
 <?php
-use Model\UserType;
 
-session_start();
-
-//$queryDict is populated from URL arguments.
-parse_str($_SERVER['QUERY_STRING'],$queryDict);
-
-if (isset($queryDict['provider'])) {
-    switch ($queryDict['provider']) {
-    case 'google':
-	  //Perform O_AUTH client authentication. Reference the README in the ./ directory
-	  //for more information.
-      header('Location: ../auth_providers/login_with_google.php');
-      break;
-    case 'microsoft':
-      header('Location: ../auth_providers/login_with_microsoft.php');
-      break;
-    case 'github':
-	  //Future Implementation Required here to handle github authentication.
-      header('Location: ../auth_providers/login_with_github.php');
-      break;
-	case 'logout':
-	  //Handle edge case of logout outside of pages directory.
-	  if (getcwd() == '/nfs/ca/info/eecs_www/education/capstone/newcapstone') {
-	      header('Location: ./pages/logout.php');
-	  } else {
-	      header('Location: ./logout.php');
-	  }
-      break;
-    default:
-      header('Location: ./');
-      break;
-  }
+if(!isset($_SESSION)) {
+    session_start();
 }
 
-// The user is already authenticated or none of the arguments are provided, proceed with the login page display
+$isLoggedIn = isset($_SESSION['userID']) && !empty($_SESSION['userID']);
+if ($isLoggedIn) {
+    // Redirect to their profile page
+    $redirect = $configManager->getBaseUrl() . 'pages/myProfile.php';
+    echo "<script>window.location.replace('$redirect');</script>";
+    die();
+}
 
 $title = 'Login';
 include_once PUBLIC_FILES . '/modules/header.php';
 
-$isLoggedIn = isset($_SESSION['userID']) && !empty($_SESSION['userID']);
-
 ?>
+<<<<<<< HEAD
   <br><br>
   <div class="container">
     <div class="row">
@@ -127,48 +102,51 @@ $isLoggedIn = isset($_SESSION['userID']) && !empty($_SESSION['userID']);
 		}
 	  ?>
 	  </div>
+=======
+>>>>>>> e80d70ffa5c7d3dec787acf76299f5086a6a382e
 
-	<?php echo '<input id="userIDHeader" style="display:none;" value="' . $_SESSION['userID'] . '"></input>'; ?>
+<br><br><br>
+<div class="container">
+<div class="row">
+    <div class="col-sm-4">
+        <br>
+        <hr class="my-4">
+        <h4 class="text-center">Student Login</h4>
+        <a class="login" href="auth/index.php?provider=onid" style="text-decoration:none;">
+            <button id="onidBtn" class="btn btn-lg btn-warning btn-block text-uppercase" type="submit">
+                <i class="fas fa-book mr-2"></i> Login with ONID
+            </button>
+        </a>
+        <hr class="my-4">
+        <h4 class="text-center">Project Proposer Login</h4>
+        <a class="login" href="auth/index.php?provider=google" style="text-decoration:none;">
+            <button id="googleBtn" class="btn btn-lg btn-danger btn-block text-uppercase" type="submit">
+                <i class="fab fa-google mr-2"></i> Login with Google
+            </button>
+        </a>
+        <br/>
+        <a class="login" href="auth/index.php?provider=microsoft" style="text-decoration:none;">
+            <button id="microsoftBtn" class="btn btn-lg btn-success btn-block text-uppercase" type="submit">
+                <i class="fab fa-microsoft mr-2"></i> Login with Microsoft
+            </button>
+        </a>
+        <br/>
+        <a class="login" href="auth/index.php?provider=github" style="text-decoration:none;">
+            <button id="microsoftBtn" class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">
+                <i class="fab fa-github mr-2"></i> Login with GitHub
+            </button>
+        </a>
+        <hr class="my-4">
     </div>
-  </div>
-
-
-<script type="text/javascript">
-
-$('#accessLevelSelect').on('change', function(){
-	var studentId = '<?php echo $studentId; ?>';
-	var proposerId = '<?php echo $proposerId; ?>';
-	
-	if($('#accessLevelSelect').val() == studentId){
-		$('#onidInputDiv').show();
-	}
-	else if($('#accessLevelSelect').val() == proposerId){
-		$('#onidInputDiv').hide();
-	}
-});
-
-/**
- * Event handler for after a user selects their type from the login page. They are able to select their type the
- * first time they log in.
- */
-function onUpdateUserType() {
-	
-    let body = {
-        action: 'updateUserType',
-        userId: $('#userIDHeader').val(),
-        typeId: $('#accessLevelSelect').val(),
-		onidId: $('#onidInput').val()
-    };
-
-    api.post('/users.php', body).then(res => {
-        window.location.replace('pages/myProfile.php');
-    }).catch(err => {
-        snackbar(err.message, 'error');
-    });
-
-}
-$('#accessLevelSaveBtn').on('click', onUpdateUserType);
-</script>
+	<div class="col-sm-8">
+        <center>
+            <br>
+            <img src="assets/img/loginImage.jpg" alt="icon" />
+            <br/>
+        </center>
+	</div>
+</div>
+</div>
 
 <?php
 include_once PUBLIC_FILES . '/modules/footer.php';
