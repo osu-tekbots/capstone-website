@@ -32,6 +32,7 @@ if ($provider) {
             if(!$ok) {
                 renderErrorMessage();
             }
+            break;
     
         case 'github':
             include_once PUBLIC_FILES . '/auth/github.php';
@@ -40,6 +41,7 @@ if ($provider) {
             if(!$ok) {
                 renderErrorMessage();
             }
+            break;
     
         default:
             renderErrorMessage();
