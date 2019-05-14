@@ -21,6 +21,13 @@ if (!isset($_SESSION)) {
  * - `lastName`: the last name of the user
  * - `email`: the email address of the user
  *
+ * @param string $name the name of the OAuth provider
+ * @param string $clientId the ID of the client making the authentication request. This ID is provided when registering
+ * with the provider to use OAuth2.
+ * @param string $secret the key used to authenticate the client request
+ * @param string[] $scope the scope of the request provided as an array of URI strings
+ * @param string $serverUrl the URL to contact for user information after successful authentication and a token is
+ * received
  * @return string|bool the ID provided by the OAuth server for the user on success, false otherwise
  */
 function authenticateWithOAuth2($name, $clientId, $secret, $scope, $serverUrl) {
@@ -69,7 +76,7 @@ function authenticateWithOAuth2($name, $clientId, $secret, $scope, $serverUrl) {
                 $client->error = $client->authorization_error;
                 $success = false;
             } elseif (strlen($client->access_token)) {
-                // We got a token. Use it to request authorization from the authentication server
+                // We got a token. Use it to request information from the authentication server
                 $success = $client->CallAPI($serverUrl, 'GET', array(), array('FailOnAccessError' => true), $user);
             }
         }
