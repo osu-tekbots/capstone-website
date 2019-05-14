@@ -91,7 +91,7 @@ die();
  * @return void
  */
 function renderErrorMessage() {
-    global $confiManager;
+    global $configManager;
     
     $title = 'Authentication Error';
     include_once PUBLIC_FILES . '/modules/header.php';
