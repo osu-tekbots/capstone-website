@@ -20,7 +20,7 @@ function authenticateStudent() {
 
     $dao = new UsersDao($dbConn, $logger);
 
-    $u = $dao->getUserByAuthProviderProvidedId($authProvidedId);
+    $u = $dao->getUserByOnid($onid);
     if ($u) {
         $_SESSION['userID'] = $u->getId();
         $_SESSION['accessLevel'] = $u->getType()->getName();
