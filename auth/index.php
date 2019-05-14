@@ -3,15 +3,24 @@
  * This file handles authentication for the capstone website
  */
 
-$provider = isset($_GET['provider']) ? $_GET['provider'] : false;
+ if (!isset($_SESSION)) {
+     session_start();
+ }
+
+$provider = isset($_GET['provider']) 
+                ? $_GET['provider'] 
+                : isset($_SESSION['provider'])
+                    ? $_SESSION['provider']
+                    : false;
 if ($provider) {
-    switch($provider) {
+    $_SESSION['provider'] = $provider;
+    switch ($provider) {
 
         case 'onid':
             include_once PUBLIC_FILES . '/auth/onid.php';
     
             $ok = authenticateStudent();
-            if(!$ok) {
+            if (!$ok) {
                 renderErrorMessage();
             }
             break;
@@ -20,7 +29,7 @@ if ($provider) {
             include_once PUBLIC_FILES . '/auth/google.php';
     
             $ok = authenticateWithGoogle();
-            if(!$ok){
+            if (!$ok) {
                 renderErrorMessage();
             }
             break;
@@ -29,7 +38,7 @@ if ($provider) {
             include_once PUBLIC_FILES . '/auth/microsoft.php';
     
             $ok = authenticateWithMicrosoft();
-            if(!$ok) {
+            if (!$ok) {
                 renderErrorMessage();
             }
             break;
@@ -38,7 +47,7 @@ if ($provider) {
             include_once PUBLIC_FILES . '/auth/github.php';
     
             $ok = authenticateWithGitHub();
-            if(!$ok) {
+            if (!$ok) {
                 renderErrorMessage();
             }
             break;
@@ -65,9 +74,10 @@ switch ($_SESSION['accessLevel']) {
         break;
 
     default:
-        $redirect = $configManager->getBaseUrl(). 'pages/myProfile.php';
+        $redirect = $configManager->getBaseUrl() . 'pages/myProfile.php';
 }
 
+unset($_SESSION['provider']);
 echo "<script>window.location.replace('$redirect');</script>";
 die();
 
@@ -81,7 +91,6 @@ die();
  * @return void
  */
 function renderErrorMessage() {
-
     $title = 'Authentication Error';
     include_once PUBLIC_FILES . '/modules/header.php';
 
