@@ -9,9 +9,11 @@
 
 $provider = isset($_GET['provider']) 
                 ? $_GET['provider'] 
-                : isset($_SESSION['provider'])
-                    ? $_SESSION['provider']
-                    : false;
+                : (
+                    isset($_SESSION['provider'])
+                        ? $_SESSION['provider']
+                        : false
+                );
 if ($provider) {
     $_SESSION['provider'] = $provider;
     switch ($provider) {
