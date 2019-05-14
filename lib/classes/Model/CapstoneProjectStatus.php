@@ -5,6 +5,13 @@ namespace Model;
  * Data class representing an CapstoneProjectStatus enumeration
  */
 class CapstoneProjectStatus {
+    const CREATED = 1;
+    const PENDING_APPROVAL = 2;
+    const REJECTED = 3;
+    const ACCEPTING_APPLICANTS = 4;
+    const IN_PROGRESS = 5;
+    const COMPLETE = 6;
+    const INCOMPLETE = 7;
     
     /** @var integer */
     private $id;
@@ -18,17 +25,21 @@ class CapstoneProjectStatus {
      * @param integer $id the ID of the CapstoneProjectStatus. This should come directly from the database.
      * @param string $name the name associated with the CapstoneProjectStatus
      */
-    public function __construct($id, $name) {
-        $this->setId($id);
-        $this->setName($name);
+    public function __construct($id = null, $name = null) {
+        if ($id == null && $name == null) {
+            $this->setId(self::CREATED);
+            $this->setName('Created');
+        } else {
+            $this->setId($id);
+            $this->setName($name);
+        }
     }
     
 
     /**
      * Get the value of id
      */ 
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -37,8 +48,7 @@ class CapstoneProjectStatus {
      *
      * @return  self
      */ 
-    public function setId($id)
-    {
+    public function setId($id) {
         $this->id = $id;
 
         return $this;
@@ -47,8 +57,7 @@ class CapstoneProjectStatus {
     /**
      * Get the value of name
      */ 
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
 
@@ -57,8 +66,7 @@ class CapstoneProjectStatus {
      *
      * @return  self
      */ 
-    public function setName($name)
-    {
+    public function setName($name) {
         $this->name = $name;
 
         return $this;

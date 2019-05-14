@@ -47,11 +47,8 @@ class UsersDao {
             $sql = 'SELECT * FROM user, user_type, user_salutation, user_auth_provider ';
             $sql .= 'WHERE u_ut_id = ut_id AND u_us_id = us_id AND u_uap_id = uap_id';
             $result = $this->conn->query($sql);
-            if (!$result) {
-                return false;
-            }
 
-            return \array_map(array('self::ExtractUserFromRow'), $result);
+            return \array_map('self::ExtractUserFromRow', $result);
         } catch (\Exception $e) {
             $this->logError('Failed to fetch users: ' . $e->getMessage());
 
@@ -72,7 +69,7 @@ class UsersDao {
             $sql .= 'WHERE u_id = :id AND u_ut_id = ut_id AND u_us_id = us_id AND u_uap_id = uap_id';
             $params = array(':id' => $id);
             $result = $this->conn->query($sql, $params);
-            if (!$result || \count($result) == 0) {
+            if (\count($result) == 0) {
                 return false;
             }
 
@@ -96,11 +93,14 @@ class UsersDao {
      */
     public function getUserByAuthProviderProvidedId($id) {
         try {
-            $sql = 'SELECT * FROM user, user_type, user_salutation, user_auth_provider ';
-            $sql .= 'WHERE u_uap_provided_id = :id AND u_ut_id = ut_id AND u_us_id = us_id AND u_uap_id = uap_id';
+            $sql = '
+            SELECT * 
+            FROM user, user_type, user_salutation, user_auth_provider
+            WHERE u_uap_provided_id = :id AND u_ut_id = ut_id AND u_us_id = us_id AND u_uap_id = uap_id
+            ';
             $params = array(':id' => $id);
             $result = $this->conn->query($sql, $params);
-            if (!$result || \count($result) == 0) {
+            if (\count($result) == 0) {
                 return false;
             }
 
@@ -162,7 +162,7 @@ class UsersDao {
                 ':onid' => $user->getOnid(),
                 ':auth' => $user->getAuthProvider()->getId(),
                 ':authpid' => $user->getAuthProviderId(),
-                ':datec' => $user->getDateCreated()->format('Y-m-d H:i:s')
+                ':datec' => QueryUtils::FormatDate($user->getDateCreated())
             );
             $this->conn->execute($sql, $params);
 
@@ -186,11 +186,12 @@ class UsersDao {
     public function updateUser($user) {
         try {
             $sql = 'UPDATE user SET ';
-            $sql .= 'u_ut_id = :type';
+            $sql .= 'u_ut_id = :type,';
             $sql .= 'u_fname = :fname, ';
             $sql .= 'u_lname = :lname, ';
             $sql .= 'u_us_id = :salu, ';
             $sql .= 'u_email = :email, ';
+			$sql .= 'u_onid = :onid, ';
             $sql .= 'u_phone = :phone, ';
             $sql .= 'u_major = :maj, ';
             $sql .= 'u_affiliation = :affil, ';
@@ -202,10 +203,11 @@ class UsersDao {
                 ':lname' => $user->getLastName(),
                 ':salu' => $user->getSalutation()->getId(),
                 ':email' => $user->getEmail(),
+				':onid' => $user->getOnid(),
                 ':phone' => $user->getPhone(),
                 ':maj' => $user->getMajor(),
                 ':affil' => $user->getAffiliation(),
-                ':dateu' => new \DateTime(),
+                ':dateu' => QueryUtils::FormatDate($user->getDateUpdated()),
                 ':id' => $user->getId()
             );
             $this->conn->execute($sql, $params);
@@ -273,8 +275,8 @@ class UsersDao {
      * @return \Model\User
      */
     public static function ExtractUserFromRow($row) {
-        return (new User($row['u_id']))
-            ->setType(self::ExtractUserTypeFromRow($row, true))
+        $user = new User($row['u_id']);
+        $user->setType(self::ExtractUserTypeFromRow($row, true))
             ->setFirstName($row['u_fname'])
             ->setLastName($row['u_lname'])
             ->setSalutation(self::ExtractUserSalutationFromRow($row, true))
@@ -288,6 +290,8 @@ class UsersDao {
             ->setDateCreated(new \DateTime($row['u_date_created']))
             ->setDateUpdated(new \DateTime($row['u_date_updated']))
             ->setDateLastLogin(new \DateTime($row['u_date_last_login']));
+        
+        return $user;
     }
 
     /**
@@ -302,7 +306,8 @@ class UsersDao {
      */
     public static function ExtractUserTypeFromRow($row, $userInRow = false) {
         $idKey = $userInRow ? 'u_ut_id' : 'ut_id';
-        return new UserType(\intval($row[$idKey]), $row['ut_name']);
+        $name = isset($row['ut_name']) ? $row['ut_name'] : null;
+        return new UserType(\intval($row[$idKey]), $name);
     }
 
     /**
@@ -317,7 +322,8 @@ class UsersDao {
      */
     public static function ExtractUserSalutationFromRow($row, $userInRow = false) {
         $idKey = $userInRow ? 'u_us_id' : 'us_id';
-        return new UserSalutation(\intval($row[$idKey]), $row['us_name']);
+        $name = isset($row['us_name']) ? $row['us_name'] : null;
+        return new UserSalutation(\intval($row[$idKey]), $name);
     }
 
     /**
@@ -332,7 +338,8 @@ class UsersDao {
      */
     public static function ExtractUserAuthProviderFromRow($row, $userInRow = false) {
         $idKey = $userInRow ? 'u_uap_id' : 'uap_id';
-        return new UserAuthProvider(\intval($row[$idKey]), $row['uap_name']);
+        $name = isset($row['uap_name']) ? $row['uap_name'] : null;
+        return new UserAuthProvider(\intval($row[$idKey]), $name);
     }
 
     /**

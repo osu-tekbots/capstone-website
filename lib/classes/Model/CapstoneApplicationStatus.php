@@ -5,15 +5,24 @@ namespace Model;
  * Represents the status of an application for a capstone project.
  */
 class CapstoneApplicationStatus {
+    const STARTED = 1;
+    const SUBMITTED = 2;
+    const ACCEPTED = 3;
+    const CLOSED = 4;
 
     /** @var int */
     private $id;
     /** @var string */
     private $name;
 
-    public function __construct($id, $name) {
-        $this->setId($id);
-        $this->setName($name);
+    public function __construct($id = null, $name = null) {
+        if ($id == null && $name == null) {
+            $this->setId(self::STARTED);
+            $this->setName('Started');
+        } else {
+            $this->setId($id);
+            $this->setName($name);
+        }
     }
 
     /**

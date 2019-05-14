@@ -6,8 +6,12 @@ use Util\IdGenerator;
 class CapstoneApplication {
     /** @var string */
     private $id;
-    /** @var mixed */
+    /** @var string */
+    private $capstoneProjectId;
+    /** @var CapstoneProject */
     private $capstoneProject;
+    /** @var string */
+    private $studentId;
     /** @var User */
     private $student;
     /** @var string */
@@ -20,6 +24,10 @@ class CapstoneApplication {
     private $portfolioLink;
     /** @var  CapstoneApplicationStatus */
     private $status;
+    /** @var CapstoneInterestLevel */
+    private $reviewInterestLevel;
+    /** @var string */
+    private $reviewProposerComments;
     /** @var \DateTime */
     private $dateCreated;
     /** @var \DateTime */
@@ -29,6 +37,9 @@ class CapstoneApplication {
 
     /**
      * Creates a new instance of a capstone application.
+     * 
+     * If an ID is provided, defaults will not be set. If an ID is not provided, a new ID will be generated and
+     * defaults will be set.
      *
      * @param string|null $id the ID of the application. If null, a random ID will be generated.
      */
@@ -36,6 +47,9 @@ class CapstoneApplication {
         if ($id == null) {
             $id = IdGenerator::generateSecureUniqueId();
             $this->setId($id);
+            $this->setStatus(new CapstoneApplicationStatus());
+            $this->setReviewInterestLevel(new CapstoneInterestLevel());
+            $this->setDateCreated(new \DateTime());
         } else {
             $this->setId($id);
         }
@@ -108,7 +122,7 @@ class CapstoneApplication {
      * @return  self
      */ 
     public function setJustification($justification) {
-        $this->justification = $justification;
+        $this->justification = \htmlspecialchars($justification);
 
         return $this;
     }
@@ -126,7 +140,7 @@ class CapstoneApplication {
      * @return  self
      */ 
     public function setTimeAvailable($timeAvailable) {
-        $this->timeAvailable = $timeAvailable;
+        $this->timeAvailable = \htmlspecialchars($timeAvailable);
 
         return $this;
     }
@@ -144,7 +158,7 @@ class CapstoneApplication {
      * @return  self
      */ 
     public function setSkillSet($skillSet) {
-        $this->skillSet = $skillSet;
+        $this->skillSet = \htmlspecialchars($skillSet);
 
         return $this;
     }
@@ -162,7 +176,7 @@ class CapstoneApplication {
      * @return  self
      */ 
     public function setPortfolioLink($portfolioLink) {
-        $this->portfolioLink = $portfolioLink;
+        $this->portfolioLink = \urlencode($portfolioLink);
 
         return $this;
     }
@@ -235,6 +249,78 @@ class CapstoneApplication {
      */ 
     public function setDateSubmitted($dateSubmitted) {
         $this->dateSubmitted = $dateSubmitted;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of studentId
+     */ 
+    public function getStudentId() {
+        return $this->studentId;
+    }
+
+    /**
+     * Set the value of studentId
+     *
+     * @return  self
+     */ 
+    public function setStudentId($studentId) {
+        $this->studentId = $studentId;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of capstoneProjectId
+     */ 
+    public function getCapstoneProjectId() {
+        return $this->capstoneProjectId;
+    }
+
+    /**
+     * Set the value of capstoneProjectId
+     *
+     * @return  self
+     */ 
+    public function setCapstoneProjectId($capstoneProjectId) {
+        $this->capstoneProjectId = $capstoneProjectId;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of reviewInterestLevel
+     */ 
+    public function getReviewInterestLevel() {
+        return $this->reviewInterestLevel;
+    }
+
+    /**
+     * Set the value of reviewInterestLevel
+     *
+     * @return  self
+     */ 
+    public function setReviewInterestLevel($reviewInterestLevel) {
+        $this->reviewInterestLevel = $reviewInterestLevel;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of reviewProposerComments
+     */ 
+    public function getReviewProposerComments() {
+        return $this->reviewProposerComments;
+    }
+
+    /**
+     * Set the value of reviewProposerComments
+     *
+     * @return  self
+     */ 
+    public function setReviewProposerComments($reviewProposerComments) {
+        $this->reviewProposerComments = \htmlspecialchars($reviewProposerComments);
 
         return $this;
     }

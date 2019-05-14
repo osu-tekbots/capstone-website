@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS user (
     u_lname VARCHAR(128),
     u_us_id INT,
     u_email VARCHAR(256),
-    u_phone INT,
+    u_phone VARCHAR(16),
     u_major VARCHAR(128),
     u_affiliation VARCHAR(128),
     u_onid VARCHAR(32),

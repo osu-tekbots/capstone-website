@@ -64,6 +64,10 @@ class User {
         if ($id == null) {
             $id = IdGenerator::generateSecureUniqueId();
             $this->setId($id);
+            $this->setType(new UserType());
+            $this->setAuthProvider(new UserAuthProvider());
+            $this->setSalutation(new UserSalutation());
+            $this->setDateCreated(new \DateTime());
         } else {
             $this->setId($id);
         }
@@ -139,6 +143,15 @@ class User {
         $this->lastName = $lastName;
 
         return $this;
+    }
+
+    /**
+     * Returns the combination of the user's first and last name.
+     *
+     * @return string
+     */
+    public function getFullName() {
+        return $this->getFirstName() . ' ' . $this->getLastName();
     }
 
     /**

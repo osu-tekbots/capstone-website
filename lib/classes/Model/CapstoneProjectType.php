@@ -5,6 +5,9 @@ namespace Model;
  * Data class representing an CapstoneProjectType enumeration
  */
 class CapstoneProjectType {
+    const CAPSTONE = 1;
+    const LONG_TERM = 2;
+    const CLUB_PROJECT = 3;
     
     /** @var integer */
     private $id;
@@ -18,17 +21,21 @@ class CapstoneProjectType {
      * @param integer $id the ID of the CapstoneProjectType. This should come directly from the database.
      * @param string $name the name associated with the CapstoneProjectType
      */
-    public function __construct($id, $name) {
-        $this->setId($id);
-        $this->setName($name);
+    public function __construct($id = null, $name = null) {
+        if ($id == null && $name == null) {
+            $this->setId(self::CAPSTONE);
+            $this->setName('Capstone');
+        } else {
+            $this->setId($id);
+            $this->setName($name);
+        }
     }
     
 
     /**
      * Get the value of id
      */ 
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -37,8 +44,7 @@ class CapstoneProjectType {
      *
      * @return  self
      */ 
-    public function setId($id)
-    {
+    public function setId($id) {
         $this->id = $id;
 
         return $this;
@@ -47,8 +53,7 @@ class CapstoneProjectType {
     /**
      * Get the value of name
      */ 
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
 
@@ -57,8 +62,7 @@ class CapstoneProjectType {
      *
      * @return  self
      */ 
-    public function setName($name)
-    {
+    public function setName($name) {
         $this->name = $name;
 
         return $this;

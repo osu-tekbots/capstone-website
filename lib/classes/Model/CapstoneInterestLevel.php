@@ -1,15 +1,28 @@
 <?php
 namespace Model;
 
-class CapstoneApplicationReviewInterestLevel {
+/**
+ * Represent an interest level enumeration from the database
+ */
+class CapstoneInterestLevel {
+    const NOT_SPECIFIED = 1;
+    const IMPARTIAL = 2;
+    const DESIREABLE = 3;
+    const UNDESIREABLE = 4;
+
     /** @var string */
     private $id;
     /** @var string */
     private $name;
 
-    public function __construct($id, $name) {
-        $this->setId($id);
-        $this->setName($name);
+    public function __construct($id = null, $name = null) {
+        if ($id == null && $name == null) {
+            $this->setId(self::NOT_SPECIFIED);
+            $this->setName('Not Specified');
+        } else {
+            $this->setId($id);
+            $this->setName($name);
+        }
     }    
 
     /**

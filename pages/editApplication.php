@@ -1,238 +1,247 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<?php include_once('../includes/header.php') ?>
-<title>Edit Application</title>
-</head>
-
-<?php require_once('../db/dbManager.php'); ?>
-<?php require_once('../modules/redirect.php'); ?>
-
 <?php
-	$applicationID;
-	if (isset($_GET['id'])) {
-		$applicationID = $_GET['id'];
-		$result = getApplication($applicationID);
-		$row = $result->fetch_assoc();
+use DataAccess\CapstoneApplicationsDao;
+use DataAccess\CapstoneProjectsDao;
+use Model\CapstoneApplicationStatus;
 
-		//Validate User.
-		if(($row['user_id'] == $_SESSION['userID']) || (array_key_exists("accessLevel", $_SESSION) && $_SESSION['accessLevel'] == "Admin")){
-			$validUserCredentials = true;
-		}
-		else{
-			//Redirect if user is not allowed to visit this page.
-			header("Location: ./index.php");
-			exit();
-		}
+session_start();
 
-	}else {
-		header("Location: ../"); /* Redirect browser */
-		exit();
-	}
+include_once PUBLIC_FILES . '/lib/shared/authorize.php';
+
+$applicationId = $_GET['id'];
+
+$isLoggedIn = isset($_SESSION['userID']) && !empty($_SESSION['userID']);
+
+// Redirect the user if they are not logged in or no ID is provided in the query string
+allowIf($applicationId != '' && $isLoggedIn);
+
+$userId = $_SESSION['userID'];
+
+$isAdmin = $_SESSION['accessLevel'] == 'Admin';
+
+$applicationsDao = new CapstoneApplicationsDao($dbConn, $logger);
+$application = $applicationsDao->getApplication($applicationId);
+
+// We also need to get the project because the application does not retrieve the proposer information
+$projectsDao = new CapstoneProjectsDao($dbConn, $logger);
+$project = $projectsDao->getCapstoneProject($application->getCapstoneProject()->getId());
+
+// Redirect the user if the application is not found or if the user does not own the application
+allowIf($application && ($application->getStudent()->getId() == $userId || $isAdmin));
+
+// Get application information
+$justification = $application->getJustification();
+$time_available = $application->getTimeAvailable();
+$skill_set = $application->getSkillSet();
+$external_link = $application->getPortfolioLink();
+$applicationStatusId = $application->getStatus()->getId();
+$submitted = $applicationStatusId == CapstoneApplicationStatus::SUBMITTED;
+$readOnly = $submitted ? 'readonly' : '';
+
+// Get Project Information
+$projectTitle = $project->getTitle();
+$description = $project->getDescription();
+$motivation = $project->getMotivation();
+$objectives = $project->getObjectives();
+$minQualifications = $project->getMinQualifications();
+$prefQualifications = $project->getPreferredQualifications();
+
+$buttonsHtml = $submitted ? "
+    <div class='alert alert-success'>
+        Submitted
+    </div>
+" : "
+    <button class='btn btn-light mr-3' type='button' id='btnSaveApplicationDraft'>
+        Save Draft
+    </button>
+    <button class='btn btn-outline-primary' type='submit'>
+        Submit Application
+    </button>
+";
+
+$title = 'Edit Application';
+include_once PUBLIC_FILES . '/modules/header.php';
+
 ?>
 
-	<?php
-		function buildEditApplication($applicationID){
-
-			$result = getApplication($applicationID);
-			$row = $result->fetch_assoc();
-			
-			$justification = $row['justification'];
-			$time_available = $row['time_available'];
-			$skill_set = $row['skill_set'];
-			$external_link = $row['external_link'];
-			
-			$title = $row['title'];
-			$description = $row['description'];
-			$motivation = $row['motivation'];
-			$objectives = $row['objectives'];
-			$minQualifications = $row['minimum_qualifications'];
-			$prefQualifications = $row['preferred_qualifications'];
-
-			$firstName = $row['first_name'];
-			$lastName = $row['last_name'];
-			
-			echo '
-			<br>
-			<div class="container-fluid">
-				<div class="row">
-					<div class="col-sm-1">
-					</div>
-					<div class="col-sm-6 jumbotron scroll">
-						<div class="row">
-							<div class="col-sm-7">
-								<h2>Application ' . $applicationID . '</h2>
-								<h4>For: ' . $title . '</h4>
-								<h5>By: ' . $firstName . ' ' . $lastName . '</h5>
-							</div>
-							<div id="cssloader" class="col-sm-1">
-							</div>
-							<div class="col-sm-4">
-								<button id="saveApplicationDraftBtn" class="btn btn-success capstone-nav-btn" type="button" >Save Draft</button>
-								<button name="submitButtonPressed" id="submitBtn" class="btn btn-primary capstone-nav-btn" type="button">Submit</button>
-								<div id="successText" class="successText" style="display:none;">Successfully submitted application!</div>
-								<div id="errorTextDiv" style="color:red;"></div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-sm-6"> 
-								<div class="form-group">
-									<label for="justificationText">Justification <font size="2" style="color:red;">*required</font></label>
-									<textarea class="form-control" id="justificationText" rows="6">' . $justification . '</textarea>
-								</div>
-								<div class="form-group">
-									<label for="externalLinkText">External Link </label>
-									<textarea class="form-control" id="externalLinkText" rows="1">' . $external_link . '</textarea>
-								</div>
-							</div>
-							<div class="col-sm-6">
-								<div class="form-group">
-									<label for="skillSetText">Skill Set <font size="2" style="color:red;">*required</font></label>
-									<textarea class="form-control" id="skillSetText" rows="5">' . $skill_set . '</textarea>
-								</div>
-								<div class="form-group">
-									<label for="timeAvailableText">Time Available <font size="2" style="color:red;">*required</font></label>
-									<textarea class="form-control" id="timeAvailableText" rows="3">' . $time_available . '</textarea>
-								</div>
-
-							</div>
-						</div>
-					</div>
-					<div class="col-sm-1">
-					</div>
-					<div class="col-sm-4 scroll jumbotron capstoneJumbotron">
-						<br>
-						<h2>'. $title .'</h2> 
-						<p>'. $description .'</p>
-						<br><br>
-						<h5>Motivation:</h5>
-						<p>'. $motivation .'</p>
-						<h5>Objectives:</h5>
-						<p>'. $objectives .'</p>
-						<h5>Minimum Qualifications:</h5>
-						<p>'. $minQualifications .'</p>
-						<h5>Preferred Qualifications:</h5>
-						<p>'. $prefQualifications .'</p>
-					</div>
-				</div>
-			</div>
-			';
-		}
-
-	?>
-<body>
-	<?php include_once('../modules/navbar.php'); ?>
-	<?php buildEditApplication($applicationID); ?>
-	<?php include_once("../modules/footer.php"); ?>
-
- </body>
+<br/>
+<br/>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1>Student Application for <?php echo $projectTitle; ?></h1>
+        </div>
+    </div>
+    <form id="formApplication">
+        <input type="hidden" name="applicationId" value="<?php echo $applicationId; ?>" />
+        <div class="form-group row">
+            <div class="col-12">
+                <label>Justification</label>
+                <textarea required <?php echo $readOnly; ?> name="justification" class="form-control" rows="4"><?php 
+                    echo $justification; ?></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label>Skill Set</label>
+                <textarea required <?php echo $readOnly; ?> name="skillSet" class="form-control" rows="5"><?php 
+                    echo $skill_set; ?></textarea>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group ">
+                    <label>Time Available</label>
+                    <input required <?php echo $readOnly; ?> name="timeAvailable" class="form-control" max="256" 
+                        value="<?php echo $time_available; ?>">
+                </div>
+                <div class="form-group ">
+                    <label>Portfolio Link</label>
+                    <input <?php echo $readOnly; ?> name="portfolioLink" class="form-control" max="512" 
+                        value="<?php echo $external_link; ?>">
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col" id="formActions">
+                <?php echo $buttonsHtml; ?>
+            </div>
+        </div>
+    </form>
+    <hr/>
+	<div class="row project-summary">
+		<div class="col">
+			<h3>Project Summary</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<h4>Description</h4>
+			<p><?php echo $description; ?></p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<h4>Motivation</h4>
+			<p><?php echo $motivation; ?></p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<h4>Objectives</h4>
+			<p><?php echo $objectives; ?></p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<h4>Preferred Qualifications</h4>
+			<p><?php echo $prefQualifications; ?></p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<h4>Minimum Qualifications</h4>
+			<p><?php echo $minQualifications; ?></p>
+		</div>
+	</div>
+</div>
 
 <script type="text/javascript">
 
-
-class Application {
-  constructor() {
-    this.justification = $('#justificationText').val();
-	this.skill_set = $('#skillSetText').val();
-	this.external_link = $('#externalLinkText').val();
-	this.time_available = $('#timeAvailableText').val();
-	this.id = <?php echo $applicationID?>;
-  }
+/**
+ * Serializes the form element as a JSON object with the 'name' attribute of the inputs and
+ * textareas as the keys in the object.
+ * @return {object}
+ */
+function getApplicationAsJson() {
+    // Get the form data
+    let data = new FormData(document.getElementById('formApplication'));
+    let json = {};
+    for(const [key, value] of data.entries()) {
+        json[key] = value;
+    }
+    return json;
 }
 
-//Generates the save icon animation.
-function createSaveIcon(){
-	loaderDivText = '<div class="loaderdiv"><span class="save-icon"><span class="loader"></span><span class="loader"></span><span class="loader"></span></span></div>';
-	$('#cssloader').html(loaderDivText);
+/**
+ * Validates the form, displaying an error messages and returning whether the form is valid
+ */
+function validateForm(form) {
+    if(form.justification == '') {
+        snackbar('Please provide a justification', 'error');
+        return false;
+    }
+    if(form.skillSet == '') {
+        snackbar('Please provide your skillset', 'error');
+        return false;
+    }
+    if(form.timeAvailable == '') {
+        snackbar('Please indicate when you are available', 'error');
+        return false;
+    }
+    return true;
 }
 
-function createSaveText(){
-	document.getElementById('successText').style.display = "block";
-	setTimeout(fade_out, 2000);
+/**
+ * Event handler for saving an application draft. The function must return false so that the default action
+ * of refreshing the page on a form submit is aborted.
+ */
+function onSaveApplicationDraft() {
+
+    // Get the form data
+    let body = getApplicationAsJson();
+    body.action = 'saveApplication';
+
+    // Make the request
+    api.post('/applications.php', body).then(res => {
+        snackbar(res.message, 'success');
+    }).catch(err => {
+        snackbar(err.message, 'error');
+    });
+
+    return false;
+
 }
+$('#btnSaveApplicationDraft').click(onSaveApplicationDraft);
 
-function fade_out(){
-	$("#successText").fadeOut();
+/**
+ * Event handler for submitting an application
+ */
+function onSubmitApplication() {
+
+    if(!confirm('You are about to submit your application. You will not be able to make changes to it after submission.'))
+        return false;
+
+    // Ensure the form is valid
+    let form = getApplicationAsJson();
+    if(!validateForm(form)) return;
+
+    // Make the request to submit the application
+    let body = getApplicationAsJson();
+    body.action = 'submitApplication';
+
+    api.post('/applications.php', body).then(res => {
+        snackbar(res.message, 'success');
+        onSubmitApplicationSuccess();
+    }).catch(err => {
+        snackbar(err.message, 'error');
+    });
+
+    return false;
 }
+$('#formApplication').submit(onSubmitApplication);
 
-function displayErrorText(idName, errorText){
-	if($(idName).val() == ""){
-		$('#errorTextDiv').text(errorText);
-		return true;
-	}
-	else{
-		$('#errorTextDiv').text("");
-		return false;
-	}
+/**
+ * Event handler for when the submission is successful. We need to change some of the HTML so that the user can't
+ * resubmit or otherwise modify the review without the need to refresh the page
+ */
+function onSubmitApplicationSuccess() {
+    $('#formApplication .form-control').attr('readonly', true);
+    $('#formActions').html(`
+        <div class='alert alert-success'>
+            Submitted
+        </div>
+    `);
+
 }
-
-$('#saveApplicationDraftBtn').on('click', function (e) {
-	if(displayErrorText('#justificationText', "Please provide justification.")){
-		return;
-	}
-	if(displayErrorText('#skillSetText', "Please provide your skillset.")){
-		return;
-	}
-	if(displayErrorText('#timeAvailableText', "Please provide your availability.")){
-		return;
-	}
-	
-	A = new Application();
-
-	$.ajax({
-		type: 'POST',
-		url: '../db/dbManager.php',
-		dataType: 'html',
-		data: {
-				A: A,
-				action: 'saveApplicationDraft'},
-				success: function(result)
-				{
-					createSaveIcon();
-				},
-				error: function (xhr, ajaxOptions, thrownError) {
-					alert(xhr.status);
-					alert(xhr.responseText);
-					alert(thrownError);
-				}
-	});
-	
-});
-
-
-$('#submitBtn').on('click', function (e) {
-	if(displayErrorText('#justificationText', "Please provide justification.")){
-		return;
-	}
-	if(displayErrorText('#skillSetText', "Please provide your skillset.")){
-		return;
-	}
-	if(displayErrorText('#timeAvailableText', "Please provide your availability.")){
-		return;
-	}
-	
-	A = new Application();
-	
-	$.ajax({
-		type: 'POST',
-		url: '../db/dbManager.php',
-		dataType: 'html',
-		data: {
-				A: A,
-				action: 'submitApplication'},
-				success: function(result)
-				{
-					createSaveText();
-					createSaveIcon();
-				},
-				error: function (xhr, ajaxOptions, thrownError) {
-					alert(xhr.status);
-					alert(xhr.responseText);
-					alert(thrownError);
-				}
-	});
-});
 
 </script>
 
-</html>
+<?php include_once PUBLIC_FILES . '/modules/footer.php'; ?>
