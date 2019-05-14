@@ -97,7 +97,7 @@ if ($loggedIn) {
 // All users
 $buttons['Info'] = 'pages/info.php';
 if ($loggedIn) {
-    $buttons['Logout'] = 'pages/login.php?provider=logout';
+    $buttons['Logout'] = 'pages/logout.php';
 } else {
     $buttons['Login'] = 'pages/login.php';
 }
