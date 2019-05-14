@@ -1,11 +1,13 @@
 <?php
 use DataAccess\CapstoneProjectsDao;
+use DataAccess\KeywordsDao;
 
 $title = 'Browse Projects';
 include_once PUBLIC_FILES . '/modules/header.php';
 include_once PUBLIC_FILES . '/modules/cards.php';
 
 $dao = new CapstoneProjectsDao($dbConn, $logger);
+$keywordsDao = new KeywordsDao($dbConn, $logger);
 
 $projects = $dao->getBrowsableCapstoneProjects();
 
@@ -120,7 +122,7 @@ $projects = $dao->getBrowsableCapstoneProjects();
             <div class="card-columns capstoneCardColumns" id="projectCardGroup">
                 <?php
 					// Render the cards to browser here
-					renderProjectCardGroup($projects, true);
+					renderProjectCardGroup($projects, $keywordsDao, true);
 					?>
             </div>
         </div>

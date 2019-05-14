@@ -3,6 +3,7 @@ namespace Api;
 
 use Model\CapstoneProject;
 use Model\CapstoneProjectStatus;
+use Model\Keyword;
 
 /**
  * Defines the logic for how to handle AJAX requests made to modify project information.
@@ -13,6 +14,8 @@ class ProjectsActionHandler extends ActionHandler {
     private $projectsDao;
     /** @var \DataAccess\UsersDao */
     private $usersDao;
+    /** @var \DataAccess\KeywordsDao */
+    private $keywordsDao;	
     /** @var \Email\ProjectMailer */
     private $mailer;
     /** @var \Util\ConfigManager */
@@ -27,10 +30,11 @@ class ProjectsActionHandler extends ActionHandler {
      * @param \Util\ConfigManager $config the configuration manager providing access to site config
      * @param \Util\Logger $logger the logger to use for logging information about actions
      */
-    public function __construct($projectsDao, $usersDao, $mailer, $config, $logger) {
+    public function __construct($projectsDao, $usersDao, $keywordsDao, $mailer, $config, $logger) {
         parent::__construct($logger);
         $this->projectsDao = $projectsDao;
         $this->usersDao = $usersDao;
+		$this->keywordsDao = $keywordsDao;
         $this->mailer = $mailer;
         $this->config = $config;
     }
@@ -115,7 +119,31 @@ class ProjectsActionHandler extends ActionHandler {
         $objectives = $this->getFromBody('objectives');
         $videoLink = $this->getFromBody('videoLink');
         $websiteLink = $this->getFromBody('websiteLink');
-        // TODO: handle keywords
+        
+		//Clear all existing keywords to account for removed keywords.
+		$this->keywordsDao->removeAllKeywordsForEntity($id);
+		
+		$keywordsBracketSeparatedString = $this->getFromBody('keywords');			
+		$keywordsArray = explode('[', $keywordsBracketSeparatedString);
+
+		//TODO: Remove extra white space character.
+
+		
+		foreach ($keywordsArray as $keyword){
+			$keyword = strtok($keyword, "],");
+			if(!$this->keywordsDao->keywordExistsForEntity($keyword, $id)){
+				if(!$this->keywordsDao->keywordExists($keyword)){
+					//If the keyword doesn't exist, create a new entry and set approved to 0.
+					$this->keywordsDao->addKeyword($keyword, 0);
+				}
+				
+				$k = $this->keywordsDao->getKeyword($keyword);
+				//Parameters are the keyword model and the project's id.
+				$this->keywordsDao->addKeywordInJoinTable($k, $id);
+				
+			}			
+		}
+		
 
         $project = $this->projectsDao->getCapstoneProject($id);
         // TODO: handle case when project is not found

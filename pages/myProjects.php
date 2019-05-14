@@ -1,5 +1,6 @@
 <?php
 use DataAccess\CapstoneProjectsDao;
+use DataAccess\KeywordsDao;
 
 if (!session_id()) {
     session_start();
@@ -15,6 +16,8 @@ $isProposer = isset($_SESSION['accessLevel']) && $_SESSION['accessLevel'] == 'Pr
 
 // Get all the projects that need to be displayed on this page
 $dao = new CapstoneProjectsDao($dbConn, $logger);
+$keywordsDao = new KeywordsDao($dbConn, $logger);
+
 if($isAdmin) {
 	$projects = $dao->getCapstoneProjectsForAdmin($userId);
 } else {
@@ -41,7 +44,7 @@ include_once PUBLIC_FILES . '/modules/cards.php';
 
 		<div class="col-sm-9 scroll jumbotron capstoneJumbotron">
 			<div class="card-columns capstoneCardColumns" id="projectCardGroup">
-				<?php renderProjectCardGroup($projects); ?>
+				<?php renderProjectCardGroup($projects, $keywordsDao); ?>
 			</div>
 		</div>
 

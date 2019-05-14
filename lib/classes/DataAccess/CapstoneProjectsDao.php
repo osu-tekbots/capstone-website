@@ -11,6 +11,8 @@ use Model\CapstoneProjectType;
 use Model\CapstoneProject;
 use Model\CapstoneProjectImage;
 
+use DataAccess\KeywordsDao;
+
 /**
  * Handles all of the logic related to queries on capstone project resources in the database.
  */
