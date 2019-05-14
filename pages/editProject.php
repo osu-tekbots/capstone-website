@@ -1,5 +1,6 @@
 <?php
 use DataAccess\CapstoneProjectsDao;
+use DataAccess\KeywordsDao;
 use Model\CapstoneProjectStatus;
 
 if (!session_id()) {
@@ -19,6 +20,7 @@ $authorizedToProceed = $pId . '' != '' && $_SESSION['userID'] . '' != '';
 allowIf($authorizedToProceed, 'pages/index.php');
 
 $dao = new CapstoneProjectsDao($dbConn, $logger);
+$keywordsDao = new KeywordsDao($dbConn, $logger);
 
 // Get the project and store properly formatted values into local variables
 $project = $dao->getCapstoneProject($pId);
@@ -127,14 +129,13 @@ function renderDefaultImageOption($imageId, $imageName, $selected) {
 
 ?>
 
-<script>
+<script type="text/javascript">
 var availableTags = [
 <?php
-// TODO: fetch the keywords available
-//$result = getKeywords();
-//while ($row = $result->fetch_assoc()) {
-//    echo '"' . $row['name'] . '",';
-//}
+	$availableKeywords = $keywordsDao->getAllKeywords();
+	foreach ($availableKeywords as $k) {
+		echo '"' . $k->getName() . '",';
+	}
 ?>
 ];
 </script>
@@ -361,20 +362,16 @@ var availableTags = [
 									Add Keywords to Project: <font size="2" style="color:red;">*required</font><br>
 									<font size="2">Press Enter after each keyword.</font>
 								</label>
-								<input id="keywordsInput" name="keywords" class="form-control input">
+								<input id="keywordsInput" class="form-control input">
 							</div>
-							<div id="keywordsDiv">
+							<div id="keywordsDiv" name="keywords">
 								<?php
-								// TODO: implement keywords here
-								//Keywords has a buffer character that will cause an additional blank key to be added
-								//for projects without any keywords. FUTURE IMPLEMENTATION: Fix this bug. 2/28/19.
-								//if (sizeof($keywords) > 1) {
-								//	foreach ($keywords as $key) {
-								//		if ($key != ' ') {
-								//			echo '<span class="badge badge-light keywordBadge">' . $key . ' <i class="fas fa-times-circle"></i></span>';
-								//		}
-								//	}
-								//}
+									$preexistingKeywords = $keywordsDao->getKeywordsForEntity($pId);
+									if($preexistingKeywords){
+										foreach ($preexistingKeywords as $k) {
+											echo '<span class="badge badge-light keywordBadge">' . $k->getName() . ' <i class="fas fa-times-circle"></i></span>';
+										}
+									}
 								?>
 							</div>
 						</div>

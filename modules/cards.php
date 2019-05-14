@@ -15,7 +15,7 @@ $numCardsCreated = 0;
  * @param boolean $showActions determines whether to show the actionable (Edit, Delete) buttons
  * @return void
  */
-function renderProjectCardGroup($projects, $browsing = false) {
+function renderProjectCardGroup($projects, $keywordsDao, $browsing = false) {
     global $numCardsCreated;
 
     foreach ($projects as $p) {
@@ -48,10 +48,15 @@ function renderProjectCardGroup($projects, $browsing = false) {
 		else{
 			$details .= "<h6>$nda</h6";
 		}
-        
-		// TODO: show the keywords
-        // foreach
-        // $extra .= '<span class="badge badge-light keywordBadge">' . $key . '</span>';
+
+		$extra = '';
+		$preexistingKeywords = $keywordsDao->getKeywordsForEntity($id);
+		if($preexistingKeywords){
+			foreach ($preexistingKeywords as $k) {
+				$extra .= '<span class="badge badge-light keywordBadge">' . $k->getName() . '</span>';
+			}
+		}
+		
 
 		$image = false;
 		$images = $p->getImages();
@@ -76,7 +81,7 @@ function renderProjectCardGroup($projects, $browsing = false) {
 		$published = !$p->getIsHidden();
 		
 		renderProjectCard($id, $title, $description, $details, $image, $status, $category, $lastUpdated, 
-			$numCardsCreated, $browsing, $published);
+			$numCardsCreated, $browsing, $published, $extra);
 
         $numCardsCreated++;
     }
@@ -97,7 +102,7 @@ function renderProjectCardGroup($projects, $browsing = false) {
  * @param boolean $browsing whether to hide or show the edit and delete buttons. A value of true hides.
  * @return void
  */
-function renderProjectCard($id, $title, $description, $details, $imageLink, $status, $category, $lastUpdated, $num, $browsing, $published) {
+function renderProjectCard($id, $title, $description, $details, $imageLink, $status, $category, $lastUpdated, $num, $browsing, $published, $extra) {
     $statusColor = ($status == 'Awaiting Approval' || $status == 'Rejected') ? 'red' : 'inherit';
     $viewButton = $published ? createLinkButton("pages/viewSingleProject.php?id=$id", 'View') : '';
 	$editButton = !$browsing ? createLinkButton("pages/editProject.php?id=$id", 'Edit') : '';
@@ -115,6 +120,7 @@ function renderProjectCard($id, $title, $description, $details, $imageLink, $sta
 			<small class='text-muted'>$details</small>
 			<div style='float: right; margin-right: 10px;'>
 				<h6><p style='color: $statusColor'>$status</p></h6>
+				<small class='text-muted'>$extra</small><br>
 				$viewButton
 				$editButton
 				$deleteButton

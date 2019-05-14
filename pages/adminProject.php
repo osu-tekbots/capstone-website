@@ -1,5 +1,6 @@
 <?php
 use DataAccess\CapstoneProjectsDao;
+use DataAccess\KeywordsDao;
 
 session_start();
 
@@ -13,6 +14,7 @@ $userId = $_SESSION['userID'];
 allowIf($isAdmin);
 
 $projectsDao = new CapstoneProjectsDao($dbConn, $logger);
+$keywordsDao = new KeywordsDao($dbConn, $logger);
 
 include_once PUBLIC_FILES . '/modules/cards.php';
 
@@ -175,7 +177,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 					<!-- createCardGroup() is found in ../modules/createCards.php -->
 					<?php 
 					$projects = $projectsDao->getCapstoneProjectsForAdmin($userId);
-					renderProjectCardGroup($projects, false); 
+					renderProjectCardGroup($projects, $keywordsDao, false); 
 					?>
 				</div>
 			</div>

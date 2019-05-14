@@ -42,21 +42,23 @@ include_once PUBLIC_FILES . '/modules/header.php';
 $isLoggedIn = isset($_SESSION['userID']) && !empty($_SESSION['userID']);
 
 ?>
-  <br><br><br>
+  <br><br>
   <div class="container">
     <div class="row">
       <div class="col-sm-4">
 		<?php
 		//Only show buttons if the user is not logged in.
-		if ($isLoggedIn) {
+		if (!$isLoggedIn) {
 		    echo '
-			<br>
-            <hr class="my-4">
+			<h3>Student Logins:</h3>
+			<hr class="my-4">
 			<a class="login" href="pages/login.php?provider=google" style="text-decoration:none;">
 				<button id="onidBtn" class="btn btn-lg btn-onid btn-block text-uppercase" type="submit">
 					<i class="fas fa-book mr-2"></i> Login with ONID
 				</button>
 			</a>
+			<hr class="my-4">
+			<h3>Proposer Logins:</h3>
 			<hr class="my-4">
 			<a class="login" href="pages/login.php?provider=google" style="text-decoration:none;">
 				<button id="googleBtn" class="btn btn-lg btn-google btn-block text-uppercase" type="submit">
@@ -83,7 +85,7 @@ $isLoggedIn = isset($_SESSION['userID']) && !empty($_SESSION['userID']);
 	  <?php
         //Renders a new user portal. Only shown after first-time authentication.
         $isNewUser = $isLoggedIn && isset($_SESSION['newUser']) && $_SESSION['newUser'];
-		if (!$isNewUser) {
+		if ($isNewUser) {
             $studentId = UserType::STUDENT;
             $proposerId = UserType::PROPOSER;
 		    echo "
@@ -98,6 +100,7 @@ $isLoggedIn = isset($_SESSION['userID']) && !empty($_SESSION['userID']);
                 </select>
 				<br>
 				<div id='onidInputDiv'>
+					<h6>Note: Students must provide their ONID even if they use a third party authenticator.</h6>
 					ONID Username: <input class='form-control' id='onidInput'>
 				</div>
             </div>

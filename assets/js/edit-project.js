@@ -26,10 +26,9 @@ function getProjectFormDataAsJson() {
         json[key] = value;
     }
 
-    // json.keywords = json.keywords
-    //         .replace(/<span class="badge badge-light keywordBadge">/g, "")
-    //         .replace(/ <i class="fas fa-times-circle"><\/i><\/span>/g, ", ");
-
+     json.keywords = $('#keywordsDiv').html()
+             .replace(/<span class="badge badge-light keywordBadge">/g, "[")
+             .replace(/ <i class="fas fa-times-circle"><\/i><\/span>/g, "],");
     return json;
 }
 
@@ -151,7 +150,7 @@ function onSaveProjectDraftClick() {
     if (body.title == '') {
         return snackbar('Please provide a project title', 'error');
     }
-
+	
     body.action = 'saveProject';
 
     api.post('/projects.php', body)
