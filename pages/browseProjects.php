@@ -37,10 +37,10 @@ $projects = $dao->getBrowsableCapstoneProjects();
                             <?php
                             // TODO: handle keywords
                             //Generate content for dropdown list.
-                            //$result = getKeywords();
-                            //while ($row = $result->fetch_assoc()) {
-                            //    echo '<option>' . $row['name'] . '</option >';
-                            //} 
+							$availableKeywords = $keywordsDao->getAllKeywords();
+							foreach ($availableKeywords as $k) {
+								echo '<option>' . $k->getName() . '</option>';
+							}
                             ?>
                         </select>
                     </div>
