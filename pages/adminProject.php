@@ -111,11 +111,11 @@ include_once PUBLIC_FILES . '/modules/header.php';
 							<select class="form-control" id="keywordFilterSelect" onchange="filterSelectChanged(this)">
 								<option></option>
 								<?php
-								// TODO: fix keywords
-								// $result = getKeywords();
-								// while ($row = $result->fetch_assoc()) {
-								//     echo '<option>' . $row['name'] . '</option>';
-								// }
+								//Generate content for dropdown list.
+								$availableKeywords = $keywordsDao->getAllKeywords();
+								foreach ($availableKeywords as $k) {
+									echo '<option>' . $k->getName() . '</option>';
+								}
 								?>
 							</select>
 						</div>

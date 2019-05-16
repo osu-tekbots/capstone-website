@@ -35,7 +35,6 @@ $projects = $dao->getBrowsableCapstoneProjects();
                         <select class="form-control" id="keywordFilterSelect" onchange="filterSelectChanged(this)">
                             <option></option>
                             <?php
-                            // TODO: handle keywords
                             //Generate content for dropdown list.
 							$availableKeywords = $keywordsDao->getAllKeywords();
 							foreach ($availableKeywords as $k) {
