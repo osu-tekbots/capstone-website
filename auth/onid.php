@@ -39,9 +39,9 @@ function authenticateWithONID() {
         $pageURL .= $_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'];
     }
 
-    $ticket = $_REQUEST['ticket'];
+    $ticket = isset($_REQUEST['ticket']) ? $_REQUEST['ticket'] : false;
 
-    if ($ticket . '' != '') {
+    if ($ticket) {
         $url = 'https://login.oregonstate.edu/cas/serviceValidate?ticket=' . $ticket . '&service=' . $pageURL;
         $html = file_get_contents($url);
 
