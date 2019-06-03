@@ -27,7 +27,7 @@ $dao = new CapstoneProjectsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
 $project = $dao->getCapstoneProject($pid);
 
-allowIf($project && !$project->getIsHidden());
+allowIf($project && !($project->getIsHidden() && !$isAdmin));
 
 $title = $project->getTitle();
 $type = $project->getType()->getName();
