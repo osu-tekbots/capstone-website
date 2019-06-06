@@ -120,6 +120,9 @@ of these variables occur in the following workflow:
 
 
 ## Future Implementation
+- Ability for admins to assign students to projects.
+- Github Login Authentication Support.
+- Mobile Support.
 
 ## Troubleshooting and Helpful Notes
 
