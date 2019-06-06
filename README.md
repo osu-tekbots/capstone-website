@@ -1,4 +1,7 @@
 # Senior Design Capstone Web Application
+
+![image](https://user-images.githubusercontent.com/20714895/59056597-68958700-884d-11e9-9879-7158ca8a879a.png)
+
 Senior Design Capstone is an application that enables students to browse Senior Design projects proposed by 
 individuals from industry and other sponsors. See [the changelog](./CHANGELOG.md) for detailed information about
 updates to the website.
@@ -96,8 +99,6 @@ new user. All new users are defaulted as Students and are re-directed to `pages/
 
 Users must contact an administrator of this application in order to be given the access level of admin.
 
-## Admin Interface
-
 
 ## Session Variables
 Session variables are used to persist user data throughout the course of a user's active session. The instantiation 
@@ -119,9 +120,6 @@ of these variables occur in the following workflow:
 
 
 ## Future Implementation
-- Application process for Proposers
-- Application process for Users
-- Refinement of Alpha Release
 
 ## Troubleshooting and Helpful Notes
 
@@ -134,3 +132,11 @@ be truncated.
 Create a hidden div and echo out the SESSION variable there. Then reference that div in the javascript. Found in 
 `pages/viewSingleProject.php`: 
 		 
+## Screenshots 
+
+![image](https://user-images.githubusercontent.com/20714895/59056636-806d0b00-884d-11e9-8a94-606cb1e5f667.png)
+
+![image](https://user-images.githubusercontent.com/20714895/59057000-43eddf00-884e-11e9-833a-ad1d8b329c7a.png)
+
+![image](https://user-images.githubusercontent.com/20714895/59057030-55cf8200-884e-11e9-8937-fd465a732039.png)
+
