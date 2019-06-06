@@ -43,11 +43,13 @@ include_once PUBLIC_FILES . '/modules/header.php';
             </button>
         </a>
         <br/>
+		<!--
         <a class="login" href="auth/index.php?provider=github" style="text-decoration:none;">
             <button id="microsoftBtn" class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">
                 <i class="fab fa-github mr-2"></i> Login with GitHub
             </button>
         </a>
+		-->
         <hr class="my-4">
     </div>
 	<div class="col-sm-8">

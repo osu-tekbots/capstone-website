@@ -1,5 +1,6 @@
 <?php
 use DataAccess\CapstoneProjectsDao;
+use DataAccess\KeywordsDao;
 
 include PUBLIC_FILES . '/lib/shared/authorize.php';
 
@@ -23,9 +24,10 @@ $isAdmin = $_SESSION['accessLevel'] == 'Admin';
 include_once PUBLIC_FILES . '/modules/admin-review.php';
 
 $dao = new CapstoneProjectsDao($dbConn, $logger);
+$keywordsDao = new KeywordsDao($dbConn, $logger);
 $project = $dao->getCapstoneProject($pid);
 
-allowIf($project && !$project->getIsHidden());
+allowIf($project && !($project->getIsHidden() && !$isAdmin));
 
 $title = $project->getTitle();
 $type = $project->getType()->getName();
@@ -48,10 +50,6 @@ $is_hidden = $project->getIsHidden();
 $category = $project->getCategory()->getName();
 $comments = $project->getProposerComments();
 $name = $project->getProposer()->getFirstName() . ' ' . $project->getProposer()->getLastName();
-
-// TODO: keywords
-//$keywords = explode(',', $row['keywords']);
-$keywords = array();
 
 ?>
 <div class="viewSingleProject">
@@ -149,12 +147,15 @@ $keywords = array();
 	        </address>
 					<address>
 						<strong>Keywords:</strong>
-						<br>		<?php
-						$string=implode(',', $keywords);
-						$string = trim($string,',');
-						$string = rtrim($string,', ');
-						echo($string);
-								?>
+						<br>		
+						<?php
+							$preexistingKeywords = $keywordsDao->getKeywordsForEntity($pid);
+							if($preexistingKeywords){
+								foreach ($preexistingKeywords as $k) {
+									echo '<span class="badge badge-light keywordBadge">' . $k->getName() . '</span>';
+								}
+							}
+						?>
 						<br>
 					</address>
 					<address>

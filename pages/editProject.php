@@ -108,8 +108,6 @@ $tooltipCompleteByText = '';
 $tooltipNumberGroupsDesiredText = 'How many student teams would you like to work on your project? ';
 $tooltipCommentsText = 'Enter any comments you would like the admins to see.';
 
-// TODO: Display the keywords
-
 /**
  * Renders the HTML for an option that will render an image to select as the default image.
  */
