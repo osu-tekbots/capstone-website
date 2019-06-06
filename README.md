@@ -6,7 +6,7 @@ Senior Design Capstone is an application that enables students to browse Senior 
 individuals from industry and other sponsors. See [the changelog](./CHANGELOG.md) for detailed information about
 updates to the website.
 
-**Initial Development**: Winter Term 2019
+**Initial Development**: Winter Term 2019 - Spring Term 2019
 
 **Contributors**
 - Symon Ramos (ramossy@oregonstate.edu)
@@ -60,16 +60,16 @@ chmod a+x .git/hooks/pre-commit
   `pages/myProjects.php` to render project cards with different attributes.
   
 
-## User Types and Website Workflow Design
+## User Roles
 **Proposers**
 1. create new projects.
 2. edit projects.
 3. submit projects for approval.
-4. review student applications. (FUTURE IMPLEMENTATION)
+4. review student applications.
 
 **Students**
 1. browse projects.
-2. apply for projects that are interesting to them. (FUTURE IMPLEMENTATION)
+2. apply for projects that are interesting to them. 
 3. have proposer functionality per user design.
 
 **Admins**
@@ -139,4 +139,6 @@ Create a hidden div and echo out the SESSION variable there. Then reference that
 ![image](https://user-images.githubusercontent.com/20714895/59057000-43eddf00-884e-11e9-833a-ad1d8b329c7a.png)
 
 ![image](https://user-images.githubusercontent.com/20714895/59057030-55cf8200-884e-11e9-8937-fd465a732039.png)
+
+![image](https://user-images.githubusercontent.com/20714895/59057421-2e2ce980-884f-11e9-83ad-6035f7787e94.png)
 
