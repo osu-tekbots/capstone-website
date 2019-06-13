@@ -1,10 +1,12 @@
 <?php
-use DataAccess\CapstoneProjectsDao;
-use Model\CapstoneProjectImage;
-
 /**
  * This api endpoint uploads files into the 'images/' directory. It is invoked from the 'editProject.php' page.
  */
+include_once '../bootstrap.php';
+
+use DataAccess\CapstoneProjectsDao;
+use Model\CapstoneProjectImage;
+
 if ($_POST['action'] == 'uploadImage') {
     header('Content-Type: application/json');
 

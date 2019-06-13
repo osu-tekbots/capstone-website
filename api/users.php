@@ -3,6 +3,8 @@
  * This page handles client requests to modify or fetch user-related data. All requests made to this page should be a 
  * POST request with a corresponding `action` field in the request body.
  */
+include_once '../bootstrap.php';
+
 use DataAccess\UsersDao;
 use Api\UsersActionHandler;
 use Api\Response;
