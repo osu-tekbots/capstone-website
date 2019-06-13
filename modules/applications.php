@@ -15,7 +15,7 @@ function renderApplicationTable($applications, $isProposer) {
 
     echo '<div class="row"><div class="col">';
 
-    if (count($applications) == 0) {
+    if (!$applications || count($applications) == 0) {
         if ($isProposer) {
             echo '<p>No applications have been submitted for this project</p>';
         } else {

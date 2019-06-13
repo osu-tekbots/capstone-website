@@ -31,10 +31,12 @@ $submittedApplications = array();
 if ($isProposer || $isAdmin) {
     $projectsDao = new CapstoneProjectsDao($dbConn, $logger);
     $projects = $projectsDao->getCapstoneProjectsForUser($uId);
-    foreach ($projects as $p) {
-        $pid = $p->getId();
-        $projectApplications = $applicationsDao->getAllApplicationsForProject($pid, true);
-        $submittedApplications[$pid] = $projectApplications;
+    if ($projects) {
+        foreach ($projects as $p) {
+            $pid = $p->getId();
+            $projectApplications = $applicationsDao->getAllApplicationsForProject($pid, true);
+            $submittedApplications[$pid] = $projectApplications;
+        }
     }
     if ($isAdmin) {
         $userApplications = $applicationsDao->getAllApplicationsForUser($uId);
@@ -57,7 +59,7 @@ include_once PUBLIC_FILES . '/modules/applications.php';
         <div class="col">
             <?php
             if ($isProposer || $isAdmin) {
-                if (count($projects) == 0) {
+                if (!$projects || count($projects) == 0) {
                     echo "<p>You don't have any projects for students to apply for.</p>";
                 } else {
                     if ($isAdmin) {
