@@ -3,6 +3,7 @@ include_once '../bootstrap.php';
 
 use DataAccess\CapstoneProjectsDao;
 use DataAccess\KeywordsDao;
+use Util\Security;
 
 include PUBLIC_FILES . '/lib/shared/authorize.php';
 
@@ -31,7 +32,7 @@ $project = $dao->getCapstoneProject($pid);
 
 allowIf($project && !($project->getIsHidden() && !$isAdmin));
 
-$title = $project->getTitle();
+$title = Security::HtmlEntitiesEncode($project->getTitle());
 $type = $project->getType()->getName();
 $status = $project->getStatus()->getName();
 $type = $project->getType()->getName();
@@ -40,18 +41,20 @@ $website = $project->getWebsiteLink();
 $video = $project->getVideoLink();
 $start_by = $project->getDateStart()->format('F j, Y');
 $complete_by = $project->getDateEnd()->format('F j, Y');
-$pref_qualifications = $project->getPreferredQualifications();
-$min_qualifications = $project->getMinQualifications();
-$motivation = $project->getMotivation();
-$description = $project->getDescription();
-$objectives = $project->getObjectives();
+$pref_qualifications = Security::HtmlEntitiesEncode($project->getPreferredQualifications());
+$min_qualifications = Security::HtmlEntitiesEncode($project->getMinQualifications());
+$motivation = Security::HtmlEntitiesEncode($project->getMotivation());
+$description = Security::HtmlEntitiesEncode($project->getDescription());
+$objectives = Security::HtmlEntitiesEncode($project->getObjectives());
 $nda = $project->getNdaIp()->getName();
 $compensation = $project->getCompensation()->getName();
 $images = $project->getImages();
 $is_hidden = $project->getIsHidden();
 $category = $project->getCategory()->getName();
-$comments = $project->getProposerComments();
-$name = $project->getProposer()->getFirstName() . ' ' . $project->getProposer()->getLastName();
+$comments = Security::HtmlEntitiesEncode($project->getProposerComments());
+$name = Security::HtmlEntitiesEncode($project->getProposer()->getFirstName()) 
+	. ' ' 
+	. Security::HtmlEntitiesEncode($project->getProposer()->getLastName());
 
 ?>
 <div class="viewSingleProject">

@@ -1,4 +1,5 @@
 <?php
+use Util\Security;
 
 /**
  * Renders the HTML for the modal that will start the application process for a student applying to a capstone
@@ -8,8 +9,8 @@
  * @return void
  */
 function renderNewApplicationModal($project) {
-    $pTitle = $project->getTitle();
-    $pDescription = $project->getDescription();
+    $pTitle = Security::HtmlEntitiesEncode($project->getTitle());
+    $pDescription = Security::HtmlEntitiesEncode($project->getDescription());
 		$pNdaIp = $project->getNdaIp()->getName();
 		
     echo "

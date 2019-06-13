@@ -1,4 +1,6 @@
 <?php
+use Util\Security;
+
 include_once PUBLIC_FILES . '/modules/button.php';
 
 // Keeps track of how many cards have been generated. This is available globally.
@@ -25,12 +27,12 @@ function renderProjectCardGroup($projects, $keywordsDao, $browsing = false) {
     foreach ($projects as $p) {
         // Capture and format all of the variables we need before rendering the HTML
         $id = $p->getId();
-        $title = $p->getTitle();
+        $title = Security::HtmlEntitiesEncode($p->getTitle());
         if (strlen($title) > 60) {
             // Restrict the title length
             $title = substr($title, 0, 60) . '...';
         }
-        $description = $p->getDescription();
+        $description = Security::HtmlEntitiesEncode($p->getDescription());
         if (strlen($description) > 90) {
             // Restrict the description length
             $description = substr($description,0,90) . '...';

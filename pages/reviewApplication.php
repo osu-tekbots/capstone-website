@@ -3,6 +3,7 @@ include_once '../bootstrap.php';
 
 use DataAccess\CapstoneApplicationsDao;
 use Model\CapstoneInterestLevel;
+use Util\Security;
 
 if (!session_id()) {
     session_start();
@@ -25,13 +26,13 @@ include_once PUBLIC_FILES . '/modules/header.php';
 
 // Get application information
 $applicationId = $application->getId();
-$justification = $application->getJustification();
-$time_available = $application->getTimeAvailable();
-$skill_set = $application->getSkillSet();
+$justification = Security::HtmlEntitiesEncode($application->getJustification());
+$time_available = Security::HtmlEntitiesEncode($application->getTimeAvailable());
+$skill_set = Security::HtmlEntitiesEncode($application->getSkillSet());
 $external_link = $application->getPortfolioLink();
 $user_id = $application->getStudent()->getId();
-$firstName = $application->getStudent()->getFirstName();
-$lastName = $application->getStudent()->getLastName();
+$firstName = Security::HtmlEntitiesEncode($application->getStudent()->getFirstName());
+$lastName = Security::HtmlEntitiesEncode($application->getStudent()->getLastName());
 
 $buttonPortfolioLink = !empty($external_link) ? "
 	<a href='$external_link' target='_blank' class='btn btn-primary'>
@@ -42,16 +43,16 @@ $buttonPortfolioLink = !empty($external_link) ? "
 
 // Get project information
 $project_id = $application->getCapstoneProject()->getId();
-$title = $application->getCapstoneProject()->getTitle();
-$description = $application->getCapstoneProject()->getDescription();
-$motivation = $application->getCapstoneProject()->getMotivation();
-$objectives = $application->getCapstoneProject()->getObjectives();
-$minQualifications = $application->getCapstoneProject()->getMinQualifications();
-$prefQualifications = $application->getCapstoneProject()->getPreferredQualifications();
+$title = Security::HtmlEntitiesEncode($application->getCapstoneProject()->getTitle());
+$description = Security::HtmlEntitiesEncode($application->getCapstoneProject()->getDescription());
+$motivation = Security::HtmlEntitiesEncode($application->getCapstoneProject()->getMotivation());
+$objectives = Security::HtmlEntitiesEncode($application->getCapstoneProject()->getObjectives());
+$minQualifications = Security::HtmlEntitiesEncode($application->getCapstoneProject()->getMinQualifications());
+$prefQualifications = Security::HtmlEntitiesEncode($application->getCapstoneProject()->getPreferredQualifications());
 
 // Get review information
 $reviewInterest = $application->getReviewInterestLevel()->getId();
-$comments = $application->getReviewProposerComments();
+$comments = Security::HtmlEntitiesEncode($application->getReviewProposerComments());
 
 // Generate a selection for the interest level. If it is equal to the currently selected interest level,
 // mark it as selected.

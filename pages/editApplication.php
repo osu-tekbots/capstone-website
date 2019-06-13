@@ -4,6 +4,7 @@ include_once '../bootstrap.php';
 use DataAccess\CapstoneApplicationsDao;
 use DataAccess\CapstoneProjectsDao;
 use Model\CapstoneApplicationStatus;
+use Util\Security;
 
 session_start();
 
@@ -40,12 +41,12 @@ $submitted = $applicationStatusId == CapstoneApplicationStatus::SUBMITTED;
 $readOnly = $submitted ? 'readonly' : '';
 
 // Get Project Information
-$projectTitle = $project->getTitle();
-$description = $project->getDescription();
-$motivation = $project->getMotivation();
-$objectives = $project->getObjectives();
-$minQualifications = $project->getMinQualifications();
-$prefQualifications = $project->getPreferredQualifications();
+$projectTitle = Security::HtmlEntitiesEncode($project->getTitle());
+$description = Security::HtmlEntitiesEncode($project->getDescription());
+$motivation = Security::HtmlEntitiesEncode($project->getMotivation());
+$objectives = Security::HtmlEntitiesEncode($project->getObjectives());
+$minQualifications = Security::HtmlEntitiesEncode($project->getMinQualifications());
+$prefQualifications = Security::HtmlEntitiesEncode($project->getPreferredQualifications());
 
 $buttonsHtml = $submitted ? "
     <div class='alert alert-success'>

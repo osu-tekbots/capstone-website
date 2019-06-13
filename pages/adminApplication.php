@@ -3,6 +3,7 @@ include_once '../bootstrap.php';
 
 use DataAccess\CapstoneApplicationsDao;
 use DataAccess\CapstoneProjectsDao;
+use Util\Security;
 
 session_start();
 
@@ -97,7 +98,7 @@ include_once PUBLIC_FILES . '/modules/applications.php';
 			} else {
 			    echo '<h2>Applications for Review</h2>';
 			    foreach ($projects as $project) {
-			        echo '<h3>' . $project->getTitle() . '</h3>';
+			        echo '<h3>' . Security::HtmlEntitiesEncode($project->getTitle()) . '</h3>';
 			        renderApplicationTable($submittedApplications[$project->getId()], true);
 			    }
 			}

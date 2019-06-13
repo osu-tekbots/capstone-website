@@ -5,6 +5,7 @@ use DataAccess\CapstoneProjectsDao;
 use DataAccess\CapstoneApplicationsDao;
 use DataAccess\UsersDao;
 use Model\UserType;
+use Util\Security;
 
 if (!session_id()) {
     session_start();
@@ -66,7 +67,7 @@ include_once PUBLIC_FILES . '/modules/applications.php';
                         echo '<h2>Applications for Review</h2>';
                     }
                     foreach ($projects as $project) {
-                        echo '<h3>' . $project->getTitle() . '</h3>';
+                        echo '<h3>' . Security::HtmlEntitiesEncode($project->getTitle()) . '</h3>';
                         renderApplicationTable($submittedApplications[$project->getId()], true);
                     }
                 }

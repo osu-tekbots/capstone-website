@@ -1,5 +1,6 @@
 <?php
 use Model\CapstoneInterestLevel;
+use Util\Security;
 
 /**
  * Renders the HTML for an application table in the user interface.
@@ -55,10 +56,12 @@ function renderApplicationTable($applications, $isProposer) {
         
         if ($isProposer) {
             //Display the name of the applicant for proposers.
-            $name = $app->getStudent()->getFirstName() . ' ' . $app->getStudent()->getLastName();
+            $name = Security::HtmlEntitiesEncode($app->getStudent()->getFirstName()) 
+                . ' ' 
+                . Security::HtmlEntitiesEncode($app->getStudent()->getLastName());
         } else {
             //This will be the name of the project.
-            $title = $app->getCapstoneProject()->getTitle();
+            $title = Security::HtmlEntitiesEncode($app->getCapstoneProject()->getTitle());
             //This will show whether or not the student's application 
             //has been created or submitted.
             $status = $app->getStatus()->getName();
