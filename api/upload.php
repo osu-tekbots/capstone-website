@@ -51,7 +51,7 @@ if ($_POST['action'] == 'uploadImage') {
 
         $ok = $dao->addNewCapstoneProjectImage($image);
         if (!$ok) {
-            $logger->warning("Image was uploaded with id '$iid', but inserting metadata into the database failed");
+            $logger->warn("Image was uploaded with id '$imageId', but inserting metadata into the database failed");
             http_response_code(500);
 			echo '{"message": "Failed to upload the new image"}';
 			die();
