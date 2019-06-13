@@ -122,7 +122,7 @@ class CapstoneApplication {
      * @return  self
      */ 
     public function setJustification($justification) {
-        $this->justification = \htmlspecialchars($justification);
+        $this->justification = $justification;
 
         return $this;
     }
@@ -140,7 +140,7 @@ class CapstoneApplication {
      * @return  self
      */ 
     public function setTimeAvailable($timeAvailable) {
-        $this->timeAvailable = \htmlspecialchars($timeAvailable);
+        $this->timeAvailable = $timeAvailable;
 
         return $this;
     }
@@ -158,7 +158,7 @@ class CapstoneApplication {
      * @return  self
      */ 
     public function setSkillSet($skillSet) {
-        $this->skillSet = \htmlspecialchars($skillSet);
+        $this->skillSet = $skillSet;
 
         return $this;
     }
@@ -176,7 +176,7 @@ class CapstoneApplication {
      * @return  self
      */ 
     public function setPortfolioLink($portfolioLink) {
-        $this->portfolioLink = \urlencode($portfolioLink);
+        $this->portfolioLink = $portfolioLink;
 
         return $this;
     }
@@ -320,7 +320,7 @@ class CapstoneApplication {
      * @return  self
      */ 
     public function setReviewProposerComments($reviewProposerComments) {
-        $this->reviewProposerComments = \htmlspecialchars($reviewProposerComments);
+        $this->reviewProposerComments = $reviewProposerComments;
 
         return $this;
     }

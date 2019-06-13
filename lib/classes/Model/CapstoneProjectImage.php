@@ -80,7 +80,7 @@ class CapstoneProjectImage {
      * @return self
      */
     public function setName($name) {
-        $this->name = \htmlspecialchars($name);
+        $this->name = $name;
         return $this;
     }
 
