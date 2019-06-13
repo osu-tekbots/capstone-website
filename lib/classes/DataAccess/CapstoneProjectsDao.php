@@ -417,7 +417,10 @@ class CapstoneProjectsDao {
     public function addNewCapstoneProjectImage($image) {
         try {
             $sql = '
-            INSERT INTO capstone_project_image VALUES (
+            INSERT INTO capstone_project_image 
+            (
+                cpi_id, cpi_cp_id, cpi_name, cpi_is_default
+            ) VALUES (
                 :id,
                 :pid,
                 :name,
