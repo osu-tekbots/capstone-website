@@ -29,6 +29,17 @@ cp scripts/pre-commit.sh .git/hooks/pre-commit
 chmod a+x .git/hooks/pre-commit
 ```
 
+## Database Configuration
+There should be an INI file located in the private files for this site (not in the repository) with the following
+contents:
+
+```ini
+host = 
+user =
+password = 
+db_name = 
+```
+
 ## Structural Overview
 - All HTML pages are rendered inside of PHP files in the `pages/` folder.
 

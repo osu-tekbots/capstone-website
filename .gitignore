@@ -1,2 +1,6 @@
 images/
 dev/
+*.ini
+.htaccess
+private/
+.private/

@@ -1,6 +1,0 @@
-# Apache Server Access File
-# OSU Capstone Website
-# (c) 2019 Oregon State University
-
-# CONFIG: change `auto_prepend_file` to the proper location before developing or merging with master
-php_value auto_prepend_file "/nfs/ca/info/eecs_www/capstone/submission/bootstrap.php"
