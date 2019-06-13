@@ -20,10 +20,13 @@ $pid = $_GET['id'];
 allowIf($pid . '' != '');
 
 $isLoggedIn = isset($_SESSION['userID']) && $_SESSION['userID'] . ''  != '';
-
-$userId = $_SESSION['userID'];
-
-$isAdmin = $_SESSION['accessLevel'] == 'Admin';
+if($isLoggedIn) {
+	$userId = $_SESSION['userID'];
+	$isAdmin = $_SESSION['accessLevel'] == 'Admin';
+} else {
+	$userId = null;
+	$isAdmin = false;
+}
 include_once PUBLIC_FILES . '/modules/admin-review.php';
 
 $dao = new CapstoneProjectsDao($dbConn, $logger);
