@@ -21,7 +21,7 @@ $projectsDao = new CapstoneProjectsDao($dbConn, $logger);
 $userApplications = array();
 $submittedApplications = array();
 
-$projects = $projectsDao->getCapstoneProjectsForAdmin();
+$projects = $projectsDao->getCapstoneProjectsForAdmin($uId);
 foreach ($projects as $p) {
     $pid = $p->getId();
     $projectApplications = $applicationsDao->getAllApplicationsForProject($pid, true);

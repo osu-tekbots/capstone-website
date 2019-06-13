@@ -36,7 +36,7 @@ define('PUBLIC_FILES', '..');
 include '../lib/shared/autoload.php';
 
 // Load configuration
-$configManager = new Util\ConfigManager('../config' );
+$configManager = new Util\ConfigManager('..');
 
 // Setup the database connection and instantiate a DAO
 $dbConn = DataAccess\DatabaseConnection::FromConfig($configManager->getDatabaseConfig());

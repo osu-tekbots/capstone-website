@@ -6,6 +6,8 @@
  * 
  * Essentially, we are masquerading as another user while we do development offline.
  */
+include_once '../bootstrap.php';
+
 use DataAccess\UsersDao;
 
 session_start();

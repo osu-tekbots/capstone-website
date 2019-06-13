@@ -16,7 +16,11 @@ $numCardsCreated = 0;
  * @return void
  */
 function renderProjectCardGroup($projects, $keywordsDao, $browsing = false) {
-    global $numCardsCreated;
+	global $numCardsCreated;
+	
+	if(!$projects || count($projects) == 0) {
+		return;
+	}
 
     foreach ($projects as $p) {
         // Capture and format all of the variables we need before rendering the HTML
