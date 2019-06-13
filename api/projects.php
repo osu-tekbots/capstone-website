@@ -18,7 +18,7 @@ session_start();
 $projectsDao = new CapstoneProjectsDao($dbConn, $logger);
 $usersDao = new UsersDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
-$mailer = new ProjectMailer($configManager->getEmailFromAddress(), $configManager->getEmailSubjectTag());
+$mailer = new ProjectMailer($configManager->get('email.from_address'), $configManager->get('email.subject_tag'));
 $handler = new ProjectsActionHandler($projectsDao, $usersDao, $keywordsDao, $mailer, $configManager, $logger);
 
 // Authorize the request

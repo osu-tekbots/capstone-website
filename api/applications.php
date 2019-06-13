@@ -18,7 +18,7 @@ session_start();
 $projectsDao = new CapstoneProjectsDao($dbConn, $logger);
 $applicationsDao = new CapstoneApplicationsDao($dbConn, $logger);
 $usersDao = new UsersDao($dbConn, $logger);
-$mailer = new ApplicationMailer($configManager->getEmailFromAddress(), $configManager->getEmailSubjectTag());
+$mailer = new ApplicationMailer($configManager->get('email.from_address'), $configManager->get('email.subject_tag'));
 $handler= new ApplicationsActionHandler($applicationsDao, $projectsDao, $usersDao, $mailer, $configManager, $logger);
 
 // Authorize the request
