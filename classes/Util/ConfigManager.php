@@ -4,40 +4,61 @@ namespace Util;
 /**
  * Configuration manager for handling basic site-wide configuration. 
  * 
- * When an instance is constructed, it will look for a `site.ini` file in the provided configuration directory. This
- * file should have a `mode` property that is set to the INI file which will be loaded as the configuration for
- * the site. There are three conventional modes:
- * - `production` : settings for the production server
- * - `development` : settings for the staging/development area running on OSU ENGR servers
- * - `local` : settings for development locally by running an Apache PHP server, either on bare metal or in a container
+ * When an instance is constructed, it will look for a `config.ini` file in the directory passed to the constructor.
+ * That config file will be parsed and loaded into the manager. Any configuration can go into the INI file, but
+ * there are a few commonly required ones that are outlined below.
  */
 class ConfigManager {
     private $configDir = null;
     private $config = null;
-    private $mode = null;
 
     private $shouldDisplayErrors = null;
     private $displayErrorSeverity = null;
     private $databaseConfig = null;
-    private $authProviderConfig = null;
 
     public function __construct($configDir) {
         $this->configDir = $configDir;
 
-        $siteConfig = $this->loadIni(join('/', array($configDir, 'site.ini')));
+        // Look for a config.ini file and load the configuration. If there is no file, throw an exception
+        $path = $this->join($configDir, 'config.ini');
+        if (!\file_exists($path)) {
+            throw new \Exception("Failed to initialize config manager: config file not found in '$configDir'");
+        }
+        $this->config = $this->loadIni($path);
 
-        // There is a config mode specified in the site.ini file. Load the configuration
-        // associated with the mode for the site
-        $this->mode = $siteConfig['mode'];
-        $this->config = array_merge($siteConfig, $this->loadIni(join('/', array($configDir, $this->mode . '.ini'))));
+        // Set the appropriate initial error configurations
+        $shouldDisplayErrors = $this->get('server.display_errors');
+        $displayErrorSev = $this->get('server.display_errors_severity');
+        $this->setShouldDisplayErrors($shouldDisplayErrors);
+        $this->setDisplayErrorSeverity($displayErrorSev);
 
-        // Handle the default configurations
-        $this->setShouldDisplayErrors($this->config['server']['display_errors']);
-        $this->setDisplayErrorSeverity($this->config['server']['display_errors_severity']);
-        $this->databaseConfig = $this->loadIni(join('/', array($this->getPrivateFilesDirectory(), 
-            $this->config['database']['config_file'])));
-        $this->authProviderConfig = $this->loadIni(join('/', array($this->getPrivateFilesDirectory(), 
-            $this->config['server']['auth_providers_config_file'])));
+        // Set the private directory location. Filepath configurations depend on the presence of this config
+        // value. Don't attempt to load the dependent common configurations unless there is a private directory
+        // specified
+        $privateDir = $this->getPrivateFilesDirectory();
+        if (!\is_null($privateDir)) {
+            // Setup the initial database configurations
+            $dbConfigFile = $this->get('database.config_file');
+            if (!\is_null($dbConfigFile)) {
+                $dbConfigPath = $this->join($privateDir, $dbConfigFile);
+                $this->databaseConfig = $this->loadIni($dbConfigPath);
+            }
+        }
+    }
+
+    /**
+     * Takes any number of arguments and joins them together to construct a filepath
+     *
+     * @return string the filepath resulting from the joined arguments
+     */
+    private function join() {
+        $paths = array();
+        foreach (\func_get_args() as $arg) {
+            if ($arg !== '') {
+                $paths[] = $arg;
+            }
+        }
+        return \preg_replace('#/+#', '/', \join('/', $paths));
     }
 
     /**
@@ -47,16 +68,7 @@ class ConfigManager {
      * @return mixed[]
      */
     public function loadIni($file) {
-        return parse_ini_file($file, true);
-    }
-
-    /**
-     * Fetches the current server mode.
-     *
-     * @return string
-     */
-    public function getMode() {
-        return $this->mode;
+        return \parse_ini_file($file, true);
     }
 
     /**
@@ -65,7 +77,7 @@ class ConfigManager {
      * @return string
      */
     public function getPrivateFilesDirectory() {
-        return $this->config['private_files'];
+        return $this->get('private_files');
     }
 
     /**
@@ -128,7 +140,7 @@ class ConfigManager {
             $sev = E_WARNING;
             break;
         }
-        error_reporting($sev);
+        \error_reporting($sev);
     }
 
     /**
@@ -140,7 +152,7 @@ class ConfigManager {
      * @return string
      */
     public function getBaseUrl() {
-        return $this->config['client']['base_url'];
+        return $this->get('client.base_url');
     }
 
     /**
@@ -159,79 +171,26 @@ class ConfigManager {
     }
 
     /**
-     * Fetches the client IDs and secrets for the configured auth providers.
-     * 
-     * The format of the configuration will be a two-dimensional array with the first dimension being the name
-     * of the provider and the second dimension containing the client ID and secret for the provider. The client
-     * ID will be available as the `client_id` key and the secret as the `secret` key.
-     *
-     * @return mixed[]
-     */
-    public function getAuthProviderConfig() {
-        return $this->authProviderConfig;
-    }
-
-    /**
      * Fetches the full path to the log file used for log output.
      *
-     * @return string the path to the log file
+     * @return string|null the path to the log file if defined, null otherwise
      */
     public function getLogFilePath() {
-        return $this->getPrivateFilesDirectory() . '/' . $this->config['logger']['log_file'];
-    }
-
-    /**
-     * Fetches the level of the logger from configuration.
-     *
-     * @return string the level of the logger
-     */
-    public function getLogLevel() {
-        return $this->config['logger']['level'];
-    }
-
-    /**
-     * Fetches the raw configuration object loaded by the manager.
-     *
-     * @return mixed[]
-     */
-    public function getConfig() {
-        return $this->config;
-    }
-
-    /**
-     * Fetches an optional subject tag to prefix to email subjects.
-     *
-     * @return string|null the email address on success, null otherwise
-     */
-    public function getEmailSubjectTag() {
-        if(\array_key_exists('email', $this->config)) {
-            return $this->config['email']['subject_tag'];
+        $privateDir = $this->getPrivateFilesDirectory();
+        $logFile = $this->get('logger.log_file');
+        if (!\is_null($privateDir) && !\is_null($logFile)) {
+            return $this->join($privateDir, $logFile);
         }
         return null;
     }
 
     /**
-     * Fetches the from address for emails sent from this server.
+     * Fetches the level of the logger from configuration.
      *
-     * @return string|boolean the email address on success, false otherwise
+     * @return string|null the level of the logger if defined, null otherwise
      */
-    public function getEmailFromAddress() {
-        if(\array_key_exists('email', $this->config)) {
-            return $this->config['email']['from_address'];
-        }
-        return false;
-    }
-
-    /**
-     * Fetches the admin email addresses for the server.
-     *
-     * @return string|boolean the email address on success, false otherwise
-     */
-    public function getEmailAdminAddresses() {
-        if(\array_key_exists('email', $this->config)) {
-            return $this->config['email']['admin_addresses'];
-        }
-        return false;
+    public function getLogLevel() {
+        return $this->get('logger.level');
     }
 
     /**
@@ -247,13 +206,13 @@ class ConfigManager {
         $parts = explode('.', $key);
 
         $result = null;
-        if(isset($this->config[$parts[0]])) {
+        if (isset($this->config[$parts[0]])) {
             $result = $this->config[$parts[0]];
         } else {
             return null;
         }
-        for($i = 1; $i < \count($parts); $i++) {
-            if(isset($result[$parts[$i]])) {
+        for ($i = 1; $i < \count($parts); $i++) {
+            if (isset($result[$parts[$i]])) {
                 $result = $result[$parts[$i]];
             } else {
                 return null;
@@ -261,6 +220,5 @@ class ConfigManager {
         }
 
         return $result;
-
     }
 }
