@@ -2,6 +2,7 @@
 /*
  * This file handles authentication for the capstone website
  */
+include_once '../bootstrap.php';
 
  if (!isset($_SESSION)) {
      session_start();

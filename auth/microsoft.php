@@ -1,4 +1,6 @@
 <?php
+include_once '../bootstrap.php';
+
 use DataAccess\UsersDao;
 use Model\User;
 use Model\UserAuthProvider;
