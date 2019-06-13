@@ -21,7 +21,7 @@ class Keyword {
      */
     public function __construct($id = null, $name = null) {
         if ($id == null && $name == null) {
-            $this->setId(self::NONE);
+            $this->setId(null);
             $this->setName('None');
         } else {
             $this->setId($id);

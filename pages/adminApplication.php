@@ -1,4 +1,6 @@
 <?php
+include_once '../bootstrap.php';
+
 use DataAccess\CapstoneApplicationsDao;
 use DataAccess\CapstoneProjectsDao;
 

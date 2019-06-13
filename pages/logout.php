@@ -1,4 +1,6 @@
 <?php 
+include_once '../bootstrap.php';
+
     session_start();
     unset($_SESSION['userID']);
     unset($_SESSION['accessLevel']);

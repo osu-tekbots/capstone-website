@@ -1,4 +1,6 @@
 <?php
+include_once '../bootstrap.php';
+
 include_once PUBLIC_FILES . '/modules/header.php';
 ?>
 
