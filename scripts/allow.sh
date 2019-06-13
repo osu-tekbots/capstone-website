@@ -7,8 +7,8 @@ for f in $(find . -not -path "./.git/*"); do
         continue
     fi
     if [ -d $f ]; then
-        chmod 755 $f
+        chmod 755 "$f"
     else
-        chmod 664 $f
+        chmod 664 "$f"
     fi
 done
