@@ -103,7 +103,7 @@ RewriteRule ^(.*)$ pages/$1
 
 Notice the `<CHANGEME>` text above. This should be changed to be the root URI of the website hosting the application.
 For example, if the website is hosted at `http://eecs.oregonstate.edu/education/capstone/`, then you would replace
-`<CHANGEME>` with `/education/capstone`. **The trailing and leading slashes are required**.
+`<CHANGEME>` with `/education/capstone/`. **The trailing and leading slashes are required**.
 
 ## Structural Overview
 - All HTML pages are rendered inside of PHP files in the `pages/` folder.
@@ -116,23 +116,19 @@ For example, if the website is hosted at `http://eecs.oregonstate.edu/education/
 
 - Third-party authentication provider IDs and secrets are located *outside this repository* in a `auth.ini` file.
 
-- The `db/upload.php` file handles uploading images to the `images/` folder that the user provides.
-
 - All external CSS and JS files are located in the `assets/css/` and `assets/js/` respectively. An internal CSS 
   file called `assets/css/capstone.css` contains customized CSS proporties relevant to this application.
 
-	> Please be aware that this CSS file is global and will modify the entire application to adhere to its standards. 
-	> (EX: modifying the background color of the "body" element will modify all "body" elements of all pages, not just
-	> a single one.) Please create new classes whenever applicable.
+   > Please be aware that this CSS file is global and will modify the entire application to adhere to its standards. 
+   > (EX: modifying the background color of the "body" element will modify all "body" elements of all pages, not just
+   > a single one.) Please create new classes whenever applicable.
 
-- The `includes/header.php` file contains all references to external CSS and JS files. The `header.php` and 
+- The `modules/header.php` file contains all references to external CSS and JS files. The `header.php` and 
   `footer.php` files should be included in all files in the `pages/` directory.
   
-- The `modules/mailer.php` file contains all e-mail handling functions.
-
 - The `modules/` folder contains encapsulated code that is shared between multiple files in the `pages/` folder. 
   Whenever possible , please consolidate duplicate functionality into a single module or folder. For example, the 
-  `modules/createCards.php` will contain functions utilized in `pages/browseProjects.php` and 
+  `modules/cards.php` will contain functions utilized in `pages/browseProjects.php` and 
   `pages/myProjects.php` to render project cards with different attributes.
   
 
@@ -164,7 +160,7 @@ Database Name: `eecs_projectsubmission`
 Server Name: `engr-db Groups`
 
 ## Login Authentication
-Within `pages/login.php`, the `auth_providers/login_with_[authenticator].php` script is executed on login button click. 
+Within `pages/login.php`, the `auth/[authenticator].php` script is executed on login button click. 
 Login credentials required to interface with the authenticator are:
 - redirect_uri
 - client_id
