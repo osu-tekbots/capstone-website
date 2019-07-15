@@ -1,92 +1,99 @@
 # Development Environment Setup
-This document outlines how to setup development locally using Docker containers and the development workflow.
+This document outlines how to setup development locally using Docker containers and the development workflow. All
+examples assume development on a UNIX operating system or from a Bash shell.
 
-> **NOTE**: Setup will require that you have access to some private files and passwords not included in the repository.
-> Contact the Tekbots Web Dev Team for more information.
+1. Install [Docker CE](https://docs.docker.com/install/). If on Linux, you should also add your user to the `docker`
+   group so that you don't have to use `sudo` in front of the `docker` command. Instructions can be found
+   [here](https://docs.docker.com/install/linux/linux-postinstall/).
 
-## TL;DR
-From the [osu-tekbots/container-dev-env] repository.
+1. Create a new folder to house the project (referred to as the *project root* in the docs).
 
-```sh
-sh dev-setup.sh /path/to/private/files /path/to/capstone/repository/root
-```
+    ```sh
+    mkdir $HOME/Work/capstone-website
+    ```
 
-After following setup below, the directory structure inside the container should look like the following (use
-`docker exec -it osu-local-web-server /bin/bash` to interact with the web server container):
+1. Create `private` folder to house things like database and authentication information.
 
-```sh
-/var/www/
-  |- # Private files (outside the repository). Mounted from a host directory.
-  |- .htpasswd
-  |- auth.ini
-  |- database.ini
-  |- out.log
-  |- html/
-       |- # Public files (the Git repository root). Mounted from a host directory.
-       |- ...
-       |- .htaccess # Update path to bootstrap.php to /var/www/html/bootstrap.php
-       |- config/
-            |- ...
-            |- site.ini # Mode is set to 'local'
-            |- local.ini # Configuration set for local development
-       |- masq/
-            |- ...
-            |- .htaccess # Location to password file set to /var/www/.htpasswd
-```
+    ```sh
+    cd $HOME/Work/capstone-website
+    mkdir private
+    ```
 
-You can stop and start your development environment at anytime without having to repeat the whole process with the 
-following:
+1. Clone the contents of the capstone website repository into a folder called `public`. (Example uses SSH)
 
-```sh
-sh dev-stop.sh
-sh dev-start.sh
-```
+    ```sh
+    git clone git@github.com:osu-tekbots/capstone-website.git public/
+    ```
 
-## Local Development Setup
-We are able to use containerization with [Docker](https://www.docker.com/) to allow for local development on 
-individual laptops (i.e. off the ENGR servers). Before completing the below steps, **make sure Docker is installed**
-on your local development machine. You can follow instructions [here][osu-tekbots/container-dev-env] for installing
-Docker on your machine.
+1. Now that we have the website source, we need the scripts that will help us setup the development environment. These
+   are located in a different repository. Outside of the project root, clone the [osu-tekbots/container-dev-env] 
+   repository. (Example uses SSH)
 
-1. Make sure you have the necessary private files locally on your machine. These include:
-   - `auth.ini`: OAuth client IDs and secrets used by the application. This file could be empty, but it needs to
-      exist in the private directory.
-   - `out.log`: the output log file for the logger. It needs to have write permissions enabled for all users.
-     (`chmod a+w out.log`)
+    ```sh
+    cd $HOME/Work
+    git clone git@github.com:osu-tekbots/container-dev-env.git
+    ```
 
-1. Clone the [osu-tekbots/container-dev-env] repository locally.
+1. From the `container-dev-env` repository, run the setup script. Running the script without any arguments will
+   output usage information. Note that you must provide the *absolute* path to the public and private files in the
+   project root for the script to work properly.
 
-1. Run the `dev-setup` script from the above mentioned repository to download and build the required containers. The
-   script will also start the containers for you. The example below uses the shell on Linux.
+    ```sh
+    cd container-dev-env
+    sh dev-setup.sh /home/<user>/Work/capstone-website/public /home/<user>/Work/capstone website
+    ```
 
-       sh dev-setup.sh /path/to/private/files /path/to/capstone/repository/root
+    Replace the `<user>` placeholder with the username
 
-   Once the script has finished executing, it will output the necessary configuration for access to the database. Place
-   this configuration inside the private directory in `database.ini`.
+1. In the `public` directory of the project root, add a `config.ini` file that follows the format defined in the
+   [README](../README.md) of this repository.
 
-1. Now we need to generate a `.htpasswd` file so that we can restrict access to the masquerading feature that allows us
-   to bypass third-party authentication while we are doing development.
-   1. "Exec" into the container running the website. This opens an interactive shell inside the container.
+    ```sh
+    cd $HOME/Work/capstone-website/public
+    touch config.ini
+    # Add configuration to the file
+    ```
 
-          docker exec -it osu-local-web-server /bin/bash
+1. In the `private` directory of the project root, add a `database.ini` file that has the database authentication
+   information provided in the final output of the `dev-setup.sh` script. Also add an `out.log` file with world write
+   permissions. You should also create an empty `auth.ini` file to avoid unexpected errors, even though we will not
+   be needing the contents of the file during development.
 
-   1. Change into the `/var/www` directory.
+    ```sh
+    cd $HOME/Work/capstone-website/private
+    touch database.ini
+    # Add database configuration
+    touch out.log
+    chmod a+w out.log
+    touch auth.ini
+    ```
 
-          cd /var/www
+1. We need to setup the database schema so that we have all the tables and appropriate enumerations available
+   before we start developing.     
 
-   1. Run the `htpasswd` command to generate a `.htpasswd` file to use for authentication. Replace *name* and *password*
-      with values of your choice. They will be the same values you provide when you navigate to the password protected
-      page on the local web server.
+1. Now things get a little tricky! The website uses CAS and OAuth2 to authenticate users, but we can't do that from
+   out local development environment because the authentication endpoints do not accept requests from `localhost`.
+   There is masquerading functionality provided for development under the `masq` directory. In order to use it, we
+   have to create users using the `create-user.php` script from *inside* the container we started.
 
-          htpasswd -nbm name password > .htpasswd
-    
-    1. Make sure that the `masq/.htaccess` configuration is pointing to `/var/www/.htpasswd`
+    ```sh
+    # Exec into the container
+    docker exec -it osu-local-web-server /bin/bash
+    $ cd scripts
+    $ php create-user.php
+    ```
 
-1. Finally, make sure that all of your configuration for the site is in order.
-   1. Copy the `development.ini` as a `local.ini` file in the `config/` directory of the repository. Change the 
-      necessary configurations.
-   1. Do a search for `CONFIG` in the repository (text search, match case) and ensure that file paths are all pointing
-      to the right locations.
+1. We can now use the fake ONID we gave the newly-created user to masquerade as a user while developing the site.
+
+    1. Navigate to http://localhost:7000/masq/ (NOTE: the port may be different if you configured your own variables
+       before running the setup script)
+    1. Enter the ONID of the user you created and click "Start Masquerading".
+    1. If successful, you should be redirected to the home page logged in as the user you just created.
+
+    You can create as many users with different permissions as you see fit.
+
+You're development environment is now set up! The `config.ini` file is not tracked by Git, so any modifications made
+to it will not be pushed to source control.
 
 ## Active Development
 The above process only needs to be completed once. After that, you can easily start/stop develpoment by using the
@@ -102,6 +109,6 @@ sh dev-start.sh
 ```
 
 > **NOTE**: if you execute the `dev-teardown` script or in any other way destroy the containers created by the
-> `dev-setup` script, you will need to repeat the process all over again.
+> `dev-setup` script, you will need to run the `dev-setup` script again.
 
 [osu-tekbots/container-dev-env]: https://github.com/osu-tekbots/container-dev-env
