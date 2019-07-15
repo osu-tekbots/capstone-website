@@ -68,7 +68,10 @@ body {
   color: #212529;
   text-align: left;
   background-color: #fff;
-  padding-top: 50px;
+}
+
+a:hover {
+  text-decoration: none;
 }
 
 [tabindex="-1"]:focus {
@@ -5134,7 +5137,6 @@ a.badge-dark:hover, a.badge-dark:focus {
 }
 
 .jumbotron {
-  padding: 2rem 1rem;
   margin-bottom: 2rem;
   background-color: #e9ecef;
   border-radius: 0.3rem;
@@ -5142,7 +5144,7 @@ a.badge-dark:hover, a.badge-dark:focus {
 
 @media (min-width: 576px) {
   .jumbotron {
-    padding: 4rem 2rem;
+
   }
 }
 
@@ -10396,4 +10398,122 @@ body.sidebar-toggled footer.sticky-footer {
   body.sidebar-toggled footer.sticky-footer {
     width: calc(100% - 90px);
   }
+}
+
+/*
+CSS Styling for header content
+Project Showcase (Now Capstone)
+Oregon State University
+*/
+header {
+  position: fixed;
+  z-index: 1000;
+  width: 100vw;
+  transition: padding 500ms ease, background-color 500ms ease, color 500ms ease;
+  display: flex;
+  align-items: center;
+  padding: 10px 30px;
+}
+
+header.dark {
+  background-color: var(--color-black);
+  color: var(--color-white);
+}
+
+header.light {
+  background-color: var(--color-white);
+  color: var(--color-primary);
+  box-shadow: 0px 0px 5px var(--color-black);
+}
+
+.header-main-link {
+  color: inherit;
+}
+
+.header-main-link:hover {
+  color: inherit;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo h1 {
+  margin: 0px 0px 0px 24px;
+  color: inherit;
+  font-family: Ostrich-Sans;
+  letter-spacing: 0.2em;
+}
+
+#projectPrefix {
+  display: none;
+}
+
+@media only screen and (min-width: 768px) {
+  #projectPrefix {
+      display: inline;
+  }
+}
+
+@media only screen and (min-width: 576px) {
+  .logo img {
+      width: 70px !important;
+      height: 70px !important;
+  }
+}
+
+.logo img {
+  border-radius: 50% ;
+  width: 40px;
+  height: 40px;
+}
+
+.navigation {
+  margin-left: auto;
+}
+
+.navigation ul {
+  display: flex;
+  list-style: none;
+  align-items: center;
+  margin: 0px;
+  padding: 0px;
+}
+
+.navigation a {
+  color: inherit;
+}
+.navigation a:hover {
+  text-decoration: none;
+}
+
+.navigation li {
+  margin: 0px 5px;
+  padding: 10px;
+}
+/*
+CSS Styling for header content -END-
+Project Showcase (Now Capstone)
+Oregon State University
+*/
+
+:root {
+  --color-black: #000000;
+  --color-light-black: #323232;
+  --color-grey: #6c757d;
+  --color-light-grey: #eeeeee;
+  --color-white: #ffffff;
+  --color-primary: #dc4405;
+}
+
+@font-face {
+  font-family: 'Ostrich-Sans';
+  src: url('../fonts/ostrich-sans/ostrich-sans-rounded.eot');
+  src: url('../fonts/ostrich-sans/ostrich-sans-rounded.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/ostrich-sans/ostrich-sans-rounded.woff') format('woff'),
+       url('../fonts/ostrich-sans/ostrich-sans-rounded.ttf') format('truetype'),
+       url('../fonts/ostrich-sans/ostrich-sans-rounded.svg#OstrichSansRoundedMedium') format('svg');
+  font-weight: normal;
+  font-style: normal;
 }

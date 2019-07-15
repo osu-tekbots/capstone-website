@@ -64,7 +64,22 @@ $focuses = $dao->getCapstoneProjectFocuses();
 $compensations = $dao->getCapstoneProjectCompensations();
 $ndaips = $dao->getCapstoneProjectNdaIps();
 
-$submitted = $pStatusId >= CapstoneProjectStatus::PENDING_APPROVAL && $pStatusId != CapstoneProjectStatus::REJECTED;
+if ($pStatusId == 2){
+	$submitted = TRUE;
+	$approved = FALSE;
+} else if ($pStatusId == 3){
+	$approved = FALSE;
+	$submitted = TRUE;
+} else if ($pStatusId >= 4){
+	$submitted = FALSE;
+	$approved = TRUE;
+}
+else {
+	$submitted = $pStatusId >= CapstoneProjectStatus::PENDING_APPROVAL && $pStatusId != CapstoneProjectStatus::REJECTED;
+	$approved = $pStatusId >= CapstoneProjectStatus::ACCEPTING_APPLICANTS && $pStatusId != CapstoneProjectStatus::REJECTED;
+}
+//$submitted = $pStatusId = CapstoneProjectStatus::PENDING_APPROVAL && $pStatusId != CapstoneProjectStatus::REJECTED;
+//$approved = $pStatusId >= CapstoneProjectStatus::ACCEPTING_APPLICANTS && $pStatusId != CapstoneProjectStatus::REJECTED;
 
 allowIf($authorizedToProceed, 'pages/index.php');
 
@@ -89,7 +104,8 @@ include_once PUBLIC_FILES . '/modules/header.php';
 
 // Set Tooltip Texts
 $tooltipProjectTitleInput = '';
-$tooltipSaveProjectDraftBtn = '';
+$tooltipSaveProjectDraftBtn = 'Allows you to save your progress on the project draft';
+$tooltipUpdateProjectDraftBtn = 'Allows you to update your entries on the project';
 $tooltipSubmitForApprovalBtn = 'Submit your project for approval. Once your project has been approved, you will receive a confirmation email indicating that it is available for public viewing. ';
 $tooltipImgBtn = 'Upload an image to be accompanied with your project when browsing. ';
 $tooltipProjectTypeSelect = 'Capstone is the default category option and should be used for all projects related to Senior Design Capstone.';
@@ -161,10 +177,21 @@ var availableTags = [
                     <?php 
                     // Display the following only when the user is the proposer
                     if ($isProposer || $isAdmin) {
-                        if ($submitted) {
+						if ($approved){
+							echo "
+							<div class='alert alert-success'>
+								Approved! Your project is now accepting applicants.
+							</div>
+							<button id='saveProjectDraftBtn' class='btn btn-success capstone-nav-btn' type='button' 
+							data-toggle='tooltip' data-placement='bottom' 
+							title='$tooltipUpdateProjectDraftBtn'>
+							Update Project</button>
+							";
+						}
+						else if ($submitted) {
                             echo "
 							<div class='alert alert-success'>
-								Submitted. Your project is pending approval.
+								Submitted. Your project is pending approval. Changes cannot be made while project is pending approval.
 							</div>
 							";
                         } else {
@@ -249,7 +276,7 @@ var availableTags = [
 			//
 			// Generate the Admin interface if the user is an admin
 			//
-			if ($isAdmin) {
+			if ($isAdmin && ($submitted || $approved)) {
 			    renderAdminReviewPanel($project, $categories);
 			}
 			?>

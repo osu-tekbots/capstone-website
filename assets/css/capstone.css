@@ -6,13 +6,33 @@
 *	used by default for laptops and desktops.
 *
 **********************************************************************************************/
+:root {
+  --color-black: #000000;
+  --color-light-black: #323232;
+  --color-grey: #6c757d;
+  --color-light-grey: #eeeeee;
+  --color-white: #ffffff;
+  --color-primary: #dc4405;
+}
 
+@font-face {
+  font-family: 'Ostrich-Sans';
+  src: url('../fonts/ostrich-sans/ostrich-sans-rounded.eot');
+  src: url('../fonts/ostrich-sans/ostrich-sans-rounded.eot') format('embedded-opentype'),
+       url('../fonts/ostrich-sans/ostrich-sans-rounded.woff') format('woff'),
+       url('../fonts/ostrich-sans/ostrich-sans-rounded.ttf') format('truetype'),
+       url('../fonts/ostrich-sans/ostrich-sans-rounded.svg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
 
 @import url('https://fonts.googleapis.com/css?family=Roboto:900|Abel|Heebo:700');
 
 body{
-	font-family: 'Abel', cursive;
-	padding-top: 50px;
+}
+
+main {
+  padding-top: 60px;
 }
 
 h1,h2,h3,h4,h5,h6{
@@ -22,6 +42,16 @@ h1,h2,h3,h4,h5,h6{
 button h6{
 	font-family: 'Abel';
 	margin: 3px;
+}
+
+.btn-outline-primary{
+  color: #D73F09;
+  border-color: #D73F09;
+}
+
+.btn:hover{
+  background-color: #D73F09;
+
 }
 
 .websiteTitle{
@@ -35,7 +65,7 @@ button h6{
 
 
 .bg-primary{
-	background: linear-gradient(to bottom right, #0066ff 0%, #fafafa 90%);
+	background: linear-gradient(to bottom right, #D73F09 0%, #ffffff 100%);
 }
 
 .homePageText{
@@ -76,13 +106,14 @@ button h6{
 	cursor: default;
 }
 
-.a{
-	color:black;
+a{
+	color: #D73F09;
 	text-decoration: none;
 }
 
-.a:hover{
-	color:black;
+a:hover{
+  color:#D73F09 ;
+  text-decoration: none;
 }
 
 
@@ -148,6 +179,11 @@ button h6{
 
 .card-signin .card-body {
   padding: 2rem;
+}
+
+.card {
+  height: 550px;
+  overflow: none;
 }
 
 .form-signin {
@@ -272,9 +308,6 @@ button h6{
 	border-spacing: 15px;
 }
 
-#singleprojecttext.active{
-
-}
 
 
 .card-img-top{
@@ -282,7 +315,7 @@ button h6{
 }
 
 .capstoneCardColumns{
-	column-count: 4;
+	column-count: 5;
 }
 
 .capstoneCardColumnsAdmin{
@@ -447,9 +480,7 @@ div.student {
 	display: none;
 }
 
-.viewSingleProject {
-	padding-top: 50px;
-}
+
 
 .popup {
     display: inline-block;
@@ -477,7 +508,103 @@ div.student {
 }
 
 
+/*
+CSS Styling for header content
+Project Showcase (Now Capstone)
+Oregon State University
+*/
+header {
+  position: fixed;
+  z-index: 1000;
+  width: 100vw;
+  transition: padding 500ms ease, background-color 500ms ease, color 500ms ease;
+  display: flex;
+  align-items: center;
+  padding: 10px 30px;
+}
 
+header.dark {
+  background-color: var(--color-black);
+  color: var(--color-white);
+}
+
+header.light {
+  background-color: var(--color-white);
+  color: var(--color-primary);
+  box-shadow: 0px 0px 5px var(--color-black);
+}
+
+.header-main-link {
+  color: inherit;
+}
+
+.header-main-link:hover {
+  color: inherit;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo h1 {
+  margin: 0px 0px 0px 24px;
+  color: inherit;
+  font-family: Ostrich-Sans;
+  letter-spacing: 0.2em;
+}
+
+#projectPrefix {
+  display: none;
+}
+
+@media only screen and (min-width: 768px) {
+  #projectPrefix {
+      display: inline;
+  }
+}
+
+@media only screen and (min-width: 576px) {
+  .logo img {
+      width: 70px !important;
+      height: 70px !important;
+  }
+}
+
+.logo img {
+  border-radius: 50% ;
+  width: 40px;
+  height: 40px;
+}
+
+.navigation {
+  margin-left: auto;
+}
+
+.navigation ul {
+  display: flex;
+  list-style: none;
+  align-items: center;
+  margin: 0px;
+  padding: 0px;
+}
+
+.navigation a {
+  color: inherit;
+}
+.navigation a:hover {
+  text-decoration: none;
+}
+
+.navigation li {
+  margin: 0px 5px;
+  padding: 10px;
+}
+/*
+CSS Styling for header content -END-
+Project Showcase (Now Capstone)
+Oregon State University
+*/
 /* Hide all mobile classes here. */
 .navbarMobile{
 	display: none;

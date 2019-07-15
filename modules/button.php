@@ -13,3 +13,11 @@ function createLinkButton($path, $name) {
 	</a>
 	";
 }
+
+function createHeaderButton($path, $name) {
+	return "
+	<a href='$path'>
+		<li>$name</li>
+	</a>
+	";
+}

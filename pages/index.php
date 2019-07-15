@@ -25,7 +25,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 			<div id="description1div">
 				<h1><img src="assets/img/light.png" alt="icon" width="70px" height="70px" />What is Capstone?</h1>
 				<hr>
-				Organized by the College of Electrical Engineering and Computer Science at Oregon State University,
+				Organized by the <a href="http://eecs.oregonstate.edu">School of Electrical Engineering and Computer Science</a> at <a href="http://www.oregonstate.edu">Oregon State University</a>,
 				the Senior Design Capstone program is a year-long course where students are presented with various
 				opportunities to design, implement, and promote unique and engaging projects sponsored by companies,
 				businesses, and proposers/student clubs with personal projects.

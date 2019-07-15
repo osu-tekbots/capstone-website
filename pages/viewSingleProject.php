@@ -32,8 +32,10 @@ include_once PUBLIC_FILES . '/modules/admin-review.php';
 $dao = new CapstoneProjectsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
 $project = $dao->getCapstoneProject($pid);
+$proposer = $project->getProposerId();
 
-allowIf($project && !($project->getIsHidden() && !$isAdmin));
+// Check if project is hidden or not approved or if the project is the project is the proposers
+allowIf( ($project && !($project->getIsHidden() && !$isAdmin)) || ($project && ($proposer == $userId) ));
 
 $title = Security::HtmlEntitiesEncode($project->getTitle());
 $type = $project->getType()->getName();
@@ -257,7 +259,7 @@ function onCreateApplicationClick() {
         uid: $('#userId').val()
     };
 
-    api.post('/applications.php', body).then(res => {
+    api.post('/./applications.php', body).then(res => {
         window.location.replace('pages/editApplication.php?id=' + res.content.id);
     }).catch( err=> {
         snackbar(err.message, 'error');

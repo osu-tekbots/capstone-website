@@ -144,17 +144,23 @@ if ($loggedIn) {
 
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-light navbarColor fixed-top navbarBrowser">
-            <a class="navbar-brand" href=""><h2 class="websiteTitle">Senior Design Capstone</h2></a>
-            <form class="form-inline">
-                <?php 
+
+    <header id="header" class="dark">
+        <a class="header-main-link" href="">
+            <div class="logo">
+                <img class="logo" src="assets/img/osu-logo-orange.png" />
+                <h1><span id="projectPrefix">Senior </span>Capstone </h1>
+            </div>
+        </a>
+        <nav class="navigation">
+            <ul>
+            <?php 
                 foreach ($buttons as $title => $link) {
-                    echo createLinkButton($link, $title);
+                    echo createHeaderButton($link, $title);
                 }
-                ?>
-            </form>
-            
+            ?>
+            </ul>
         </nav>
     </header>
+
     <main>
