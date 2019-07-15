@@ -179,7 +179,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 					<!-- createCardGroup() is found in ../modules/createCards.php -->
 					<?php 
 					$projects = $projectsDao->getCapstoneProjectsForAdmin($userId);
-					renderProjectCardGroup($projects, $keywordsDao, false); 
+					renderAdminProjectCardGroup($projects, $keywordsDao, false); 
 					?>
 				</div>
 			</div>
@@ -193,173 +193,149 @@ include_once PUBLIC_FILES . '/modules/header.php';
 
 <script type="text/javascript">
 
-
-
-/*********************************************************************************
-* Function Name: strstr()
-* Description: Mimics strstr() php function that searches for the first occurence
-* of a string (needle) in another string (haystack).
-*********************************************************************************/
-function strstr(haystack, needle, bool) {
-    var pos = 0;
-    haystack += '';
-    pos = haystack.toLowerCase().indexOf((needle + '').toLowerCase());
-    if (pos == -1) {
-        return false;
-    } else {
-        if (bool) {
-            return haystack.substr(0, pos);
+    /*********************************************************************************
+    * Function Name: strstr()
+    * Description: Mimics strstr() php function that searches for the first occurence
+    * of a string (needle) in another string (haystack).
+    *********************************************************************************/
+    function strstr(haystack, needle, bool) {
+        var pos = 0;
+        haystack += '';
+        pos = haystack.toLowerCase().indexOf((needle + '').toLowerCase());
+        if (pos == -1) {
+            return false;
         } else {
-            return haystack.slice(pos);
+            if (bool) {
+                return haystack.substr(0, pos);
+            } else {
+                return haystack.slice(pos);
+            }
         }
     }
-}
 
-$(document).ready(function(){
+    $(document).ready(function(){
 
-  //As each letter is typed in filterInput, filtering of cards will occur.
-  //For drop down lists, like filtering by key word, filterInput is programmically
-  //filled and keydown behavior is explicitly called.
-  $("#filterInput").keydown(function(){
-	var value = $(this).val().toLowerCase();
+      //As each letter is typed in filterInput, filtering of cards will occur.
+      //For drop down lists, like filtering by key word, filterInput is programmically
+      //filled and keydown behavior is explicitly called.
+      $("#filterInput").keydown(function(){
+    	var value = $(this).val().toLowerCase();
 
-	for(var i = 0; i < <?php echo $numOfCardsCreated; ?>; i++){
-		if($("#projectCard" + i).text().toLowerCase().indexOf(value) > -1){
-			$("#projectCard" + i).show();
-		}
-		else{
-			$("#projectCard" + i).hide();
-		}
-	}
-  });
+    	for(var i = 0; i < <?php echo $numCardsCreated; ?>; i++){
+    		if($("#projectCard" + i).text().toLowerCase().indexOf(value) > -1){
+    			$("#projectCard" + i).show();
+    		}
+    		else{
+    			$("#projectCard" + i).hide();
+    		}
+    	}
+      });
 
-  //Fixme: Future Implementation, allow checkbox to be checked and user to
-  //still filter additional options.
-  $("#NDAFilterCheckBox").change(function(){
+	  $("#ApprovalRequiredCheckBox").change(function(){
 	 if($(this).is(":checked")){
-		for(var i = 0; i < <?php echo $numOfCardsCreated; ?>; i++){
-			if($("#projectCard" + i).text().toLowerCase().indexOf("nda") > -1){
+		for(var i = 0; i < <?php echo $numCardsCreated; ?>; i++){
+			if(($("#projectCard" + i).text().toLowerCase().indexOf("category") <= -1) && ($("#projectCard" + i).text().toLowerCase().indexOf("pending") <= -1)) {
 				$("#projectCard" + i).hide();
 			}
 		}
 	 }
 	 else{
-		for(var i = 0; i < <?php echo $numOfCardsCreated; ?>; i++){
-			$("#projectCard" + i).show();
-		}
-	 }
-  });
-
-
-
-	$("#ApprovalRequiredCheckBox").change(function(){
-	 if($(this).is(":checked")){
-		for(var i = 0; i < <?php echo $numOfCardsCreated; ?>; i++){
-			if(($("#projectCard" + i).text().toLowerCase().indexOf("needs") <= -1) && ($("#projectCard" + i).text().toLowerCase().indexOf("awaiting") <= -1)) {
-				$("#projectCard" + i).hide();
-			}
-		}
-	 }
-	 else{
-		for(var i = 0; i < <?php echo $numOfCardsCreated; ?>; i++){
+		for(var i = 0; i < <?php echo $numCardsCreated; ?>; i++){
 			$("#projectCard" + i).show();
 		}
 	 }
 	});
 
-	$("#CategoryRequiredCheckBox").change(function(){
-	 if($(this).is(":checked")){
-		for(var i = 0; i < <?php echo $numOfCardsCreated; ?>; i++){
-			if(($("#projectCard" + i).text().toLowerCase().indexOf("needs") <= -1)) {
-				$("#projectCard" + i).hide();
-			}
-		}
-	 }
-	 else{
-		for(var i = 0; i < <?php echo $numOfCardsCreated; ?>; i++){
-			$("#projectCard" + i).show();
-		}
-	 }
-	});
 
-	$('.form-check-input').on('change', function() {
-		$('.form-check-input').not(this).prop('checked', false);
+      //Fixme: Future Implementation, allow checkbox to be checked and user to
+      //still filter additional options.
+      $("#NDAFilterCheckBox").change(function(){
+    	 if($(this).is(":checked")){
+    		for(var i = 0; i < <?php echo $numCardsCreated; ?>; i++){
+    			//-1 is returned by indexOf(String) if the String parameter passed in
+    			//does not exist anywhere within the text. Otherwise, its index would
+    			//be returned.
+    			if($("#projectCard" + i).text().toLowerCase().indexOf("nda") > -1){
+    				$("#projectCard" + i).hide();
+    			}
+    		}
+    	 }
+    	 else{
+    		for(var i = 0; i < <?php echo $numCardsCreated; ?>; i++){
+    			$("#projectCard" + i).show();
+    		}
+    	 }
+      });
 
-	});
+      //Performs sorting functionality based on which radio button is chosen.
+    	$('input[name="sortRadio"]').change(function() {
+    		switch ($(this).val()) {
+    			case "sortTitleAsc":
+    				var mylist = $('#projectCardGroup');
+    				var listitems = mylist.children('div').get();
+    				listitems.sort(function(a, b) {
+    				   return $(a).text().toUpperCase().localeCompare($(b).text().toUpperCase());
+    				});
 
+    				$.each(listitems, function(index, item) {
+    				   mylist.append(item);
+    				});
+    				break;
+    			case "sortTitleDesc":
+    				var mylist = $('#projectCardGroup');
+    				var listitems = mylist.children('div').get();
+    				listitems.sort(function(a, b) {
+    				   return $(b).text().toUpperCase().localeCompare($(a).text().toUpperCase());
+    				});
 
-  //Performs sorting functionality based on which radio button is chosen.
-	$('input[name="sortRadio"]').change(function() {
-		switch ($(this).val()) {
-			case "sortTitleAsc":
-				var mylist = $('#projectCardGroup');
-				var listitems = mylist.children('div').get();
-				listitems.sort(function(a, b) {
-				   return $(a).text().toUpperCase().localeCompare($(b).text().toUpperCase());
-				});
+    				$.each(listitems, function(index, item) {
+    				   mylist.append(item);
+    				});
+    				break;
+    			case "sortDateAsc":
+    				var mylist = $('#projectCardGroup');
+    				var listitems = mylist.children('div').get();
+    				listitems.sort(function(a, b) {
+    				   return strstr($(a).text(), "Last Updated:").toUpperCase().localeCompare(strstr($(b).text(), "Last Updated:").toUpperCase());
+    				});
 
-				$.each(listitems, function(index, item) {
-				   mylist.append(item);
-				});
-				break;
-			case "sortTitleDesc":
-				var mylist = $('#projectCardGroup');
-				var listitems = mylist.children('div').get();
-				listitems.sort(function(a, b) {
-				   return $(b).text().toUpperCase().localeCompare($(a).text().toUpperCase());
-				});
+    				$.each(listitems, function(index, item) {
+    				   mylist.append(item);
+    				});
+    				break;
+    			case "sortDateDesc":
+    				var mylist = $('#projectCardGroup');
+    				var listitems = mylist.children('div').get();
+    				listitems.sort(function(a, b) {
+    				   return strstr($(b).text(), "Last Updated:").toUpperCase().localeCompare(strstr($(a).text(), "Last Updated:").toUpperCase());
+    				});
 
-				$.each(listitems, function(index, item) {
-				   mylist.append(item);
-				});
-				break;
-			case "sortDateAsc":
-				var mylist = $('#projectCardGroup');
-				var listitems = mylist.children('div').get();
-				listitems.sort(function(a, b) {
-				   return strstr($(a).text(), "Last Updated:").toUpperCase().localeCompare(strstr($(b).text(), "Last Updated:").toUpperCase());
-				});
+    				$.each(listitems, function(index, item) {
+    				   mylist.append(item);
+    				});
+    				break;
+    		};
+    	});
 
-				$.each(listitems, function(index, item) {
-				   mylist.append(item);
-				});
-				break;
-			case "sortDateDesc":
-				var mylist = $('#projectCardGroup');
-				var listitems = mylist.children('div').get();
-				listitems.sort(function(a, b) {
-				   return strstr($(b).text(), "Last Updated:").toUpperCase().localeCompare(strstr($(a).text(), "Last Updated:").toUpperCase());
-				});
+		
+		// Automatically check the Hide Projects that do NOT need Admin Approval Checkbox and trigger ajax
+		$('#ApprovalRequiredCheckBox').prop('checked', true).change();
 
-				$.each(listitems, function(index, item) {
-				   mylist.append(item);
-				});
-				break;
-		};
-	});
+    });
 
-// Automatically check the Hide Projects that do NOT need Admin Approval Checkbox and trigger ajax
-	$('#ApprovalRequiredCheckBox').prop('checked', true).change();
+    function filterSelectChanged(filterObject){
+    	var value = filterObject.value;
+    	$("#filterInput").val(value);
 
-
-
-});
-
-
-
-function filterSelectChanged(filterObject){
-	var value = filterObject.value;
-	$("#filterInput").val(value);
-
-	//Manually trigger keydown to mimic keydown function feature.
-	//Attempted to programmically toggleProjectCard, but ran into
-	//logical bug 2/26/19.
-    var e = jQuery.Event("keydown");
-    e.which = 77;
-    $("#filterInput").trigger(e);
-}
-
+    	//Manually trigger keydown to mimic keydown function feature.
+    	//Attempted to programmically toggleProjectCard, but ran into
+    	//logical bug 2/26/19.
+        var e = jQuery.Event("keydown");
+        e.which = 77;
+        $("#filterInput").trigger(e);
+    }
 </script>
+
 
 <?php 
 include_once PUBLIC_FILES . '/modules/footer.php'; 

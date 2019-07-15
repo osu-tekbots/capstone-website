@@ -94,6 +94,92 @@ function renderProjectCardGroup($projects, $keywordsDao, $browsing = false) {
 }
 
 /**
+ * Renders the HTML for the card group that displays projects.
+ * 
+ * The projects passed to this render function will ALL be rendered. All projects that should not be rendered (e.g.
+ * projects that are not published or should be hidden) should be filtered out before calling this function.
+ *
+ * @param \Model\CapstoneProject[] $projects the projects to display
+ * @param boolean $browsing indicates whether the rendered cards are for browsing or viewing/editing user projects
+ * @param boolean $showActions determines whether to show the actionable (Edit, Delete) buttons
+ * @return void
+ */
+function renderAdminProjectCardGroup($projects, $keywordsDao, $browsing = false) {
+	global $numCardsCreated;
+	
+	if(!$projects || count($projects) == 0) {
+		return;
+	}
+
+    foreach ($projects as $p) {
+        // Capture and format all of the variables we need before rendering the HTML
+        $id = $p->getId();
+        $title = Security::HtmlEntitiesEncode($p->getTitle());
+        if (strlen($title) > 60) {
+            // Restrict the title length
+            $title = substr($title, 0, 60) . '...';
+        }
+        $description = Security::HtmlEntitiesEncode($p->getDescription());
+        if (strlen($description) > 90) {
+            // Restrict the description length
+            $description = substr($description,0,90) . '...';
+        }
+        $status = $p->getStatus()->getName();
+        $category = $p->getCategory()->getName();
+        $nda = $p->getNdaIp()->getName();
+
+        // The details string contains the small text for the project
+        $details = $p->getType()->getName() . ' ' . $p->getDateStart()->format('Y') . '<br/>';
+        if (!$browsing) {
+            $details .= "Status: $status";
+        }
+		
+		if($nda == 'No Agreement Required'){
+			$details .= "<h6>NDA: $nda</h6>";
+		}
+		//NDA is "NDA Required" or "NDA/IP Required"
+		else{
+			$details .= "<h6>$nda</h6";
+		}
+		
+		$CategoryName = $p->getCategory()->getName();
+
+		$extra = '';
+		if ($CategoryName != 'Electrical Engineering' && $CategoryName != 'Computer Science' && $CategoryName != 'EECS'){
+			$extra = "Category Placement";
+		}
+		
+
+		$image = false;
+		$images = $p->getImages();
+		if($images) {
+			foreach($images as $i) {
+				if($i->getIsDefault()){
+					$image = $i->getId();
+					break;
+				}
+			}
+		}
+		
+        if (!$image) {
+            $image = 'assets/img/capstone.jpg';
+        } else {
+            $image = "images/$image";
+        }
+
+        $dateUpdated = $p->getDateUpdated()->format('Y-m-d');
+		$lastUpdated = "<br/>Last Updated: $dateUpdated";
+		
+		$published = !$p->getIsHidden();
+		
+		renderAdminProjectCard($id, $title, $description, $details, $image, $status, $category, $lastUpdated, 
+			$numCardsCreated, $browsing, $published, $extra);
+
+        $numCardsCreated++;
+    }
+}
+
+/**
  * Renders the HTML required for a project card.
  *
  * @param string $id the ID of the project
@@ -127,6 +213,49 @@ function renderProjectCard($id, $title, $description, $details, $imageLink, $sta
 			<small class='text-muted'>$details</small>
 			<div style='position: absolute; float: left; margin-right: 10px; bottom: 10px;'>
 				<h6><p style='color: $statusColor'>$status</p></h6>
+				$viewButton
+				$editButton
+				$deleteButton
+				<small id='small$id' class='text-muted lastUpdatedSmall'>$lastUpdated</small>
+			</div>
+		</div>
+		<br/>
+	</div>
+
+	<script type='text/javascript'>
+		$(document).ready(function() {
+			$('#projectCard$id').hover(function() {
+				$(this).css('background-color', '#f8f9fa');
+				$('#projectImg$id').css('transition', 'all .2s ease-in-out');
+			}, function() {
+				$(this).css('background-color', 'white');
+			});
+		});
+	</script>
+	";
+}
+
+
+function renderAdminProjectCard($id, $title, $description, $details, $imageLink, $status, $category, $lastUpdated, $num, $browsing, $published, $extra) {
+	$statusColor = ($status == 'Pending Approval' || $status == 'Rejected') ? 'red' : 'inherit';
+	$statusColorExtra = ($extra == 'Category Placement' || $status == 'Rejected') ? 'red' : 'inherit';
+    $viewButton = $published ? createLinkButton("pages/viewSingleProject.php?id=$id", 'View') : '';
+	$editButton = !$browsing ? createLinkButton("pages/editProject.php?id=$id", 'Edit') : '';
+	$deleteButton = !$browsing ? createProjectDeleteButton($id, $num) : '';
+
+
+	//<small class='text-muted'>$extra</small><br> (Above $viewButton)
+    echo "
+	<div class='card capstoneCard my-3' id='projectCard$num'>
+		<a href='pages/viewSingleProject.php?id=$id' target='_blank' style='color: black'>
+			<img class='card-img-top' id='projectImg$id' src='$imageLink' alt='Card Image Capstone' />
+		</a>
+		<div class='card-body' id='projectCardBody$num'>
+			<h6>$title</h6>
+			<small class='text-muted'>$details</small>
+			<div style='position: absolute; float: left; margin-right: 10px; bottom: 10px;'>
+				<h6><p style='color: $statusColor'>$status</p></h6>
+				<h6><p style='color: $statusColorExtra'>$extra</p></h6>
 				$viewButton
 				$editButton
 				$deleteButton

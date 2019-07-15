@@ -26,12 +26,12 @@ $projects = $dao->getBrowsableCapstoneProjects();
                     <br />
                     <button type="button" style="float:right;" class="btn btn-outline-secondary">Search</button>
                     <br /><br />
-
+<!-- CHECKBOX HIDE IF PROJECTS REQUIRE NDA NOT FUNCTIONING
                     <div class="form-check">
                         <input type="checkbox" class="form-check-input" id="NDAFilterCheckBox" />
                         <label for="NDAFilterCheckBox">Hide projects that require an NDA/IP</label>
                     </div>
-
+-->
                     <div class="form-group">
                         <label for="projectTypeFilterSelect">Filter by Keyword</label>
                         <select class="form-control" id="keywordFilterSelect" onchange="filterSelectChanged(this)">

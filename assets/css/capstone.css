@@ -26,9 +26,10 @@
   font-style: normal;
 }
 
-@import url('https://fonts.googleapis.com/css?family=Roboto:900|Abel|Heebo:700');
 
 body{
+  font-family: 'Abel', 'sans-serif';
+  font-weight: 300;
 }
 
 main {
@@ -49,7 +50,7 @@ button h6{
   border-color: #D73F09;
 }
 
-.btn:hover{
+.btn-outline-primary:hover{
   background-color: #D73F09;
 
 }
@@ -184,6 +185,7 @@ a:hover{
 .card {
   height: 550px;
   overflow: none;
+  line-height: normal;
 }
 
 .form-signin {
@@ -599,6 +601,7 @@ header.light {
 .navigation li {
   margin: 0px 5px;
   padding: 10px;
+  font-size: 20px;
 }
 /*
 CSS Styling for header content -END-

@@ -4884,12 +4884,20 @@ input[type="button"].btn-block {
   color: #fff;
 }
 
+a:hover{
+  text-decoration: none;
+}
+
 .navbar-dark .navbar-text a:hover, .navbar-dark .navbar-text a:focus {
   color: #fff;
 }
 
 .card-signin .card-body {
   padding: 2rem;
+}
+
+.capstoneCardColumns {
+  column-count: 4!important;
 }
 
 .breadcrumb {
