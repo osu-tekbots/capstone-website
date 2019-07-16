@@ -100,7 +100,7 @@ $name = Security::HtmlEntitiesEncode($project->getProposer()->getFirstName())
                     <br>
                     
                     <?php 
-                    if ($isLoggedIn): 
+                    if ($isLoggedIn && ($proposer != $userId)): 
                     ?>
 
                     <button class="btn btn-lg btn-outline-primary capstone-nav-btn" type="button" data-toggle="modal" 

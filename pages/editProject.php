@@ -64,12 +64,14 @@ $focuses = $dao->getCapstoneProjectFocuses();
 $compensations = $dao->getCapstoneProjectCompensations();
 $ndaips = $dao->getCapstoneProjectNdaIps();
 
+// Status
+
 if ($pStatusId == 2){
 	$submitted = TRUE;
 	$approved = FALSE;
 } else if ($pStatusId == 3){
 	$approved = FALSE;
-	$submitted = TRUE;
+	$submitted = FALSE;
 } else if ($pStatusId >= 4){
 	$submitted = FALSE;
 	$approved = TRUE;
@@ -180,12 +182,8 @@ var availableTags = [
 						if ($approved){
 							echo "
 							<div class='alert alert-success'>
-								Approved! Your project is now accepting applicants.
+								Approved! Your project is now accepting applicants.  Changes can no longer be made to your project.  To make changes, please contact the administer with the information you'd like to change or have them unapprove your project so you can resubmit for approval.  
 							</div>
-							<button id='saveProjectDraftBtn' class='btn btn-success capstone-nav-btn' type='button' 
-							data-toggle='tooltip' data-placement='bottom' 
-							title='$tooltipUpdateProjectDraftBtn'>
-							Update Project</button>
 							";
 						}
 						else if ($submitted) {
@@ -242,6 +240,7 @@ var availableTags = [
 						<?php
 						$defaultImage = '';
 						foreach ($pImages as $image) {
+
 						    $isDefault = $image->getIsDefault();
 						    $id = $image->getId();
 						    $name = $image->getName();
@@ -524,7 +523,7 @@ var availableTags = [
 
 <?php 
 
-if($submitted) {
+if($submitted || $approved) {
 	echo "<script>$('#formProject .input').attr('readonly', true);</script>";
 }
 

@@ -69,6 +69,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 
 			<h2>Users Table</h2>
 			<h6>*Columns colored orange are editable (click on row)*</h6>
+			<h6 style="color: red;">CURRENT DOES NOT WORK - CHANGES MUST BE MADE IN THE DATABASE</h6>
 	<div class="search-table-outter wrapper">
 	<table id="data_table" class="search-table inner">
 		<thead>

@@ -200,7 +200,6 @@ function renderProjectCard($id, $title, $description, $details, $imageLink, $sta
 	$editButton = !$browsing ? createLinkButton("pages/editProject.php?id=$id", 'Edit') : '';
 	$deleteButton = !$browsing ? createProjectDeleteButton($id, $num) : '';
 
-	//<small class='text-muted'>$extra</small><br> (Above $viewButton)
     echo "
 	<div class='card capstoneCard my-3' id='projectCard$num'>
 		<a href='pages/viewSingleProject.php?id=$id' target='_blank' style='color: black'>
@@ -213,6 +212,7 @@ function renderProjectCard($id, $title, $description, $details, $imageLink, $sta
 			<small class='text-muted'>$details</small>
 			<div style='position: absolute; float: left; margin-right: 10px; bottom: 10px;'>
 				<h6><p style='color: $statusColor'>$status</p></h6>
+				<small class='text-muted'>$extra</small><br>
 				$viewButton
 				$editButton
 				$deleteButton
