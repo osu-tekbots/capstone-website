@@ -46,13 +46,13 @@ include_once PUBLIC_FILES . '/modules/header.php';
 				<hr>
 				Senior Design Capstone hosts many appealing projects tailored for multiple majors ranging from
 				Web Application Development, Embedded Programming, Virtual Reality, Artificial Intelligence,
-				and Automation. <a href="./browseProjects.php" target="_blank">Click here</a> to browse projects now!
+				and Automation. <a href="./pages/browseProjects.php" target="_blank">Click here</a> to browse projects now!
 			</div>
 			<br><br>
 			<div id="description3div">
 				<h2><img src="assets/img/light.png" alt="icon" width="70px" height="70px" />How do I get involved?</h2>
 				<hr>
-				Students and potential proposers can register for an account by <a href="./login.php"
+				Students and potential proposers can register for an account by <a href="./pages/login.php"
 					target="_blank">clicking
 					here</a>.
 			</div>

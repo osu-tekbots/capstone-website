@@ -122,6 +122,11 @@ a:hover{
 	margin: 5px;
 }
 
+.capstone-nav-btn:hover {
+  background-color: #D73F09;
+  border: 1px solid #D73F09;
+}
+
 .admin-btn{
 	margin: 15px;
 
