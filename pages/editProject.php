@@ -185,6 +185,14 @@ var availableTags = [
 								Approved! Your project is now accepting applicants.  Changes can no longer be made to your project.  To make changes, please contact the administer with the information you'd like to change or have them unapprove your project so you can resubmit for approval.  
 							</div>
 							";
+							if ($isAdmin) {
+								echo("
+								<button id='saveProjectDraftBtn' class='btn btn-success capstone-nav-btn' type='button' 
+								data-toggle='tooltip' data-placement='bottom' 
+								title='$tooltipUpdateProjectDraftBtn'>
+								Update Project Information</button>
+								");
+							}
 						}
 						else if ($submitted) {
                             echo "
@@ -192,6 +200,15 @@ var availableTags = [
 								Submitted. Your project is pending approval. Changes cannot be made while project is pending approval.
 							</div>
 							";
+
+							if ($isAdmin) {
+								echo("
+								<button id='saveProjectDraftBtn' class='btn btn-success capstone-nav-btn' type='button' 
+								data-toggle='tooltip' data-placement='bottom' 
+								title='$tooltipSaveProjectDraftBtn'>
+								Update Project Information</button>
+								");
+							}
                         } else {
                             echo "
 							<button id='saveProjectDraftBtn' class='btn btn-success capstone-nav-btn' type='button' 
@@ -523,7 +540,7 @@ var availableTags = [
 
 <?php 
 
-if($submitted || $approved) {
+if(($submitted || $approved) && !$isAdmin) {
 	echo "<script>$('#formProject .input').attr('readonly', true);</script>";
 }
 

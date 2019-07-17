@@ -20,12 +20,12 @@ include_once PUBLIC_FILES . '/lib/shared/auth/oauth.php';
 function authenticateWithGoogle() {
     global $dbConn, $logger, $configManager;
 
-    $authProviders = $configManager->getAuthProviderConfig();
+    $authProviders = $configManager->get("auth_google");
 
     $authProvidedId = authenticateWithOAuth2(
         'Google',
-        $authProviders['google']['client_id'],
-        $authProviders['google']['secret'],
+        $authProviders['client_id'],
+        $authProviders['secret'],
         array(
             'https://www.googleapis.com/auth/userinfo.email',
             'https://www.googleapis.com/auth/userinfo.profile'

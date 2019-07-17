@@ -7,6 +7,20 @@ include_once '../bootstrap.php';
 use DataAccess\CapstoneProjectsDao;
 use Model\CapstoneProjectImage;
 
+/**
+ * Simple function that allows us to respond with a response code and a message inside a JSON object.
+ *
+ * @param int  $code the HTTP status code of the response
+ * @param string $message the message to send back to the client
+ * @return void
+ */
+function respond($code, $message) {
+    header('Content-Type: application/json');
+    header("X-PHP-Response-Code: $code", true, $code);
+    echo '{"message": "' . $message . '"}';
+    die();
+}
+
 if ($_POST['action'] == 'uploadImage') {
     header('Content-Type: application/json');
 
@@ -14,9 +28,7 @@ if ($_POST['action'] == 'uploadImage') {
 
     $id = $_POST['id'];
     if (empty($id)) {
-        http_response_code(400);
-        echo '{"message": "Must include ID of project in file upload request"}';
-        die();
+        respond(400, "Must include ID of project in file upload request");
     }
 
     if (isset($_FILES['image'])) {
@@ -25,9 +37,7 @@ if ($_POST['action'] == 'uploadImage') {
         $file_tmp  = $_FILES['image']['tmp_name'];
 	
         if ($file_size > (5 * 2097152)) {
-            http_response_code(400);
-            echo '{"message": "File size must be less than 10MB"}';
-            die();
+            respond(400, "File size must be less than 10MB");
         }
 	
         $project = $dao->getCapstoneProject($id);
@@ -44,21 +54,15 @@ if ($_POST['action'] == 'uploadImage') {
         $ok = move_uploaded_file($file_tmp, PUBLIC_FILES . '/images' . "/$imageId");
 
         if (!$ok) {
-            http_response_code(500);
-			echo '{"message": "Failed to upload the new image"}';
-			die();
+            respond(500, "Failed to upload the new image");
         }
 
         $ok = $dao->addNewCapstoneProjectImage($image);
         if (!$ok) {
             $logger->warn("Image was uploaded with id '$imageId', but inserting metadata into the database failed");
-            http_response_code(500);
-			echo '{"message": "Failed to upload the new image"}';
-			die();
+            respond(500, "Failed to upload the new image");
         }
 
-        http_response_code(201);
-        echo '{"message": "Successfully uploaded a new image"}';
-        die();
+        respond(201, "Successfully uploaded a new image");
     }
 }

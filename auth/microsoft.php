@@ -19,12 +19,12 @@ include_once PUBLIC_FILES . '/lib/shared/auth/oauth.php';
 function authenticateWithMicrosoft() {
     global $dbConn, $logger, $configManager;
 
-    $authProviders = $configManager->getAuthProviderConfig();
+    $authProviders = $configManager->get("auth_microsoft");
 
     $authProvidedId = authenticateWithOAuth2(
         'Microsoft',
-        $authProviders['microsoft']['client_id'],
-        $authProviders['microsoft']['secret'],
+        $authProviders['client_id'],
+        $authProviders['secret'],
         array(
             'wl.basic',
             'wl.emails'

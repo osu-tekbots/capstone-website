@@ -38,12 +38,14 @@ include_once PUBLIC_FILES . '/modules/header.php';
             </button>
         </a>
         <br/>
+        <!--
         <a class="login" href="auth/index.php?provider=microsoft" style="text-decoration:none;">
             <button id="microsoftBtn" class="btn btn-lg btn-success btn-block text-uppercase" type="submit">
                 <i class="fab fa-microsoft mr-2"></i> Login with Microsoft
             </button>
         </a>
         <br/>
+        -->
 		<!--
         <a class="login" href="auth/index.php?provider=github" style="text-decoration:none;">
             <button id="microsoftBtn" class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">
