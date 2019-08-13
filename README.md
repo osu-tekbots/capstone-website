@@ -196,6 +196,19 @@ of these variables occur in the following workflow:
 - Github Login Authentication Support.
 - Mobile Support.
 
+# Current Migration onto official capstone site (eecs.oregonstate.edu/capstone/submission)
+1. Push all changes from STAGE directory (education/capstone/stage) to github for version maintence
+2. Clear all files from official capstone directory EXCEPT
+   - images dir
+   - .htaccess
+   - .config.ini
+3. Copy everything over from STAGE directory EXCEPT
+   - config.ini
+   - .git dir
+   - .gitignore
+
+Future Implementation: Move everything to a github branch and set up .gitignore for unecessary files and just git pull for new changes.
+
 ## Troubleshooting and Helpful Notes
 
 ### Problem
