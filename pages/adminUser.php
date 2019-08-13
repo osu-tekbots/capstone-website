@@ -73,17 +73,18 @@ include_once PUBLIC_FILES . '/modules/header.php';
 	<table id="data_table" class="search-table inner scrolltable">
 		<thead>
 			<tr>
-				<th bgcolor="#66C2E0">User ID</th>
-				<th bgcolor="#FFA500">First Name <i class="fas fa-edit"></i></th>
 				<th bgcolor="#FFA500">Last Name <i class="fas fa-edit"></i></th>
+				<th bgcolor="#FFA500">First Name <i class="fas fa-edit"></i></th>
+				<th bgcolor="#FFA500">Email <i class="fas fa-edit"></i></th>
 				<th bgcolor="#FFA500">ONID <i class="fas fa-edit"></i></th>
-				<th bgcolor="#66C2E0">Salutation</th>
-				<th bgcolor="#66C2E0">Email</th>
+				<th bgcolor="#FFA500">Access Level <i class="fas fa-edit"></th>
+				<th bgcolor="#66C2E0">User ID</th>
 				<th bgcolor="#FFA500">Phone <i class="fas fa-edit"></i></th>
-				<th bgcolor="#66C2E0">Affiliation</th>
+				<th bgcolor="#66C2E0">Salutation</th>
+				<th bgcolor="#FFA500">Affiliation <i class="fas fa-edit"></i></th>
 				<th bgcolor="#FFA500">Major <i class="fas fa-edit"></th>
 				<th bgcolor="#66C2E0">Auth Provider</th>
-				<th bgcolor="#FFA500">Access Level <i class="fas fa-edit"></th>
+				
 				<?php
 				//<th bgcolor="#FFA500">project_assigned <i class="fas fa-edit"></th>
 				?>
@@ -95,32 +96,34 @@ include_once PUBLIC_FILES . '/modules/header.php';
 		<?php
 		$users = $usersDao->getAllUsers();
 		foreach ($users as $u) {
-		    $uId = $u->getId();
-		    $uFirstName = $u->getFirstName();
-		    $uLastName = $u->getLastName();
-		    $uOnid = $u->getOnid();
+			$uLastName = $u->getLastName();
+			$uFirstName = $u->getFirstName();
+			$uEmail = $u->getEmail();
+			$uOnid = $u->getOnid();
+			$uType = $u->getType()->getName();
+			$uId = $u->getId();
+			$uPhone = $u->getPhone();
 		    $uSalutation = $u->getSalutation()->getName();
-		    $uEmail = $u->getEmail();
-		    $uPhone = $u->getPhone();
 		    $uAffiliation = $u->getAffiliation();
 		    $uMajor = $u->getMajor();
 		    $uAuthProvider = $u->getAuthProvider()->getName();
-		    $uType = $u->getType()->getName();
+
 		    // TODO: project assigned?
 
 		    echo "
 			<tr id='$uId'>
-				<td>$uId</td>
-				<td>$uFirstName</td>
 				<td>$uLastName</td>
-				<td>$uOnid</td>
-				<td>$uSalutation</td>
+				<td>$uFirstName</td>
 				<td>$uEmail</td>
+				<td>$uOnid</td>
+				<td>$uType</td>
+				<td>$uId</td>
 				<td>$uPhone</td>
+				<td>$uSalutation</td>
 				<td>$uAffiliation</td>
 				<td>$uMajor</td>
 				<td>$uAuthProvider</td>
-				<td>$uType</td>
+		
 			</tr>
 			";
 		}
@@ -149,8 +152,8 @@ $(document).ready(function(){
 		autoFocus: false,
 		editButton: false,
 		columns: {
-		  identifier: [0, 'u_id'],
-		  editable: [[1, 'u_fname'], [2, 'u_lname'], [3, 'u_onid'], [6, 'u_phone'], [8, 'u_major'], [10, 'u_ut_id', '{"1": "Student", "2": "Proposer", "3": "Admin"}'], [11, 'project_assigned']]
+		  identifier: [5, 'u_id'],
+		  editable: [[1, 'u_fname'], [0, 'u_lname'], [3, 'u_onid'], [6, 'u_phone'], [9, 'u_major'], [4, 'u_ut_id', '{"1": "Student", "2": "Proposer", "3": "Admin"}'], [11, 'project_assigned'], [8, 'u_affiliation'], [2, 'u_email'] ]
 		},
 		hideIdentifier: false,
 		// Executed when the ajax request is completed

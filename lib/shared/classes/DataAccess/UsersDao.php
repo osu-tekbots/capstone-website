@@ -45,7 +45,8 @@ class UsersDao {
     public function getAllUsers() {
         try {
             $sql = 'SELECT * FROM user, user_type, user_salutation, user_auth_provider ';
-            $sql .= 'WHERE u_ut_id = ut_id AND u_us_id = us_id AND u_uap_id = uap_id';
+            $sql .= 'WHERE u_ut_id = ut_id AND u_us_id = us_id AND u_uap_id = uap_id ';
+            $sql .= 'ORDER BY u_lname ASC';
             $result = $this->conn->query($sql);
 
             return \array_map('self::ExtractUserFromRow', $result);

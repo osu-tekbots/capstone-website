@@ -39,11 +39,15 @@ if ($input['action'] == 'edit') {
 		$update_field.= "u_phone='".$input['u_phone']."'";
 	} else if(isset($input['u_major'])) {
 		$update_field.= "u_major='".$input['u_major']."'";
-	}	else if(isset($input['u_ut_id'])) {
-  	$update_field.= "u_ut_id='".$input['u_ut_id']."'";
-  } else if(isset($input['project_assigned'])) {
+	} else if(isset($input['u_ut_id'])) {
+  		$update_field.= "u_ut_id='".$input['u_ut_id']."'";
+	} else if(isset($input['u_email'])) {
+		$update_field.= "u_email='".$input['u_email']."'";
+  	} else if(isset($input['u_affiliation'])) {
+		$update_field.= "u_affiliation='".$input['u_affiliation']."'";
+  	} else if(isset($input['project_assigned'])) {
   		$update_field.= "project_assigned='".$input['project_assigned']."'";
-  }
+  	}
 
 	if($update_field && $input['u_id']) {
 		$sql_query = "UPDATE user SET $update_field WHERE u_id='" . $input['u_id'] . "'";

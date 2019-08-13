@@ -201,7 +201,7 @@ class CapstoneProjectsDao {
                 (
                 SELECT COUNT(*) 
                 FROM capstone_project 
-                WHERE cp_cpc_id = :category AND cp_archived = :archived
+                WHERE cp_cpc_id = :category AND cp_archived = :archived AND cp_cps_id > 1
             ) AS projectsNeedingCategoryPlacement
             ';
             $params = array(
