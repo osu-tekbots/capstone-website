@@ -127,6 +127,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 						<div class="form-group">
 							<label for="projectTypeFilterSelect">Filter by Project Type</label>
 							<select class="form-control" id="projectTypeFilterSelect" onchange="filterSelectChanged(this)">
+								<option></option>
 								<?php
 								$types = $projectsDao->getCapstoneProjectTypes();
 								if ($types) {

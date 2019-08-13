@@ -73,6 +73,9 @@ class CapstoneProject {
 	
     /** @var boolean */
     private $isHidden;
+
+    /** @var boolean */
+    private $isArchived;
 	
     /** @var string */
     private $proposerComments;
@@ -104,9 +107,9 @@ class CapstoneProject {
             $this->setCop(new CapstoneProjectCop());
             $this->setNdaIp(new CapstoneProjectNDAIP());
             $this->setStatus( new CapstoneProjectStatus());
-            $this->setDateCreated(new \DateTime());
+            $this->setDateCreated(new \DateTime()); //No idea why there is a '\' here... Don 7/29/2019
             $this->setIsHidden(true);
-            $this->setArchived(false);
+            $this->setIsArchived(false);
         }
         $this->setId($id);
     }
@@ -528,7 +531,7 @@ class CapstoneProject {
     /**
      * Get the value of archived
      */ 
-    public function getArchived() {
+    public function getIsArchived() {
         return $this->archived;
     }
 
@@ -537,7 +540,7 @@ class CapstoneProject {
      *
      * @return  self
      */ 
-    public function setArchived($archived) {
+    public function setIsArchived($archived) {
         $this->archived = $archived;
 
         return $this;

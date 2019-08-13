@@ -38,7 +38,6 @@ $proposer = $project->getProposerId();
 allowIf( ($project && !($project->getIsHidden() && !$isAdmin)) || ($project && ($proposer == $userId) ));
 
 $title = Security::HtmlEntitiesEncode($project->getTitle());
-$type = $project->getType()->getName();
 $status = $project->getStatus()->getName();
 $type = $project->getType()->getName();
 $year = $project->getDateCreated()->format('Y');
@@ -47,7 +46,11 @@ $video = $project->getVideoLink();
 $start_by = $project->getDateStart()->format('F j, Y');
 $complete_by = $project->getDateEnd()->format('F j, Y');
 $pref_qualifications = Security::HtmlEntitiesEncode($project->getPreferredQualifications());
+if ($pref_qualifications == '')
+	$pref_qualifications = "None Listed";
 $min_qualifications = Security::HtmlEntitiesEncode($project->getMinQualifications());
+if ($min_qualifications == '')
+	$min_qualifications = "None Listed";
 $motivation = Security::HtmlEntitiesEncode($project->getMotivation());
 $description = Security::HtmlEntitiesEncode($project->getDescription());
 $objectives = Security::HtmlEntitiesEncode($project->getObjectives());
@@ -132,16 +135,21 @@ $name = Security::HtmlEntitiesEncode($project->getProposer()->getFirstName())
 					<strong>NDA/IPA:</strong>
 					<p><?php echo($nda);?></p>
 			</address>
-	        <address>
+	        <?php 
+			if ($type != 'Capstone')
+			echo "<address>
 	          <strong>Start Date:</strong>
-	          <br><?php echo($start_by);?>
-	          <br>
-	        </address>
-	        <address>
+	          <br>$start_by<br>
+	        </address>";
+			?>
+	        <?php 
+			if ($type != 'Capstone')
+			echo "<address>
 						<strong>End Date:</strong>
-	          <br><?php echo($complete_by);?>
+	          <br>$complete_by
 	          <br>
-	        </address>
+	        </address>";
+			?>
 					<address>
 						<strong>Website:</strong>
 	          <br><a href="<?php echo($website);?>" target="_blank"><?php echo($website);?></a>
@@ -150,11 +158,14 @@ $name = Security::HtmlEntitiesEncode($project->getProposer()->getFirstName())
 	          <br><a href="<?php echo($video);?>" target="_blank"><?php echo($video);?></a>
 	          <br>
 	        </address>
-					<address>
-						<strong>Compensation:</strong>
-	          <br><?php echo($compensation);?>
+			<?php 
+			if ($type != 'Capstone')
+			echo "<address>
+			<strong>Compensation:</strong>
+	          <br>$compensation)
 	          <br>
-	        </address>
+	        </address>";
+			?>
 					<address>
 						<strong>Keywords:</strong>
 						<br>		

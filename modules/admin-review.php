@@ -14,10 +14,11 @@ function renderAdminReviewPanel($project, $categories) {
     $pCategoryId = $project->getCategory()->getId();
     $pCategoryName = $project->getCategory()->getName();
     $pIsHidden = $project->getIsHidden();
+    $pIsArchived = $project->getIsArchived();
     $pComments = $project->getProposerComments();
 
     $actions = array();
-    if ($pStatusName == 'Awaiting Approval') {
+    if ($pStatusName == 'Pending Approval') {
         $actions[] = 'Project Review';
     }
     if ($pCategoryName == 'None') {
@@ -27,12 +28,15 @@ function renderAdminReviewPanel($project, $categories) {
 					? 'Private Project (Not viewable on Browse Projects)' 
 					: 'Public Project';
     $actionsHtmlContent = count($actions) > 0 
-					? 'Acion Required: ' . implode(' and ', $actions)
-					: 'No action required at this time';
+					? 'Action Required: ' . implode(' and ', $actions)
+                    : 'No action required at this time';
 
     $commentsHtml = $pComments != '' 
 					? "<h6><p style='color:red'>Proposer Comments: $pComments</p></h6>"
-					: '';
+                    : '';
+    $isArchived = $pIsArchived
+                    ? 'Archived Project (Not longer Active)'
+                    : '';
 
     $options = '';
     foreach ($categories as $c) {
@@ -52,6 +56,7 @@ function renderAdminReviewPanel($project, $categories) {
             <center><h4><p style='color: black;'>-- Admin Project Status Review --</p></h4></center>
             <h6><p style='color:red'>$actionsHtmlContent</p></h6>
             <h6><p style='color:red'>$visibility</p></h6>
+            <h6><p style='color:red'>$isArchived</p></h6>
             $commentsHtml
             <h6><p style='color:black'>Current Project Status: $pStatusName</p></h6>
             <h6><p style='color:black'>Major Category: $pCategoryName</p></h6>
@@ -75,6 +80,8 @@ function renderAdminReviewPanel($project, $categories) {
                     id='adminMakeProjectPrivateBtn'>Make Project Private</button>
                 <button class='btn btn-lg btn-outline-info admin-btn' type='button' 
                     id='adminMakeProjectNotPrivateBtn'>Make Project Public</button>
+                <button class='btn btn-lg btn-outline-danger admin-btn' type='button' 
+                    id='adminMakeProjectArchivedBtn'>Archive Project</button>
                 <a href='pages/adminProject.php'>
                     <button class='btn btn-lg btn-primary admin-btn' type='button' 
                         id='adminReturnBtn'>Return &raquo</button>
@@ -90,6 +97,8 @@ function renderAdminReviewPanel($project, $categories) {
                 style='color: blue;'>Project Now Public! (WILL show up in Browse Projects)</div>
             <div id='categoryText' class='adminText' 
                 style='color: green;'>Category Changed!</div>
+            <div id='archivedText' class='adminText' 
+                style='color: blue;'>Project Archived! (No Longer Active)</div>
         </div>
     </div>
     <div class='col-sm-3'></div>

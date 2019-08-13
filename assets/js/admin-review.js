@@ -113,3 +113,22 @@ function onMakeProjectPrivate() {
         });
 }
 $('#adminMakeProjectPrivateBtn').on('click', onMakeProjectPrivate);
+
+/**
+ * Event handler to unpublishing a project (making it not viewable to the public)
+ */
+function onArchiveProject() {
+    let body = {
+        action: 'archiveProject',
+        id: getProjectId()
+    };
+
+    api.post('/projects.php', body)
+        .then(res => {
+            snackbar(res.message, 'success');
+        })
+        .catch(err => {
+            snackbar(err.message, 'error');
+        });
+}
+$('#adminMakeProjectArchivedBtn').on('click', onArchiveProject);

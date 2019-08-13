@@ -334,7 +334,7 @@ class ProjectsActionHandler extends ActionHandler {
     }
 
     /**
-     * Request handler for publishing a project (making it publically viewable).
+     * Request handler for publishing a project (making it publicly viewable).
      *
      * @return void
      */
@@ -387,16 +387,16 @@ class ProjectsActionHandler extends ActionHandler {
         $project = $this->projectsDao->getCapstoneProject($id);
         // TODO: handle when not found
 
-        $project->setArchived(true);
+        $project->setIsArchived(true);
 
         $ok = $this->projectsDao->updateCapstoneProject($project);
         if (!$ok) {
-            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to remove project'));
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to archive project'));
         }
 
         $this->respond(new Response(
             Response::OK,
-            'Successfully removed project.'
+            'Successfully Archived project.'
         ));
     }
 

@@ -25,16 +25,17 @@ include_once PUBLIC_FILES . '/modules/header.php';
         <br>
         <hr class="my-4">
         <h4 class="text-center">Student Login</h4>
+        <p class="text-center">*Logging in this method does not allow you to create projects*</p>
         <a class="login" href="auth/index.php?provider=onid" style="text-decoration:none;">
             <button id="onidBtn" class="btn btn-lg btn-warning btn-block text-uppercase" type="submit">
-                <i class="fas fa-book mr-2"></i> Login with ONID
+                <i class="fas fa-book mr-2"></i> Student Login (ONID)
             </button>
         </a>
         <hr class="my-4">
         <h4 class="text-center">Project Proposer Login</h4>
         <a class="login" href="auth/index.php?provider=google" style="text-decoration:none;">
             <button id="googleBtn" class="btn btn-lg btn-danger btn-block text-uppercase" type="submit">
-                <i class="fab fa-google mr-2"></i> Login with Google
+                <i class="fab fa-google mr-2"></i> Proposer Login (Google)
             </button>
         </a>
         <br/>

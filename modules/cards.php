@@ -19,6 +19,7 @@ $numCardsCreated = 0;
  */
 function renderProjectCardGroup($projects, $keywordsDao, $browsing = false) {
 	global $numCardsCreated;
+	global $image_dir;
 	
 	if(!$projects || count($projects) == 0) {
 		return;
@@ -46,15 +47,16 @@ function renderProjectCardGroup($projects, $keywordsDao, $browsing = false) {
         if (!$browsing) {
             $details .= "Status: $status";
         }
-		
+
+/*	Disabling NDA display on card for look		
 		if($nda == 'No Agreement Required'){
 			$details .= "<h6>NDA: $nda</h6>";
 		}
 		//NDA is "NDA Required" or "NDA/IP Required"
 		else{
-			$details .= "<h6>$nda</h6";
+			$details .= "<h6>$nda</h6>";
 		}
-
+*/
 		$extra = '';
 		$preexistingKeywords = $keywordsDao->getKeywordsForEntity($id);
 		if($preexistingKeywords){
@@ -76,9 +78,9 @@ function renderProjectCardGroup($projects, $keywordsDao, $browsing = false) {
 		}
 		
         if (!$image) {
-            $image = 'assets/img/capstone.jpg';
+            $image = $image_dir . 'assets/img/capstone.jpg';
         } else {
-            $image = "images/$image";
+            $image = $image_dir . "images/$image";
         }
 
         $dateUpdated = $p->getDateUpdated()->format('Y-m-d');
@@ -106,6 +108,7 @@ function renderProjectCardGroup($projects, $keywordsDao, $browsing = false) {
  */
 function renderAdminProjectCardGroup($projects, $keywordsDao, $browsing = false) {
 	global $numCardsCreated;
+	global $image_dir;
 	
 	if(!$projects || count($projects) == 0) {
 		return;
@@ -139,7 +142,7 @@ function renderAdminProjectCardGroup($projects, $keywordsDao, $browsing = false)
 		}
 		//NDA is "NDA Required" or "NDA/IP Required"
 		else{
-			$details .= "<h6>$nda</h6";
+			$details .= "<h6>$nda</h6>";
 		}
 		
 		$CategoryName = $p->getCategory()->getName();
@@ -161,10 +164,10 @@ function renderAdminProjectCardGroup($projects, $keywordsDao, $browsing = false)
 			}
 		}
 		
-        if (!$image) {
-            $image = 'assets/img/capstone.jpg';
+		if (!$image) {
+            $image = $image_dir . 'assets/img/capstone.jpg';
         } else {
-            $image = "images/$image";
+            $image = $image_dir . "images/$image";
         }
 
         $dateUpdated = $p->getDateUpdated()->format('Y-m-d');
@@ -210,9 +213,9 @@ function renderProjectCard($id, $title, $description, $details, $imageLink, $sta
 			$description
 			<br>
 			<small class='text-muted'>$details</small>
-			<div style='position: absolute; float: left; margin-right: 10px; bottom: 10px;'>
-				<h6><p style='color: $statusColor'>$status</p></h6>
-				<small class='text-muted'>$extra</small><br>
+			<div style='position: absolute; float: left; margin-right: 10px; bottom: 10px;'>";
+				//<h6><p style='color: $statusColor'>$status</p></h6>
+echo "			<small class='text-muted'>$extra</small><br>
 				$viewButton
 				$editButton
 				$deleteButton

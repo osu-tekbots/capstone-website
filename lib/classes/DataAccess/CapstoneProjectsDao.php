@@ -328,7 +328,7 @@ class CapstoneProjectsDao {
                 ':hidden' => $project->getIsHidden(),
                 ':comments' => $project->getProposerComments(),
                 ':cpsid' => $project->getStatus()->getId(),
-                ':archived' => $project->getArchived(),
+                ':archived' => $project->getIsArchived(),
                 ':dcreated' => QueryUtils::FormatDate($project->getDateCreated()),
                 ':dupdated' => QueryUtils::FormatDate($project->getDateUpdated())
             );
@@ -396,7 +396,7 @@ class CapstoneProjectsDao {
                 ':hidden' => $project->getIsHidden(),
                 ':comments' => $project->getProposerComments(),
                 ':cpsid' => $project->getStatus()->getId(),
-                ':archived' => $project->getArchived(),
+                ':archived' => $project->getIsArchived(),
                 ':dupdated' => QueryUtils::FormatDate($project->getDateUpdated())
             );
             $this->conn->execute($sql, $params);
@@ -675,7 +675,7 @@ class CapstoneProjectsDao {
             ->setIsHidden($row['cp_is_hidden'] ? true : false)
             ->setProposerComments($row['cp_proposer_comments'])
             ->setStatus(self::ExtractCapstoneProjectStatusFromRow($row, true))
-            ->setArchived($row['cp_archived'] ? true : false)
+            ->setIsArchived($row['cp_archived'] ? true : false)
             ->setDateCreated(new \DateTime($row['cp_date_created']))
             ->setDateUpdated(new \DateTime($row['cp_date_updated']));
         if ($userInRow) {

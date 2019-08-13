@@ -14,6 +14,7 @@ if (!session_id()) {
 }
 
 $baseUrl = $configManager->getBaseUrl();
+$image_dir = 'http://eecs.oregonstate.edu/capstone/submission/';
 
 $title = isset($title) ? $title : 'Senior Design Capstone | OSU';
 

@@ -68,23 +68,22 @@ include_once PUBLIC_FILES . '/modules/header.php';
 
 
 			<h2>Users Table</h2>
-			<h6>*Columns colored orange are editable (click on row)*</h6>
-			<h6 style="color: red;">CURRENT DOES NOT WORK - CHANGES MUST BE MADE IN THE DATABASE</h6>
+			<h6>*Columns colored orange are editable (click on cell)*</h6>
 	<div class="search-table-outter wrapper">
-	<table id="data_table" class="search-table inner">
+	<table id="data_table" class="search-table inner scrolltable">
 		<thead>
 			<tr>
-				<th bgcolor="#66C2E0">user_id</th>
-				<th bgcolor="#FFA500">first_name <i class="fas fa-edit"></i></th>
-				<th bgcolor="#FFA500">last_name <i class="fas fa-edit"></i></th>
-				<th bgcolor="#FFA500">student_id <i class="fas fa-edit"></i></th>
-				<th bgcolor="#66C2E0">salutation</th>
-				<th bgcolor="#66C2E0">email</th>
-				<th bgcolor="#FFA500">phone <i class="fas fa-edit"></i></th>
-				<th bgcolor="#66C2E0">affiliation</th>
-				<th bgcolor="#FFA500">major <i class="fas fa-edit"></th>
-				<th bgcolor="#66C2E0">auth_provider</th>
-				<th bgcolor="#FFA500">type <i class="fas fa-edit"></th>
+				<th bgcolor="#66C2E0">User ID</th>
+				<th bgcolor="#FFA500">First Name <i class="fas fa-edit"></i></th>
+				<th bgcolor="#FFA500">Last Name <i class="fas fa-edit"></i></th>
+				<th bgcolor="#FFA500">ONID <i class="fas fa-edit"></i></th>
+				<th bgcolor="#66C2E0">Salutation</th>
+				<th bgcolor="#66C2E0">Email</th>
+				<th bgcolor="#FFA500">Phone <i class="fas fa-edit"></i></th>
+				<th bgcolor="#66C2E0">Affiliation</th>
+				<th bgcolor="#FFA500">Major <i class="fas fa-edit"></th>
+				<th bgcolor="#66C2E0">Auth Provider</th>
+				<th bgcolor="#FFA500">Access Level <i class="fas fa-edit"></th>
 				<?php
 				//<th bgcolor="#FFA500">project_assigned <i class="fas fa-edit"></th>
 				?>
@@ -140,15 +139,32 @@ include_once PUBLIC_FILES . '/modules/header.php';
 
 $(document).ready(function(){
 	$('#data_table').Tabledit({
+		url: 'modules/live_edit.php',
+		editmethod: 'post',
+		// Class for row when ajax request fails
+		dangerClass: 'danger',
+		// Class for row when save changes
+		successClass: 'table-success',
 		deleteButton: false,
 		autoFocus: false,
 		editButton: false,
 		columns: {
-		  identifier: [0, 'user_id'],
-		  editable: [[1, 'first_name'], [2, 'last_name'], [3, 'student_id'], [6, 'phone'], [8, 'major'], [10, 'type', '{"Admin": "Admin", "Proposer": "Proposer", "Student": "Student"}'], [11, 'project_assigned']]
+		  identifier: [0, 'u_id'],
+		  editable: [[1, 'u_fname'], [2, 'u_lname'], [3, 'u_onid'], [6, 'u_phone'], [8, 'u_major'], [10, 'u_ut_id', '{"1": "Student", "2": "Proposer", "3": "Admin"}'], [11, 'project_assigned']]
 		},
 		hideIdentifier: false,
-		url: 'modules/live_edit.php'
+		// Executed when the ajax request is completed
+		onSuccess: function () {
+			snackbar("Entry Successfully Updated!", type = 'success');
+			return;
+		},
+		onFail: function () {
+			snackbar("Ajax Request Error", type = 'error');
+			return;
+		}
+
+		
+
 	});
 });
 

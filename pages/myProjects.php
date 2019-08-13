@@ -20,11 +20,7 @@ $isProposer = isset($_SESSION['accessLevel']) && $_SESSION['accessLevel'] == 'Pr
 $dao = new CapstoneProjectsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
 
-if($isAdmin) {
-	$projects = $dao->getCapstoneProjectsForAdmin($userId);
-} else {
-	$projects = $dao->getCapstoneProjectsForUser($userId);
-}
+$projects = $dao->getCapstoneProjectsForUser($userId);
 
 $title = 'My Projects';
 include_once PUBLIC_FILES . '/modules/header.php';
