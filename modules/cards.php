@@ -275,9 +275,20 @@ function renderAdminProjectCard($id, $title, $description, $details, $imageLink,
 	//<small class='text-muted'>$extra</small><br> (Above $viewButton)
     echo "
 	<div class='card capstoneCard my-3' id='projectCard$num'>
+	";
+	if (!$archived){
+		echo "
 		<a href='pages/viewSingleProject.php?id=$id' target='_blank' style='color: black'>
 			<img class='card-img-top' id='projectImg$id' src='$imageLink' alt='Card Image Capstone' />
 		</a>
+		";
+	}
+	else {
+		echo "
+		<img class='card-img-top' id='projectImg$id' src='$imageLink' alt='Card Image Capstone' />
+		";
+	}
+	echo "
 		<div class='card-body' id='projectCardBody$num'>
 			<h6>$title</h6>
 			<small class='text-muted'>$details</small>
