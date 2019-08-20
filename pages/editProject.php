@@ -402,7 +402,7 @@ var availableTags = [
 						<div class="form-group">
 							<div class="ui-widget">
 								<label for="keywordsInput">
-									Add Keywords to Project: <font size="2" style="color:red;">*required</font><br>
+									Add Keywords to Project: <br>
 									<font size="2">Press Enter after each keyword.</font>
 								</label>
 								<input id="keywordsInput" class="form-control input">
@@ -412,7 +412,9 @@ var availableTags = [
 									$preexistingKeywords = $keywordsDao->getKeywordsForEntity($pId);
 									if($preexistingKeywords){
 										foreach ($preexistingKeywords as $k) {
-											echo '<span class="badge badge-light keywordBadge">' . $k->getName() . ' <i class="fas fa-times-circle"></i></span>';
+											if (trim($k->getName()) != '') {
+												echo '<span class="badge badge-light keywordBadge">' . $k->getName() . ' <i class="fas fa-times-circle"></i></span>';
+											}
 										}
 									}
 								?>
@@ -491,11 +493,35 @@ var availableTags = [
 							</select>
 						</div>
 					</div>
+					<div class="col-sm-3">
+						<div class="form-group">
+							<label for="minQualificationsText">
+								Minimum Qualifications
+							</label>
+							<textarea class="form-control input" id="minQualificationsText" name="minQualifications" 
+								rows="9" data-toggle="tooltip" 
+								data-placement="top" title="<?php echo $tooltipMinQualificationsText; ?>"><?php
+									echo $pMinQual;
+								?></textarea>
+						</div>
+					</div>
+					<div class="col-sm-3">
+						<div class="form-group">
+							<label for="preferredQualificationsText">
+								Preferred Qualifications
+							</label>
+							<textarea class="form-control input" id="preferredQualificationsText" name="preferredQualifications" 
+								rows="9" data-toggle="tooltip" 
+								data-placement="top" title="<?php echo $tooltipPrefQualificationsText; ?>"><?php
+									echo $pPreferredQual;
+								?></textarea>
+						</div>
+					</div>
 				</div>
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="form-group">
-							<label for="commentsText">Special Comments</label>
+							<label for="commentsText">Special Comments *Only Seen By Admins*</label>
 							<textarea class="form-control input" id="commentsText" name="comments" rows="3" data-toggle="tooltip" 
 								data-placement="top" title='<?php echo $tooltipCommentsText; ?>'><?php
 									echo $pComments; 

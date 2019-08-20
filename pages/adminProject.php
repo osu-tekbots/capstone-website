@@ -104,6 +104,16 @@ include_once PUBLIC_FILES . '/modules/header.php';
 						</div>
 
 						<div class="form-check">
+							<input type="checkbox" class="form-check-input" id="archivedCheckBox">
+							<label for="archivedCheckBox">Hide Archived projects</label>
+						</div>
+
+						<div class="form-check">
+							<input type="checkbox" class="form-check-input" id="notSubmittedCheckBox">
+							<label for="notSubmittedCheckBox">Hide Not-Submitted projects</label>
+						</div>
+
+						<div class="form-check">
 							<input type="checkbox" class="form-check-input" id="NDAFilterCheckBox">
 							<label for="NDAFilterCheckBox">Hide projects that require an NDA/IP</label>
 						</div>
@@ -235,7 +245,38 @@ include_once PUBLIC_FILES . '/modules/header.php';
 	  $("#ApprovalRequiredCheckBox").change(function(){
 	 if($(this).is(":checked")){
 		for(var i = 0; i < <?php echo $numCardsCreated; ?>; i++){
-			if(($("#projectCard" + i).text().toLowerCase().indexOf("category") <= -1) && ($("#projectCard" + i).text().toLowerCase().indexOf("pending") <= -1)) {
+			if(($("#projectCard" + i).text().toLowerCase().indexOf("category placement") <= -1) && ($("#projectCard" + i).text().toLowerCase().indexOf("pending approval") <= -1)) {
+				$("#projectCard" + i).hide();
+			}
+		}
+	 }
+	 else{
+		for(var i = 0; i < <?php echo $numCardsCreated; ?>; i++){
+			$("#projectCard" + i).show();
+		}
+	 }
+	});
+
+	
+	$("#archivedCheckBox").change(function(){
+	 if($(this).is(":checked")){
+		for(var i = 0; i < <?php echo $numCardsCreated; ?>; i++){
+			if(($("#projectCard" + i).text().toLowerCase().indexOf("archived") > -1)) {
+				$("#projectCard" + i).hide();
+			}
+		}
+	 }
+	 else{
+		for(var i = 0; i < <?php echo $numCardsCreated; ?>; i++){
+			$("#projectCard" + i).show();
+		}
+	 }
+	});
+
+	$("#notSubmittedCheckBox").change(function(){
+	 if($(this).is(":checked")){
+		for(var i = 0; i < <?php echo $numCardsCreated; ?>; i++){
+			if($("#projectCard" + i).text().toLowerCase().indexOf("not yet submitted") > -1)  {
 				$("#projectCard" + i).hide();
 			}
 		}
@@ -256,7 +297,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
     			//-1 is returned by indexOf(String) if the String parameter passed in
     			//does not exist anywhere within the text. Otherwise, its index would
     			//be returned.
-    			if($("#projectCard" + i).text().toLowerCase().indexOf("nda") > -1){
+    			if($("#projectCard" + i).text().toLowerCase().indexOf("nda required") > -1 || $("#projectCard" + i).text().toLowerCase().indexOf("nda/ip required") > -1) {
     				$("#projectCard" + i).hide();
     			}
     		}

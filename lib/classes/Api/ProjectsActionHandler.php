@@ -117,6 +117,8 @@ class ProjectsActionHandler extends ActionHandler {
         $description = $this->getFromBody('description');
         $motivation = $this->getFromBody('motivation');
         $objectives = $this->getFromBody('objectives');
+        $minQualifications = $this->getFromBody('minQualifications');
+        $preferredQualifications = $this->getFromBody('preferredQualifications');
         $videoLink = $this->getFromBody('videoLink');
         $websiteLink = $this->getFromBody('websiteLink');
         
@@ -159,6 +161,8 @@ class ProjectsActionHandler extends ActionHandler {
             ->setDescription($description)
             ->setMotivation($motivation)
             ->setObjectives($objectives)
+            ->setMinQualifications($minQualifications)
+            ->setPreferredQualifications($preferredQualifications)
             ->setVideoLink($videoLink)
             ->setWebsiteLink($websiteLink);
 
@@ -199,6 +203,8 @@ class ProjectsActionHandler extends ActionHandler {
         $description = $this->getFromBody('description');
         $motivation = $this->getFromBody('motivation');
         $objectives = $this->getFromBody('objectives');
+        $minQualifications = $this->getFromBody('minQualifications');
+        $preferredQualifications = $this->getFromBody('preferredQualifications');
         $videoLink = $this->getFromBody('videoLink');
         $websiteLink = $this->getFromBody('websiteLink');
 
@@ -217,6 +223,8 @@ class ProjectsActionHandler extends ActionHandler {
             ->setDescription($description)
             ->setMotivation($motivation)
             ->setObjectives($objectives)
+            ->setMinQualifications($minQualifications)
+            ->setPreferredQualifications($preferredQualifications)
             ->setVideoLink($videoLink)
             ->setWebsiteLink($websiteLink);
 

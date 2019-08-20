@@ -188,7 +188,7 @@ a:hover{
 }
 
 .card {
-  height: 550px;
+  height: 600px;
   overflow: none;
   line-height: normal;
 }
@@ -511,7 +511,8 @@ div.student {
 }
 
 .card-img-top {
-  max-height: 275px;
+  max-height: 250px;
+  min-height: 250px;
 }
 
 

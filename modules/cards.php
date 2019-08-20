@@ -61,7 +61,9 @@ function renderProjectCardGroup($projects, $keywordsDao, $browsing = false) {
 		$preexistingKeywords = $keywordsDao->getKeywordsForEntity($id);
 		if($preexistingKeywords){
 			foreach ($preexistingKeywords as $k) {
-				$extra .= '<span class="badge badge-light keywordBadge">' . $k->getName() . '</span>';
+				if (trim($k->getName()) != '') {
+					$extra .= '<span class="badge badge-light keywordBadge">' . $k->getName() . '</span>';
+				}
 			}
 		}
 		
@@ -129,7 +131,31 @@ function renderAdminProjectCardGroup($projects, $keywordsDao, $browsing = false)
         }
         $status = $p->getStatus()->getName();
         $category = $p->getCategory()->getName();
-        $nda = $p->getNdaIp()->getName();
+		$nda = $p->getNdaIp()->getName();
+		$archived = $p->getIsArchived();
+		$CategoryName = $p->getCategory()->getName();
+		$name = Security::HtmlEntitiesEncode($p->getProposer()->getFirstName()) 
+		. ' ' 
+		. Security::HtmlEntitiesEncode($p->getProposer()->getLastName());
+		$proposerID = $p->getProposer()->getId();
+
+		$info = '';
+		$info .= "<p>Proposer: $name</p>";
+		$info .= "<p>Proposer ID: $proposerID</p>";
+		$info .= "<p>Project ID: $id</p>";
+
+		$extra = '';
+		// Set Extra Information for Admin Browse (If Archived, show that, if just a created project show nothing)
+		if ($archived) {
+			$extra = "Archived";
+			$status = "";
+		}
+		else if ($status == "Created") {
+			$extra = "";
+		}
+		else if ($CategoryName != 'Electrical Engineering' && $CategoryName != 'Computer Science' && $CategoryName != 'EECS'){
+			$extra = "Category Placement";
+		}
 
         // The details string contains the small text for the project
         $details = $p->getType()->getName() . ' ' . $p->getDateStart()->format('Y') . '<br/>';
@@ -145,12 +171,9 @@ function renderAdminProjectCardGroup($projects, $keywordsDao, $browsing = false)
 			$details .= "<h6>$nda</h6>";
 		}
 		
-		$CategoryName = $p->getCategory()->getName();
+		
 
-		$extra = '';
-		if ($CategoryName != 'Electrical Engineering' && $CategoryName != 'Computer Science' && $CategoryName != 'EECS'){
-			$extra = "Category Placement";
-		}
+
 		
 
 		$image = false;
@@ -176,7 +199,7 @@ function renderAdminProjectCardGroup($projects, $keywordsDao, $browsing = false)
 		$published = !$p->getIsHidden();
 		
 		renderAdminProjectCard($id, $title, $description, $details, $image, $status, $category, $lastUpdated, 
-			$numCardsCreated, $browsing, $published, $extra);
+			$numCardsCreated, $browsing, $published, $archived, $info, $extra);
 
         $numCardsCreated++;
     }
@@ -239,13 +262,15 @@ echo "			<small class='text-muted'>$extra</small><br>
 }
 
 
-function renderAdminProjectCard($id, $title, $description, $details, $imageLink, $status, $category, $lastUpdated, $num, $browsing, $published, $extra) {
-	$statusColor = ($status == 'Pending Approval' || $status == 'Rejected') ? 'red' : 'inherit';
-	$statusColorExtra = ($extra == 'Category Placement' || $status == 'Rejected') ? 'red' : 'inherit';
+function renderAdminProjectCard($id, $title, $description, $details, $imageLink, $status, $category, $lastUpdated, $num, $browsing, $published, $archived, $info, $extra) {
+	$statusColor = ($status == 'Pending Approval' || $status == 'Rejected') ? 'red' : (($status == 'Created' || $status == 'Incomplete') ? '#ffcc00' : 'inherit');
+	$statusColorExtra = ($extra == 'Category Placement' || $status == 'Rejected') ? 'red' : (($extra == 'Archived') ? '#ffcc00' : 'inherit');
     $viewButton = $published ? createLinkButton("pages/viewSingleProject.php?id=$id", 'View') : '';
-	$editButton = !$browsing ? createLinkButton("pages/editProject.php?id=$id", 'Edit') : '';
-	$deleteButton = !$browsing ? createProjectDeleteButton($id, $num) : '';
-
+	$editButton = (!$browsing && !$archived) ? createLinkButton("pages/editProject.php?id=$id", 'Edit') : '';
+	$deleteButton = (!$browsing && !$archived) ? createProjectDeleteButton($id, $num) : '';
+	if ($status == 'Created') {
+		$status = 'Not Yet Submitted';
+	}
 
 	//<small class='text-muted'>$extra</small><br> (Above $viewButton)
     echo "
@@ -256,6 +281,7 @@ function renderAdminProjectCard($id, $title, $description, $details, $imageLink,
 		<div class='card-body' id='projectCardBody$num'>
 			<h6>$title</h6>
 			<small class='text-muted'>$details</small>
+			<small class='text-muted'>$info</small>
 			<div style='position: absolute; float: left; margin-right: 10px; bottom: 10px;'>
 				<h6><p style='color: $statusColor'>$status</p></h6>
 				<h6><p style='color: $statusColorExtra'>$extra</p></h6>

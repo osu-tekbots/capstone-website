@@ -188,6 +188,7 @@ $projects = $dao->getBrowsableCapstoneProjects();
     		}
     	 }
       });
+      
 
       //Performs sorting functionality based on which radio button is chosen.
     	$('input[name="sortRadio"]').change(function() {

@@ -95,6 +95,10 @@ p {
   margin-bottom: 1rem;
 }
 
+.card {
+  height: 630px!important;
+}
+
 abbr[title],
 abbr[data-original-title] {
   text-decoration: underline;

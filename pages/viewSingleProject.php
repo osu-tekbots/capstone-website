@@ -173,7 +173,9 @@ $name = Security::HtmlEntitiesEncode($project->getProposer()->getFirstName())
 							$preexistingKeywords = $keywordsDao->getKeywordsForEntity($pid);
 							if($preexistingKeywords){
 								foreach ($preexistingKeywords as $k) {
-									echo '<span class="badge badge-light keywordBadge">' . $k->getName() . '</span>';
+									if (trim($k->getName()) != '') {
+										echo '<span class="badge badge-light keywordBadge">' . $k->getName() . '</span>';
+									}
 								}
 							}
 						?>

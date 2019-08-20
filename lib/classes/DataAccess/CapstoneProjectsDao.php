@@ -120,17 +120,10 @@ class CapstoneProjectsDao {
                 capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
             WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
                 AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id
-                AND (u_id = :uid OR (cp_cps_id = :pending OR cp_cps_id = :rejected OR cp_cps_id = :accepting))
-                AND cp_archived = :archived
+               
             ';
-            $params = array(
-                ':uid' => $userId,
-                ':pending' => CapstoneProjectStatus::PENDING_APPROVAL,
-                ':rejected' => CapstoneProjectStatus::REJECTED,
-                ':accepting' => CapstoneProjectStatus::ACCEPTING_APPLICANTS,
-                ':archived' => false
-            );
-            $results = $this->conn->query($sql, $params);
+          
+            $results = $this->conn->query($sql);
 
             $projects = array();
             foreach ($results as $row) {
