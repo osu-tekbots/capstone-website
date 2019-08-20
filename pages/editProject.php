@@ -126,7 +126,7 @@ $tooltipAdditionalEmailsText = 'Enter additional emails (separated by a semi-col
 $tooltipStartByText = '';
 $tooltipCompleteByText = '';
 $tooltipNumberGroupsDesiredText = 'How many student teams would you like to work on your project? ';
-$tooltipCommentsText = 'Enter any comments you would like the admins to see.';
+$tooltipCommentsText = 'Enter any comments you would like only the admins to see.';
 
 /**
  * Renders the HTML for an option that will render an image to select as the default image.
@@ -521,7 +521,7 @@ var availableTags = [
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="form-group">
-							<label for="commentsText">Special Comments *Only Seen By Admins*</label>
+							<label for="commentsText">Special Comments (preferred contact number, requesting the project to be set to private)</label>
 							<textarea class="form-control input" id="commentsText" name="comments" rows="3" data-toggle="tooltip" 
 								data-placement="top" title='<?php echo $tooltipCommentsText; ?>'><?php
 									echo $pComments; 

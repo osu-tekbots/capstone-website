@@ -138,9 +138,11 @@ function renderAdminProjectCardGroup($projects, $keywordsDao, $browsing = false)
 		. ' ' 
 		. Security::HtmlEntitiesEncode($p->getProposer()->getLastName());
 		$proposerID = $p->getProposer()->getId();
+		$proposerPhone = $p->getProposer()->getPhone();
 
 		$info = '';
 		$info .= "<p>Proposer: $name</p>";
+		$info .= "<p>Proposer Number: $proposerPhone</p>";
 		$info .= "<p>Proposer ID: $proposerID</p>";
 		$info .= "<p>Project ID: $id</p>";
 
