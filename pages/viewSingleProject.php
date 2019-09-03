@@ -135,6 +135,10 @@ $name = Security::HtmlEntitiesEncode($project->getProposer()->getFirstName())
 					<strong>NDA/IPA:</strong>
 					<p><?php echo($nda);?></p>
 			</address>
+			<address>
+					<strong>Course Type:</strong>
+					<p><?php echo($category);?></p>
+			</address>
 	        <?php 
 			if ($type != 'Capstone')
 			echo "<address>

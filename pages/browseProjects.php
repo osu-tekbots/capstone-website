@@ -60,7 +60,7 @@ $projects = $dao->getBrowsableCapstoneProjects();
                     </div>
 
                     <div class="form-group">
-                        <label for="projectCategoryFilterSelect">Filter by Category</label>
+                        <label for="projectCategoryFilterSelect">Filter by Course Type</label>
                         <select class="form-control" id="projectCategoryFilterSelect" onchange="filterSelectChanged(this)">
                             <option></option>
                             <option>EECS</option>

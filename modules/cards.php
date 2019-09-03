@@ -44,7 +44,7 @@ function renderProjectCardGroup($projects, $keywordsDao, $browsing = false) {
 
         // The details string contains the small text for the project
 		$details = $p->getType()->getName() . ' ' . $p->getDateStart()->format('Y') . '<br/>';
-		$details .= $category;
+		$details .= "Course: $category";
         if (!$browsing) {
             $details .= "Status: $status";
         }
