@@ -160,6 +160,28 @@ include_once PUBLIC_FILES . '/modules/header.php';
 						</div>
 					</div>
 				</div>
+				
+				<!-- Area Chart Example-->
+				<div class="card mb-3">
+					<div class="card-header">
+						<i class="fas fa-chart-area"></i>
+						Export Options</div>
+						<form method="post" action="modules/export.php">
+						<div class="row">
+							<div class="col-sm-4">
+								<input type="submit" name="exportProjects" class="btn btn-success" value="Export Projects As EXCEL" />
+							</div>
+							<div class="col-sm-4">
+							
+							</div>
+							<div class="col-sm-4">
+							
+							</div>
+						</div>
+						</form>
+				
+				</div>
+				
 
 				<!-- Area Chart Example-->
 				<div class="card mb-3">
@@ -167,16 +189,11 @@ include_once PUBLIC_FILES . '/modules/header.php';
 						<i class="fas fa-chart-area"></i>
 						Bar Graph</div>
 					<div id="barGraphContainer" style="height: 300px; width: 100%;"></div>
-					<div class="card-footer small text-muted"></div>
-				</div>
-
-				<div class="card mb-3">
-					<div class="card-header">
-						<i class="fas fa-chart-area"></i>
-						Pie Chart</div>
 					<div id="chartContainer" style="height: 300px; width: 100%;"></div>
 					<div class="card-footer small text-muted"></div>
 				</div>
+
+
 
 
 			</div>

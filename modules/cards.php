@@ -43,7 +43,8 @@ function renderProjectCardGroup($projects, $keywordsDao, $browsing = false) {
         $nda = $p->getNdaIp()->getName();
 
         // The details string contains the small text for the project
-        $details = $p->getType()->getName() . ' ' . $p->getDateStart()->format('Y') . '<br/>';
+		$details = $p->getType()->getName() . ' ' . $p->getDateStart()->format('Y') . '<br/>';
+		$details .= $category;
         if (!$browsing) {
             $details .= "Status: $status";
         }
@@ -137,14 +138,12 @@ function renderAdminProjectCardGroup($projects, $keywordsDao, $browsing = false)
 		$name = Security::HtmlEntitiesEncode($p->getProposer()->getFirstName()) 
 		. ' ' 
 		. Security::HtmlEntitiesEncode($p->getProposer()->getLastName());
-		$proposerID = $p->getProposer()->getId();
+
 		$proposerPhone = $p->getProposer()->getPhone();
 
 		$info = '';
 		$info .= "<p>Proposer: $name</p>";
 		$info .= "<p>Proposer Number: $proposerPhone</p>";
-		$info .= "<p>Proposer ID: $proposerID</p>";
-		$info .= "<p>Project ID: $id</p>";
 
 		$extra = '';
 		// Set Extra Information for Admin Browse (If Archived, show that, if just a created project show nothing)

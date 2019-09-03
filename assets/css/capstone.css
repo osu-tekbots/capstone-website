@@ -188,10 +188,11 @@ a:hover{
 }
 
 .card {
-  height: 600px;
+  height: 650px;
   overflow: none;
   line-height: normal;
 }
+
 
 .form-signin {
   width: 100%;
@@ -322,7 +323,7 @@ a:hover{
 }
 
 .capstoneCardColumns{
-	column-count: 5;
+	column-count: 4;
 }
 
 .capstoneCardColumnsAdmin{

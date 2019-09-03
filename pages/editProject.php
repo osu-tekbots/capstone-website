@@ -280,7 +280,7 @@ var availableTags = [
 			<img id="img-upload" max-width="400px;" max-height="200px;" src="<?php echo $defaultImage; ?>"/>
 			</div>
 			<div id="helpDiv">
-				<a href="mailto:heer@oregonstate.edu" target="_blank" class="btn btn-help">Questions?</a>
+				<a href="mailto:eecs_capstone_staff@engr.oregonstate.edu" target="_blank" class="btn btn-help">Questions?</a>
 			</div>
 		</div>
 
