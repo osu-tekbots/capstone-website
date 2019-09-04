@@ -15,14 +15,21 @@ $applicationId = $_GET['id'];
 $isLoggedIn = isset($_SESSION['userID']) && !empty($_SESSION['userID']);
 
 // Redirect the user if they are not logged in or no ID is provided in the query string
-allowIf($applicationId != '' && $isLoggedIn);
+//allowIf($authorizedToProceed, 'index.php');
 
 $userId = $_SESSION['userID'];
 
 $isAdmin = $_SESSION['accessLevel'] == 'Admin';
 
+$authorizedToProceed = $applicationId . '' != '' && $userId . '' != '';
+allowIf($authorizedToProceed, '/index.php');
+
 $applicationsDao = new CapstoneApplicationsDao($dbConn, $logger);
 $application = $applicationsDao->getApplication($applicationId);
+
+$authorizedToProceed = ($application->getStudent()->getId() == $_SESSION['userID']) || $isAdmin;
+
+allowIf($authorizedToProceed, '/index.php');
 
 // We also need to get the project because the application does not retrieve the proposer information
 $projectsDao = new CapstoneProjectsDao($dbConn, $logger);

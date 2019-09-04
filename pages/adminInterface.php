@@ -169,7 +169,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 						<form method="post" action="modules/export.php">
 						<div class="row">
 							<div class="col-sm-4">
-								<input type="submit" name="exportProjects" class="btn btn-success" value="Export Projects As EXCEL" />
+								<input type="submit" name="exportProjects" class="btn btn-success" value="APPROVED Projects CSV" />
 							</div>
 							<div class="col-sm-4">
 							

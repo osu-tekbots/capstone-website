@@ -9,36 +9,15 @@ use Util\Security;
 $projectsDao = new CapstoneProjectsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
 
-$output = '';
+
+$data = '';
 if(isset($_POST["exportProjects"]))
 {
-	$projects = $projectsDao->getBrowsableCapstoneProjects();
+	$projects = $projectsDao-> getAllApprovedCapstoneProjects();
 	if(count($projects) > 0) {
-		$count = 1;
-		$output .= '
-		<table class="table" bordered="1">  
-		<tr>  
-			<th>#</th>  
-			<th>Proposer</th>  
-			<th>Proposer Email</th>
-			<th>Proposer Phone</th>  
-			<th>Additional Emails</th>
-			<th>Title</th>
-			<th>Focus</th>
-			<th>Description</th>
-			<th>Motivation</th>
-			<th>Objectives/Deliverables</th>
-			<th>Keywords</th>
-			<th>Minimum Qualifications</th>
-			<th>Preferred Qualifications</th>
-			<th>NDA/IP Status</th>
-			<th>Website</th>
-			<th>Video</th>
-			<th>Special Comments</th>
 
-	
-		</tr>
-		';
+		$data = "Proposer". "," ."Affiliation". "," ."Email". "," . "Phone". "," ."Additional Emails". "," . "Title". "," ."Focus". "," ."Description". "," ."Motivation". "," ."Category". "," ."Objectives". "," ."keyword list". "," . "min qualifications". "," ."pref qualifications". "," ."nda". "," ."website". "," ."video". "," ."special comments". "\n";
+		$fileName='approvedprojects_'.date('m-d-Y_hia').'.csv';
 		foreach ($projects as $p) {
 			$proposer = $p->getProposerId();
 			$pid = $p->getId();
@@ -85,38 +64,20 @@ if(isset($_POST["exportProjects"]))
 			$additionalEmails = Security::HtmlEntitiesEncode($p->getAdditionalEmails());
 			$proposerEmail = Security::HtmlEntitiesEncode($p->getProposer()->getEmail());
 			$proposerPhone = Security::HtmlEntitiesEncode($p->getProposer()->getPhone());
+			$proposerAffiliation = Security::HtmlEntitiesEncode($p->getProposer()->getAffiliation());
 				
-			$output .= "
-			<tr>  
-				<td>$count</td>  
-				<td>$name</td>  
-				<td>$proposerEmail</td>  
-				<td>$proposerPhone</td>  
-				<td>$additionalEmails</td>
-				<td>$title</td>
-				<td>$focus</td>
-				<td>$description</td>
-				<td>$motivation</td>
-				<td>$objectives</td>
-				<td>$keywordList</td>
-				<td>$min_qualifications</td>
-				<td>$pref_qualifications</td>
-				<td>$nda</td>
-				<td>$website</td>
-				<td>$video</td>
-				<td>$specialComments</td>
-			</tr>
-			";
-			$count++;
+			$data .= EscapeForCSV($name). "," .EscapeForCSV($proposerAffiliation). "," .EscapeForCSV($proposerEmail). "," .EscapeForCSV($proposerPhone). "," .EscapeForCSV($additionalEmails). "," .EscapeForCSV($title). "," .EscapeForCSV($focus). "," .EscapeForCSV($description). "," .EscapeForCSV($motivation). "," .EscapeForCSV($category). "," .EscapeForCSV($objectives). "," .EscapeForCSV($keywordList). "," .EscapeForCSV($min_qualifications). "," .EscapeForCSV($pref_qualifications). "," .EscapeForCSV($nda). "," .EscapeForCSV($website). "," .EscapeForCSV($video). "," .EscapeForCSV($specialComments). "\n";
+
+	
 		}
-		$output .= '</table>';
-		header('Content-Type: application/xls; charset=utf-8');
-		header('Content-Disposition: attachment; filename=projects.xls');
-		header("Pragma: no-cache");
-        header("Expires: 0");
-		echo $output;
+		header('Content-Type: application/csv');
+		header("Content-Disposition: attachment; filename=$fileName");
+		echo $data; exit();
 	}
 }
 
-
+function EscapeForCSV($value)
+{
+  return '"' . str_replace('"', '""', $value) . '"';
+}
 ?>

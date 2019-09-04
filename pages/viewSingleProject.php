@@ -63,6 +63,23 @@ $comments = Security::HtmlEntitiesEncode($project->getProposerComments());
 $name = Security::HtmlEntitiesEncode($project->getProposer()->getFirstName()) 
 	. ' ' 
 	. Security::HtmlEntitiesEncode($project->getProposer()->getLastName());
+$preexistingKeywords = $keywordsDao->getKeywordsForEntity($pid);
+global $image_dir;
+$image = false;
+$images = $project->getImages();
+if($images) {
+	foreach($images as $i) {
+		if($i->getIsDefault()){
+			$image = $i->getId();
+			break;
+		}
+	}
+}
+if (!$image) {
+	$image = $image_dir . 'assets/img/capstone.jpg';
+} else {
+	$image = $image_dir . "images/$image";
+}
 
 ?>
 <div class="viewSingleProject">
@@ -136,6 +153,11 @@ $name = Security::HtmlEntitiesEncode($project->getProposer()->getFirstName())
 					<p><?php echo($nda);?></p>
 			</address>
 			<address>
+					<strong>Project Status:</strong>
+	          <br><?php echo($status);?>
+	          <br>
+	        </address>
+			<address>
 					<strong>Course Type:</strong>
 					<p><?php echo($category);?></p>
 			</address>
@@ -145,51 +167,63 @@ $name = Security::HtmlEntitiesEncode($project->getProposer()->getFirstName())
 	          <strong>Start Date:</strong>
 	          <br>$start_by<br>
 	        </address>";
-			?>
-	        <?php 
+	
 			if ($type != 'Capstone')
 			echo "<address>
 						<strong>End Date:</strong>
 	          <br>$complete_by
 	          <br>
 	        </address>";
-			?>
-					<address>
+
+			if ($website !== ''){
+			echo"		<address>
 						<strong>Website:</strong>
-	          <br><a href="<?php echo($website);?>" target="_blank"><?php echo($website);?></a>
+	          <br><a href='$website' target='_blank'>$website</a>
 	          <br>
+			  </address>";
+			}
+			if ($video !== ''){
+			echo"  <address>
 						<strong>Video:</strong>
-	          <br><a href="<?php echo($video);?>" target="_blank"><?php echo($video);?></a>
+	          <br><a href='$video' target='_blank'>$video</a>
 	          <br>
-	        </address>
-			<?php 
-			if ($type != 'Capstone')
+			</address>";
+			}
+			if ($type != 'Capstone') {
 			echo "<address>
 			<strong>Compensation:</strong>
 	          <br>$compensation)
 	          <br>
-	        </address>";
-			?>
-					<address>
-						<strong>Keywords:</strong>
-						<br>		
-						<?php
-							$preexistingKeywords = $keywordsDao->getKeywordsForEntity($pid);
-							if($preexistingKeywords){
-								foreach ($preexistingKeywords as $k) {
-									if (trim($k->getName()) != '') {
-										echo '<span class="badge badge-light keywordBadge">' . $k->getName() . '</span>';
-									}
-								}
+			</address>";
+			}
+			
+			if (count($preexistingKeywords) > 1){		
+			echo"
+			<address>
+				<strong>Keywords:</strong>
+				<br>		
+				";
+					
+				
+						foreach ($preexistingKeywords as $k) {
+							if (trim($k->getName()) != '') {
+								echo '<span class="badge badge-light keywordBadge">' . $k->getName() . '</span>';
 							}
-						?>
-						<br>
-					</address>
-					<address>
-						<strong>Project Status:</strong>
-	          <br><?php echo($status);?>
-	          <br>
-	        </address>
+						}
+					
+			echo"	
+				<br>
+			</address>";
+			}
+			?>
+			<address>
+				<img class='card-img-top' id='projectImg' src='<?php echo $image; ?>' alt='Card Image Capstone' />
+				<br>
+			</address>
+
+
+
+
 	      </div>
 	    </div>
 			<br>

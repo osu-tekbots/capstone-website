@@ -139,6 +139,47 @@ class CapstoneProjectsDao {
         }
     }
 
+        /**
+     * Fetches several capstone projects from a specified range.
+     *
+     * @param integer $offset the offset into the results to fetch
+     * @param integer $limit the max number of results to fetch in this batch
+     * @return \Model\CapstoneProject[]|boolean an array of projects on success, false otherwise
+     */
+    public function getAllApprovedCapstoneProjects() {
+        try {
+            $sql = '
+            SELECT * 
+            FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+                capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
+            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id 
+                AND cp_cpf_id = cpf_id AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id 
+                AND cp_cps_id = cps_id AND cp_u_id = u_id AND cp_cps_id = :status
+                AND cp_archived = :archived
+            ';
+            // TODO: enable pagination with the offset and limit
+            $params = array(
+                ':status' => CapstoneProjectStatus::ACCEPTING_APPLICANTS,
+                ':archived' => false);
+            $results = $this->conn->query($sql, $params);
+
+            $projects = array();
+            foreach ($results as $row) {
+                $project = self::ExtractCapstoneProjectFromRow($row, true);
+                $this->getCapstoneProjectImages($project, true);
+                $projects[] = $project;
+            }
+
+            return $projects;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to get many projects: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+
+    
+
     /**
      * Fetches all the pending capstone projects for admins to review.
      *

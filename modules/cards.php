@@ -40,11 +40,15 @@ function renderProjectCardGroup($projects, $keywordsDao, $browsing = false) {
         }
         $status = $p->getStatus()->getName();
         $category = $p->getCategory()->getName();
-        $nda = $p->getNdaIp()->getName();
+		$nda = $p->getNdaIp()->getName();
+		$name = Security::HtmlEntitiesEncode($p->getProposer()->getFirstName()) 
+		. ' ' 
+		. Security::HtmlEntitiesEncode($p->getProposer()->getLastName());
 
         // The details string contains the small text for the project
 		$details = $p->getType()->getName() . ' ' . $p->getDateStart()->format('Y') . '<br/>';
-		$details .= "Course: $category";
+		$details .= "Course: $category <br/>";
+		$details .= "Proposer: $name";
         if (!$browsing) {
             $details .= "Status: $status";
         }
@@ -81,7 +85,7 @@ function renderProjectCardGroup($projects, $keywordsDao, $browsing = false) {
 		}
 		
         if (!$image) {
-            $image = $image_dir . 'assets/img/capstone.jpg';
+            $image = $image_dir . 'assets/img/capstone_test.jpg';
         } else {
             $image = $image_dir . "images/$image";
         }
@@ -143,7 +147,7 @@ function renderAdminProjectCardGroup($projects, $keywordsDao, $browsing = false)
 
 		$info = '';
 		$info .= "<p>Proposer: $name</p>";
-		$info .= "<p>Proposer Number: $proposerPhone</p>";
+		$info .= "<p>Phone Number: $proposerPhone</p>";
 
 		$extra = '';
 		// Set Extra Information for Admin Browse (If Archived, show that, if just a created project show nothing)
@@ -189,7 +193,7 @@ function renderAdminProjectCardGroup($projects, $keywordsDao, $browsing = false)
 		}
 		
 		if (!$image) {
-            $image = $image_dir . 'assets/img/capstone.jpg';
+            $image = $image_dir . 'assets/img/capstone_test.jpg';
         } else {
             $image = $image_dir . "images/$image";
         }
