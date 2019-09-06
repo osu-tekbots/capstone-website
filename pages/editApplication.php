@@ -22,14 +22,14 @@ $userId = $_SESSION['userID'];
 $isAdmin = $_SESSION['accessLevel'] == 'Admin';
 
 $authorizedToProceed = $applicationId . '' != '' && $userId . '' != '';
-allowIf($authorizedToProceed, '/index.php');
+allowIf($authorizedToProceed);
 
 $applicationsDao = new CapstoneApplicationsDao($dbConn, $logger);
 $application = $applicationsDao->getApplication($applicationId);
 
 $authorizedToProceed = ($application->getStudent()->getId() == $_SESSION['userID']) || $isAdmin;
 
-allowIf($authorizedToProceed, '/index.php');
+allowIf($authorizedToProceed);
 
 // We also need to get the project because the application does not retrieve the proposer information
 $projectsDao = new CapstoneProjectsDao($dbConn, $logger);

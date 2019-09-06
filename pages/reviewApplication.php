@@ -16,13 +16,13 @@ $isLoggedIn = isset($_SESSION['userID']) && $_SESSION['userID'] . '' != '';
 $isProposer = isset($_SESSION['accessLevel']) && $_SESSION['accessLevel'] == 'Proposer';
 $isAdmin = isset($_SESSION['accessLevel']) && $_SESSION['accessLevel'] == 'Admin';
 
-allowIf($aid != '' && $isLoggedIn, 'pages/login.php');
+allowIf($aid != '' && $isLoggedIn, '/login.php');
 
 $dao = new CapstoneApplicationsDao($dbConn, $logger);
 $application = $dao->getApplication($aid);
 
 $authorizedToProceed = ($application->getCapstoneProject()->getProposerId() == $_SESSION['userID']) || $isAdmin;
-allowIf($authorizedToProceed, 'pages/index.php');
+allowIf($authorizedToProceed, '/index.php');
 
 $title = 'Review Application';
 include_once PUBLIC_FILES . '/modules/header.php';
