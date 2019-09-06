@@ -12,7 +12,6 @@ $(document).ready(function () {
 
         var input = $(this),
             label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-
         input.trigger('fileselect', [label]);
     });
 
@@ -20,7 +19,7 @@ $(document).ready(function () {
     $(document).on('change', '.btn-file :file', function () {
         var input = $(this),
             label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-
+           
         input.trigger('fileselect', [label]);
     });
 
@@ -28,6 +27,7 @@ $(document).ready(function () {
 
         var input = $(this).parents('.input-group').find(':text'),
             log = label;
+       
 
         //3/3/19: Included this logic to ensure only valid files
         //are capable of being submitted.
@@ -38,6 +38,7 @@ $(document).ready(function () {
             !log.includes(".gif") && !log.includes(".GIF")) {
             return;
         }
+
 
         if (input.length) {
             input.val(log);

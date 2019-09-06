@@ -19,7 +19,7 @@ $pId = $_GET['id'];
 
 $authorizedToProceed = $pId . '' != '' && $_SESSION['userID'] . '' != '';
 
-allowIf($authorizedToProceed, 'pages/index.php');
+allowIf($authorizedToProceed, 'pages/login.php');
 
 $dao = new CapstoneProjectsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
@@ -96,10 +96,6 @@ $js = array(
     array(
         'defer' => 'true',
         'src' => 'assets/js/admin-review.js'
-    ),
-    array(
-        'defer' => 'true',
-        'src' => 'assets/js/upload-image.js'
     )
 );
 include_once PUBLIC_FILES . '/modules/header.php';
@@ -239,7 +235,7 @@ var availableTags = [
                     <span class="input-group-btn">
                         <span class="btn btn-outline-secondary btn-file" data-toggle="tooltip" 
                             data-placement="bottom" title="<?php echo $tooltipImgBtn; ?>">
-                            Upload Image<input type="file" id="imgInp">
+                            Upload Image<input type="file" id="imgInp" accept="image/*">
                         </span>
                     </span>
                     <input type="text" class="form-control" id="nameOfImageInput" value="" readonly>
@@ -293,7 +289,7 @@ var availableTags = [
 			// Generate the Admin interface if the user is an admin
 			//
 			if ($isAdmin && ($submitted || $approved)) {
-			    renderAdminReviewPanel($project, $categories);
+			    renderAdminReviewPanel($project, $categories, false);
 			}
 			?>
 

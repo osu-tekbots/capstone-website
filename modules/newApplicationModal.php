@@ -1,5 +1,11 @@
 <?php
+include_once '../bootstrap.php';
 use Util\Security;
+use DataAccess\CapstoneApplicationsDao;
+
+include_once PUBLIC_FILES . '/modules/button.php';
+
+
 
 /**
  * Renders the HTML for the modal that will start the application process for a student applying to a capstone
@@ -11,7 +17,7 @@ use Util\Security;
 function renderNewApplicationModal($project) {
     $pTitle = Security::HtmlEntitiesEncode($project->getTitle());
     $pDescription = Security::HtmlEntitiesEncode($project->getDescription());
-		$pNdaIp = $project->getNdaIp()->getName();
+	$pNdaIp = $project->getNdaIp()->getName();
 		
     echo "
 		<div class='modal fade' id='newApplicationModal'>
@@ -35,7 +41,7 @@ function renderNewApplicationModal($project) {
 
 					<!-- Modal footer -->
 					<div class='modal-footer'>
-					<button type='button' class='btn btn-success' data-dismiss='modal' id='createApplicationBtn'>Create</button>
+					<button type='button' class='btn btn-success' data-dismiss='modal' id='createApplicationBtn'>Apply</button>
 					<button type='button' class='btn btn-secondary' data-dismiss='modal'>Cancel</button>
 					</div>
 

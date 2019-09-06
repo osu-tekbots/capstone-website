@@ -63,7 +63,7 @@ $projects = $dao->getBrowsableCapstoneProjects();
                         <label for="projectCategoryFilterSelect">Filter by Course Type</label>
                         <select class="form-control" id="projectCategoryFilterSelect" onchange="filterSelectChanged(this)">
                             <option></option>
-                            <option>EECS</option>
+                            <option>ECE and CS</option>
                             <option>Computer Science</option>
                             <option>Electrical Engineering</option>
                         </select>
@@ -85,6 +85,7 @@ $projects = $dao->getBrowsableCapstoneProjects();
                 </div>
 
                 <div class="col-sm-6">
+                    <!--
                     Sort By...
                     <div class="custom-control custom-radio">
                         <input
@@ -126,6 +127,7 @@ $projects = $dao->getBrowsableCapstoneProjects();
                         />
                         <label class="custom-control-label" for="sortDateAscRadio">Date (Oldest)</label>
                     </div>
+                        -->
                 </div>
             </div>
         </div>

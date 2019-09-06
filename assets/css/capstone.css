@@ -45,15 +45,7 @@ button h6{
 	margin: 3px;
 }
 
-.btn-outline-primary{
-  color: #D73F09;
-  border-color: #D73F09;
-}
 
-.btn-outline-primary:hover{
-  background-color: #D73F09;
-
-}
 
 .websiteTitle{
 	font-family: 'Roboto';
@@ -122,10 +114,7 @@ a:hover{
 	margin: 5px;
 }
 
-.capstone-nav-btn:hover {
-  background-color: #D73F09;
-  border: 1px solid #D73F09;
-}
+
 
 .admin-btn{
 	margin: 15px;

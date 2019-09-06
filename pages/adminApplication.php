@@ -3,6 +3,7 @@ include_once '../bootstrap.php';
 
 use DataAccess\CapstoneApplicationsDao;
 use DataAccess\CapstoneProjectsDao;
+use DataAccess\UsersDao;
 use Util\Security;
 
 session_start();
@@ -87,8 +88,7 @@ include_once PUBLIC_FILES . '/modules/applications.php';
 </ul>
 
 <div class="container-fluid">
-    <br><br>
-    <h1>My Applications</h1>
+	<br>
 
     <div class="row">
         <div class="col">
@@ -98,8 +98,15 @@ include_once PUBLIC_FILES . '/modules/applications.php';
 			} else {
 			    echo '<h2>Applications for Review</h2>';
 			    foreach ($projects as $project) {
-			        echo '<h3>' . Security::HtmlEntitiesEncode($project->getTitle()) . '</h3>';
-			        renderApplicationTable($submittedApplications[$project->getId()], true);
+					if (count($submittedApplications[$project->getId()]) > 0){
+						
+						$proposerName = Security::HtmlEntitiesEncode($project->getProposer()->getFirstName())
+						. ' ' . Security::HtmlEntitiesEncode($project->getProposer()->getLastName());
+						$proposerEmail = Security::HtmlEntitiesEncode($project->getProposer()->getEmail());
+						$emailLink = "<a href='mailto: $proposerEmail'>$proposerName</a>";
+						echo '<h3>' . Security::HtmlEntitiesEncode($project->getTitle()) . ' [ ' . $emailLink . ' ] ' . '</h3>';
+						renderAdminApplicationTable($submittedApplications[$project->getId()]);
+					}
 			    }
 			}
 			echo '<h2>My Applications in Progress</h2>';

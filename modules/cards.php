@@ -6,6 +6,7 @@ include_once PUBLIC_FILES . '/modules/button.php';
 // Keeps track of how many cards have been generated. This is available globally.
 $numCardsCreated = 0;
 
+
 /**
  * Renders the HTML for the card group that displays projects.
  * 
@@ -48,7 +49,7 @@ function renderProjectCardGroup($projects, $keywordsDao, $browsing = false) {
         // The details string contains the small text for the project
 		$details = $p->getType()->getName() . ' ' . $p->getDateStart()->format('Y') . '<br/>';
 		$details .= "Course: $category <br/>";
-		$details .= "Proposer: $name";
+		$details .= "Proposer: $name <br/>";
         if (!$browsing) {
             $details .= "Status: $status";
         }
@@ -86,9 +87,17 @@ function renderProjectCardGroup($projects, $keywordsDao, $browsing = false) {
 		
         if (!$image) {
             $image = $image_dir . 'assets/img/capstone_test.jpg';
-        } else {
+		}
+		else {
             $image = $image_dir . "images/$image";
-        }
+		}
+
+		if(!@getimagesize($image)){
+			$image = $image_dir . 'assets/img/capstone_test.jpg';
+		}
+		
+		
+	
 
         $dateUpdated = $p->getDateUpdated()->format('Y-m-d');
 		$lastUpdated = "<br/>Last Updated: $dateUpdated";
@@ -158,7 +167,7 @@ function renderAdminProjectCardGroup($projects, $keywordsDao, $browsing = false)
 		else if ($status == "Created") {
 			$extra = "";
 		}
-		else if ($CategoryName != 'Electrical Engineering' && $CategoryName != 'Computer Science' && $CategoryName != 'EECS'){
+		else if ($CategoryName != 'Electrical Engineering' && $CategoryName != 'Computer Science' && $CategoryName != 'ECE and CS'){
 			$extra = "Category Placement";
 		}
 
@@ -196,7 +205,11 @@ function renderAdminProjectCardGroup($projects, $keywordsDao, $browsing = false)
             $image = $image_dir . 'assets/img/capstone_test.jpg';
         } else {
             $image = $image_dir . "images/$image";
-        }
+		}
+		
+		if(!@getimagesize($image)){
+			$image = $image_dir . 'assets/img/capstone_test.jpg';
+		}
 
         $dateUpdated = $p->getDateUpdated()->format('Y-m-d');
 		$lastUpdated = "<br/>Last Updated: $dateUpdated";

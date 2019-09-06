@@ -49,7 +49,7 @@ function renderApplicationTable($applications, $isProposer) {
         $appID = $app->getId();
 		
         //Gather relevant application review data.
-        $interestLevel = $isProposer ? $app->getReviewInterestLevel()->getName() : '';
+        $interestLevel = Security::HtmlEntitiesEncode($app->getReviewInterestLevel()->getName());
         
         //The interestLevel must be selected for an application to have been reviewed.
         $isReviewed = $app->getReviewInterestLevel()->getId() != CapstoneInterestLevel::NOT_SPECIFIED ? 'Yes' : 'No';
@@ -91,13 +91,104 @@ function renderApplicationTable($applications, $isProposer) {
             
         echo '<td>';
             
-        if ($isProposer) {
-            echo '<a class="btn btn-outline-primary" href="pages/reviewApplication.php?id=' . $appID . '">Review</a>';
+        if ($isProposer && $isReviewed == 'Yes') {
+            echo '<a class="btn btn-outline-primary" href="pages/reviewApplication.php?id=' . $appID . '">View</a>';
+        }
+        else if ($isProposer){
+            echo '<a class="btn btn-outline-danger" href="pages/reviewApplication.php?id=' . $appID . '">Review</a>';
         }
         //Student view
-        else {
-            echo '<a class="btn btn-outline-success" href="pages/editApplication.php?id=' . $appID . '">Edit</a>';
+        else if ($status == 'Submitted') {
+            echo '<a class="btn btn-outline-primary" href="pages/editApplication.php?id=' . $appID . '">View</a>';
         }
+        else {
+            echo '<a class="btn btn-outline-danger" href="pages/editApplication.php?id=' . $appID . '">Edit</a>';
+        }
+        echo '		
+                    </td>
+                </tr>
+                ';
+    }
+		
+    echo '</tbody></table></div></div>';
+}
+
+/**
+ * Renders the HTML for an application table in the user interface.
+ * 
+ * Note that multiple application tables can exist and this function is used in both the student and proposer
+ * interfaces.
+ *
+ * @param \Model\CapstoneApplication[] $applications the applications to display in the table
+ * @param boolean $isProposer indicates whether the table generator should account for the user being a proposer
+ * @return void
+ */
+function renderAdminApplicationTable($applications) {
+
+    echo '<div class="row"><div class="col">';
+
+    if (!$applications || count($applications) == 0) {    
+        echo '</div></div>';
+        return;
+    }
+
+    echo '<table class="table"><thead>';
+	
+    //Create table column headers based on the user's access level.
+  
+    echo '<th>Applicant</th>';
+    echo '<th>Reviewed?</th>';
+    echo '<th>Interest Level</th>';
+    echo '<th>Start Date</th>';
+    echo '<th>Updated</th>';
+    echo '<th></th>';
+    echo '</thead>';
+    echo '<tbody>';
+	
+    //Iterating through every single application associated with this specific project...
+    foreach ($applications as $app) {
+        $appID = $app->getId();
+		
+        //Gather relevant application review data.
+        $interestLevel = Security::HtmlEntitiesEncode($app->getReviewInterestLevel()->getName());
+        
+        //The interestLevel must be selected for an application to have been reviewed.
+        $isReviewed = $app->getReviewInterestLevel()->getId() != CapstoneInterestLevel::NOT_SPECIFIED ? 'Yes' : 'No';
+        
+            //Display the name of the applicant for proposers.
+            $name = Security::HtmlEntitiesEncode($app->getStudent()->getFirstName()) 
+                . ' ' 
+                . Security::HtmlEntitiesEncode($app->getStudent()->getLastName());
+
+        
+        
+
+        $format = 'm-d-Y h:i a';
+        $dateUpdated = $app->getDateUpdated()->format($format);
+        $dateApplied = $app->getDateSubmitted()->format($format);
+            
+        //Generate table rows for each application.
+        echo '<tr>';
+                  
+       
+            echo '<td>' . $name . '</td>';
+            echo '<td>' . $isReviewed . '</td>';
+            echo '<td>' . $interestLevel . '</td>';
+            
+        echo '
+                    <td>' . $dateApplied . '</td>
+                    <td>' . $dateUpdated . '</td>';
+            
+        echo '<td>';
+            
+        if ($isReviewed == 'Yes') {
+            echo '<a class="btn btn-outline-primary" href="pages/reviewApplication.php?id=' . $appID . '">View</a>';
+        }
+        else{
+            echo '<a class="btn btn-outline-danger" href="pages/reviewApplication.php?id=' . $appID . '">Waiting For Review</a>';
+        }
+        
+        
         echo '		
                     </td>
                 </tr>

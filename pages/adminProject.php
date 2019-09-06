@@ -84,21 +84,9 @@ include_once PUBLIC_FILES . '/modules/header.php';
 				</li>
 				<li class="breadcrumb-item active">Approval Proccess</li>
 			</ol>
-	
 
-		<h1>Admin Project Approval</h1>
-		<div class="row">
-
-			<div class="col-sm-3">
-				<h2>Search and Filter</h2>
-				<div class="row">
-					<div class="col-sm-12">
-						<input class="form-control" id="filterInput" type="text" placeholder="Search...">
-						<br>
-						<button type="button" style="float:right;" class="btn btn-outline-secondary">Search</button>
-						<br><br>
-
-						<div class="form-check">
+			<!--
+				<div class="form-check">
 							<input type="checkbox" class="form-check-input" id="ApprovalRequiredCheckBox">
 							<label for="ApprovalRequiredCheckBox">Hide projects do NOT need Admin Approval</label>
 						</div>
@@ -118,6 +106,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 							<label for="NDAFilterCheckBox">Hide projects that require an NDA/IP</label>
 						</div>
 
+						
 						<div class="form-group">
 							<label for="projectTypeFilterSelect">Filter by Keyword</label>
 							<select class="form-control" id="keywordFilterSelect" onchange="filterSelectChanged(this)">
@@ -131,9 +120,21 @@ include_once PUBLIC_FILES . '/modules/header.php';
 								?>
 							</select>
 						</div>
+
+-->
+	
+
+		<h1>Admin Project Approval</h1>
+		<div class="row">
+		<div class="col-sm">
+				<h2>Search and Filter</h2>
+				<div class="row">
+					<div class="col-sm-3">
+						<label for="filterInput">Search</label>
+						<input class="form-control" id="filterInput" type="text" placeholder="Search...">
 					</div>
 
-					<div class="col-sm-6">
+					<div class="col-sm-2">
 						<div class="form-group">
 							<label for="projectTypeFilterSelect">Filter by Project Type</label>
 							<select class="form-control" id="projectTypeFilterSelect" onchange="filterSelectChanged(this)">
@@ -149,6 +150,10 @@ include_once PUBLIC_FILES . '/modules/header.php';
 								?>
 							</select>
 						</div>
+					</div>
+
+
+					<div class="col-sm-1">
 						<div class="form-group">
 							<label for="yearFilterSelect">Filter by Year</label>
 							<select class="form-control" id="yearFilterSelect" onchange="filterSelectChanged(this)">
@@ -158,12 +163,29 @@ include_once PUBLIC_FILES . '/modules/header.php';
 								<option><?php echo date('Y') - 2; ?></option>
 								<option><?php echo date('Y') - 3; ?></option>
 								<option><?php echo date('Y') - 4; ?></option>
-								<option><?php echo date('Y') - 5; echo ' and earlier'; ?></option>
+								<option><?php echo date('Y') - 5; ?></option>
 							</select>
 						</div>
 					</div>
+<!--
+					<div class="col-sm-3">
+						<div class="form-group">
+							<label for="projectShowSelect">Show..</label>
+							<select class="form-control" id="projectShowSelect" onchange="showAdminNeeded()">
+								<option></option>
+								<option>Admin Required</option>
+								<option>Approved Projects</option>
+								<option>Not Yet Submitted</option>
+								<option>Archived</option>
 
-					<div class="col-sm-6">
+							</select>
+						</div>
+					</div>
+-->
+				
+		
+<!--
+					<div class="col-sm">
 						Sort By...
 						<div class="custom-control custom-radio">
 						  <input type="radio" id="sortTitleAscRadio" value="sortTitleAsc" name="sortRadio" class="custom-control-input">
@@ -182,10 +204,40 @@ include_once PUBLIC_FILES . '/modules/header.php';
 						  <label class="custom-control-label" for="sortDateAscRadio">Date (Oldest)</label>
 						</div>
 					</div>
+-->
+					<div class="col-sm">
+						<div class="form-check">
+							<input type="checkbox" class="form-check-input" id="ApprovalRequiredCheckBox">
+							<label for="ApprovalRequiredCheckBox">Hide projects do NOT need Admin Approval</label>
+						</div>
+
+						<div class="form-check">
+							<input type="checkbox" class="form-check-input" id="archivedCheckBox">
+							<label for="archivedCheckBox">Hide Archived projects</label>
+						</div>
+
+						<div class="form-check">
+							<input type="checkbox" class="form-check-input" id="notSubmittedCheckBox">
+							<label for="notSubmittedCheckBox">Hide Not-Submitted projects</label>
+						</div>
+
+						<div class="form-check">
+							<input type="checkbox" class="form-check-input" id="NDAFilterCheckBox">
+							<label for="NDAFilterCheckBox">Hide projects that require an NDA/IP</label>
+						</div>
+					</div>
+							
+
+
 				</div>
 			</div>
+		</div>
 
-			<div class="col-sm-9 scroll jumbotron capstoneJumbotron">
+		<div class="row">
+
+
+
+			<div class="col-sm scroll jumbotron capstoneJumbotron">
 				<div class="card-columns capstoneCardColumns" id="projectCardGroup">
 					<!-- createCardGroup() is found in ../modules/createCards.php -->
 					<?php 
@@ -249,7 +301,8 @@ include_once PUBLIC_FILES . '/modules/header.php';
 				$("#projectCard" + i).hide();
 			}
 		}
-	 }
+
+	}
 	 else{
 		for(var i = 0; i < <?php echo $numCardsCreated; ?>; i++){
 			$("#projectCard" + i).show();
@@ -375,7 +428,26 @@ include_once PUBLIC_FILES . '/modules/header.php';
         var e = jQuery.Event("keydown");
         e.which = 77;
         $("#filterInput").trigger(e);
-    }
+	}
+	
+	function showAdminNeeded() {
+		$.ajax({
+                type: 'POST',
+                url: './modules/filter.php',
+                dataType: 'html',
+                data: {action: 'adminRequired'},
+                success: function(result)
+                    {
+                        $('#projectCardGroup').load(result);  
+                    },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.status);
+                    alert(xhr.responseText);
+                    alert(thrownError);
+                }
+            });
+		
+	}
 </script>
 
 

@@ -2,10 +2,13 @@
 include_once '../bootstrap.php';
 
 use DataAccess\CapstoneProjectsDao;
+use DataAccess\CapstoneApplicationsDao;
+use DataAccess\UsersDao;
 use DataAccess\KeywordsDao;
 use Util\Security;
 
 include PUBLIC_FILES . '/lib/shared/authorize.php';
+include_once PUBLIC_FILES . '/modules/button.php';
 
 $title = 'Single Project';
 $js = array(
@@ -30,6 +33,7 @@ if($isLoggedIn) {
 include_once PUBLIC_FILES . '/modules/admin-review.php';
 
 $dao = new CapstoneProjectsDao($dbConn, $logger);
+$applicationsDao = new CapstoneApplicationsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
 $project = $dao->getCapstoneProject($pid);
 $proposer = $project->getProposerId();
@@ -76,9 +80,13 @@ if($images) {
 	}
 }
 if (!$image) {
-	$image = $image_dir . 'assets/img/capstone.jpg';
+	$image = $image_dir . 'assets/img/capstone_test.jpg';
 } else {
 	$image = $image_dir . "images/$image";
+}
+
+if(!@getimagesize($image)){
+	$image = $image_dir . 'assets/img/capstone_test.jpg';
 }
 
 ?>
@@ -119,24 +127,53 @@ if (!$image) {
 					<p></p>
                     <br>
                     
-                    <?php 
-                    if ($isLoggedIn && ($proposer != $userId)): 
-                    ?>
+					<?php 
+                    if ($isLoggedIn){
+						$applications = $applicationsDao->getAllApplicationsForUserAndProject($userId, $pid);
+						if (count($applications) > 0){
+							foreach ($applications as $app) {
+								$appID = $app->getId();
+								$status = $app->getStatus()->getName();
+							}
+							if ($status !== 'Started'){
+							echo"
+								<a href='pages/editApplication.php?id=$appID'>
+								<button class='btn btn-lg btn-outline-primary capstone-nav-btn' type='button'>
+									View Submitted Application
+								</button>
+								</a>
+							
+							";
+							}
+							else {
+								echo"
+								<a href='pages/editApplication.php?id=$appID'>
+								<button class='btn btn-lg btn-outline-primary capstone-nav-btn' type='button'>
+									Edit Application
+								</button>
+								</a>
+							
+							";
+							}
+						}
+						else {
+							echo'
+							<button class="btn btn-lg btn-outline-primary capstone-nav-btn" type="button" data-toggle="modal" 
+								data-target="#newApplicationModal" id="openNewApplicationModalBtn">
+								Apply For This Project &raquo
+							</button>';
+						}
+                  
+					}
 
-                    <button class="btn btn-lg btn-outline-primary capstone-nav-btn" type="button" data-toggle="modal" 
-                        data-target="#newApplicationModal" id="openNewApplicationModalBtn">
-                        Apply For This Project &raquo
-                    </button>
-
-                    <?php
-                    endif;
-                    ?>
+                	?>
 
 					<?php
                     //Generate admin interface for admins.
                     if ($isAdmin) {
+						echo'<br><br>';
                         $categories = $dao->getCapstoneProjectCategories();
-                        renderAdminReviewPanel($project, $categories);
+                        renderAdminReviewPanel($project, $categories, true);
                     }
 					?>
 	      </div>

@@ -8,7 +8,7 @@ class CapstoneProjectCategory {
     const NONE = 1;
     const ELECTRICAL_ENG = 2;
     const COMP_SCI = 3;
-    const EECS = 4;
+    const ECE_AND_CS = 4;
     
     /** @var integer */
     private $id;

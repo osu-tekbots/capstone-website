@@ -55,15 +55,26 @@ $objectives = Security::HtmlEntitiesEncode($project->getObjectives());
 $minQualifications = Security::HtmlEntitiesEncode($project->getMinQualifications());
 $prefQualifications = Security::HtmlEntitiesEncode($project->getPreferredQualifications());
 
+// Set tooltip texts
+$tooltipJustificationInput = '';
+$tooltipSkillSetInput = '';
+$tooltipTimeAvailableInput = '';
+$tooltipPortfolioLinkInput = '';
+$tooltipSaveDraftBtn = '';
+$tooltipSubmitBtn = '';
+
+
 $buttonsHtml = $submitted ? "
     <div class='alert alert-success'>
         Submitted
     </div>
 " : "
-    <button class='btn btn-light mr-3' type='button' id='btnSaveApplicationDraft'>
+    <button class='btn btn-light mr-3' type='button' id='btnSaveApplicationDraft' 	data-toggle='tooltip' data-placement='bottom' 
+    title='$tooltipSaveDraftBtn'>
         Save Draft
     </button>
-    <button class='btn btn-outline-primary' type='submit'>
+    <button class='btn btn-outline-primary' type='submit' data-toggle='tooltip' data-placement='bottom' 
+    title='$tooltipSubmitBtn'>
         Submit Application
     </button>
 ";
@@ -86,26 +97,32 @@ include_once PUBLIC_FILES . '/modules/header.php';
         <div class="form-group row">
             <div class="col-12">
                 <label>Justification</label>
-                <textarea required <?php echo $readOnly; ?> name="justification" class="form-control" rows="4"><?php 
-                    echo $justification; ?></textarea>
+                <textarea required <?php echo $readOnly; ?> name="justification" class="form-control input" rows="4" data-toggle="tooltip" 
+                data-placement="bottom" title="<?php echo $tooltipJustificationInput?>" >
+                <?php 
+                    echo $justification; ?>
+                    </textarea>
             </div>
         </div>
         <div class="row">
             <div class="form-group col-md-6">
                 <label>Skill Set</label>
-                <textarea required <?php echo $readOnly; ?> name="skillSet" class="form-control" rows="5"><?php 
+                <textarea required <?php echo $readOnly; ?> name="skillSet" class="form-control" rows="5" data-toggle="tooltip" 
+                data-placement="bottom" title="<?php echo $tooltipSkillSetInput?>"><?php 
                     echo $skill_set; ?></textarea>
             </div>
             <div class="col-md-6">
                 <div class="form-group ">
                     <label>Time Available</label>
                     <input required <?php echo $readOnly; ?> name="timeAvailable" class="form-control" max="256" 
-                        value="<?php echo $time_available; ?>">
+                        value="<?php echo $time_available; ?> " data-toggle="tooltip" 
+                data-placement="bottom" title="<?php echo $tooltipTimeAvailableInput?>">
                 </div>
                 <div class="form-group ">
                     <label>Portfolio Link</label>
                     <input <?php echo $readOnly; ?> name="portfolioLink" class="form-control" max="512" 
-                        value="<?php echo $external_link; ?>">
+                        value="<?php echo $external_link; ?>" data-toggle="tooltip" 
+                data-placement="bottom" title="<?php echo $tooltipPortfolioLinkInput?>">
                 </div>
             </div>
         </div>

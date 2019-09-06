@@ -71,8 +71,8 @@ class CapstoneApplicationsDao {
      */
     public function getAllApplicationsForProject($projectId, $submitted = false) {
         try {
-            $sql = 'SELECT * FROM capstone_application, capstone_application_status, capstone_project, user ';
-            $sql .= 'WHERE ca_cp_id = :id AND ca_cp_id = cp_id AND ca_cas_id = cas_id AND ca_u_id = u_id';
+            $sql = 'SELECT * FROM capstone_application, capstone_application_status, capstone_interest_level, capstone_project, user ';
+            $sql .= 'WHERE ca_cp_id = :id AND ca_review_cil_id = cil_id AND ca_cp_id = cp_id AND ca_cas_id = cas_id AND ca_u_id = u_id';
             $params = array(':id' => $projectId);
             if ($submitted) {
                 $sql .= ' AND ca_cas_id = :status';
@@ -104,6 +104,35 @@ class CapstoneApplicationsDao {
             $sql .= 'WHERE ca_u_id = :id AND ca_cas_id = cas_id AND ca_u_id = u_id AND ca_cp_id = cp_id ';
             $sql .= 'ORDER BY ca_date_created DESC';
             $params = array(':id' => $userId);
+            $results = $this->conn->query($sql, $params);
+
+            $applications = array();
+            foreach ($results as $row) {
+                $applications[] = self::ExtractApplicationFromRow($row, true);
+            }
+
+            return $applications;
+        } catch (\Exception $e) {
+            $this->logError('Failed to get applications for user with id "' . $userId . '": ' . $e->getMessage());
+            return false;
+        }
+    }
+
+        /**
+     * Fetches all of the applications in the database associated with the user and the project with the provided ID.
+     *
+     * @param string $projectId the ID of the user whose applications the DAO will fetch
+     * @return \Model\CapstoneApplication[]|boolean an array of the resulting applications, or false if the fetch fails
+     */
+    public function getAllApplicationsForUserAndProject($userId, $projectId) {
+        try {
+            $sql = 'SELECT * FROM capstone_application, capstone_application_status, capstone_project, user ';
+            $sql .= 'WHERE ca_u_id = :uid AND ca_cp_id = :pid AND ca_cas_id = cas_id AND ca_u_id = u_id AND ca_cp_id = cp_id ';
+            $sql .= 'ORDER BY ca_date_created DESC';
+            $params = array(
+                ':uid' => $userId,
+                ':pid' => $projectId
+            );
             $results = $this->conn->query($sql, $params);
 
             $applications = array();

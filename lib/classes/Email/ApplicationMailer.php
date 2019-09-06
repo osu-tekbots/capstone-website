@@ -5,6 +5,9 @@ namespace Email;
  * Responsible for sending emails related to actions on applications for capstone projects.
  */
 class ApplicationMailer extends Mailer {
+
+
+
     /**
      * Constructs a new instance of a mailer specifically for capstone project application-related emails
      *
@@ -64,6 +67,7 @@ class ApplicationMailer extends Mailer {
         $first_name = $application->getCapstoneProject()->getProposer()->getFirstName();
         $last_name = $application->getCapstoneProject()->getProposer()->getLastName();
         $title = $application->getCapstoneProject()->getTitle();
+        $myapplicationLink = "http://eecs.oregonstate.edu/capstone/submission/pages/myApplications.php";
 
         $subject = "An Application has been submitted for: $title";
 
@@ -77,7 +81,9 @@ class ApplicationMailer extends Mailer {
         Project Title: $title
         ---------------------------
 
-        You can view all of your existing applications at: $link. 
+        You can review this applications at: $link.
+        
+        Additionally, you can view all of your existing applications at: $myapplicationLink.
         
         Thank you,
 

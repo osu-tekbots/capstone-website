@@ -35,7 +35,22 @@ if ($_POST['action'] == 'uploadImage') {
         $file_name = $_FILES['image']['name'];
         $file_size = $_FILES['image']['size'];
         $file_tmp  = $_FILES['image']['tmp_name'];
-	
+
+        $supported_image = array(
+            'gif',
+            'jpg',
+            'jpeg',
+            'png'
+        );
+        $path_parts = pathinfo($file_name);
+        $extension = strtolower($path_parts['extension']);
+       
+        if(!in_array($extension, $supported_image))
+        {
+            respond(400, "File must be an image");
+        
+        }
+
         if ($file_size > (5 * 2097152)) {
             respond(400, "File size must be less than 10MB");
         }
