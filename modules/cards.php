@@ -245,7 +245,7 @@ function renderProjectCard($id, $title, $description, $details, $imageLink, $sta
 	$deleteButton = !$browsing ? createProjectDeleteButton($id, $num) : '';
 
     echo "
-	<div class='card capstoneCard my-3' id='projectCard$num'>
+	<div class='masonry-brick' id='projectCard$num'>
 		<a href='pages/viewSingleProject.php?id=$id' target='_blank' style='color: black'>
 			<img class='card-img-top' id='projectImg$id' src='$imageLink' alt='Card Image Capstone' />
 		</a>
@@ -292,7 +292,7 @@ function renderAdminProjectCard($id, $title, $description, $details, $imageLink,
 
 	//<small class='text-muted'>$extra</small><br> (Above $viewButton)
     echo "
-	<div class='card capstoneCard my-3' id='projectCard$num'>
+	<div class='masonry-brick' id='projectCard$num'>
 	";
 	if (!$archived){
 		echo "

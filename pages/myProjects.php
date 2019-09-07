@@ -41,7 +41,7 @@ include_once PUBLIC_FILES . '/modules/cards.php';
 		</div>
 
 		<div class="col-sm-9 scroll jumbotron capstoneJumbotron">
-			<div class="card-columns capstoneCardColumns" id="projectCardGroup">
+			<div class="masonry" id="projectCardGroup">
 				<?php renderProjectCardGroup($projects, $keywordsDao); ?>
 			</div>
 		</div>

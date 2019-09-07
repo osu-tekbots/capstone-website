@@ -85,7 +85,7 @@ $projects = $dao->getBrowsableCapstoneProjects();
                 </div>
 
                 <div class="col-sm-6">
-                    <!--
+                    
                     Sort By...
                     <div class="custom-control custom-radio">
                         <input
@@ -127,19 +127,19 @@ $projects = $dao->getBrowsableCapstoneProjects();
                         />
                         <label class="custom-control-label" for="sortDateAscRadio">Date (Oldest)</label>
                     </div>
-                        -->
+                    
                 </div>
             </div>
         </div>
 
         <div class="col-sm-9 scroll jumbotron capstoneJumbotron">
-            <div class="card-columns capstoneCardColumns" id="projectCardGroup">
+            <div class="masonry" id="projectCardGroup">
                 <?php
 					// Render the cards to browser here
 					renderProjectCardGroup($projects, $keywordsDao, true);
 					?>
             </div>
-        </div>
+       </div> 
     </div>
 </div>
 <script type="text/javascript">
@@ -229,7 +229,7 @@ $projects = $dao->getBrowsableCapstoneProjects();
     				});
     				break;
     			case "sortDateAsc":
-    				var mylist = $('#projectCardGroup');
+                    var mylist = $('#projectCardGroup');
     				var listitems = mylist.children('div').get();
     				listitems.sort(function(a, b) {
     				   return strstr($(a).text(), "Last Updated:").toUpperCase().localeCompare(strstr($(b).text(), "Last Updated:").toUpperCase());
@@ -252,6 +252,8 @@ $projects = $dao->getBrowsableCapstoneProjects();
     				break;
     		};
     	});
+
+        $("#sortTitleAscRadio").prop("checked", true);
 
     });
 

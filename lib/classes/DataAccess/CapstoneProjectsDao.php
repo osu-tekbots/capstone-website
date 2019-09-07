@@ -50,8 +50,9 @@ class CapstoneProjectsDao {
                 capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
             WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id 
                 AND cp_cpf_id = cpf_id AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id 
-                AND cp_cps_id = cps_id AND cp_u_id = u_id AND cp_is_hidden = :hidden AND cp_cps_id = :status
-                AND cp_archived = :archived
+                AND cp_cps_id = cps_id AND cp_u_id = u_id AND cp_is_hidden = :hidden AND cp_cps_id = :status 
+                AND cp_archived = :archived 
+            ORDER BY cp_title ASC;
             ';
             // TODO: enable pagination with the offset and limit
             $params = array(
@@ -120,6 +121,7 @@ class CapstoneProjectsDao {
                 capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
             WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
                 AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id
+            ORDER BY cp_title ASC
                
             ';
           

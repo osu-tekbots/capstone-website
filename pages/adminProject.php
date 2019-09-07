@@ -153,7 +153,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 					</div>
 
 
-					<div class="col-sm-1">
+					<div class="col-sm">
 						<div class="form-group">
 							<label for="yearFilterSelect">Filter by Year</label>
 							<select class="form-control" id="yearFilterSelect" onchange="filterSelectChanged(this)">
@@ -184,8 +184,8 @@ include_once PUBLIC_FILES . '/modules/header.php';
 -->
 				
 		
-<!--
-					<div class="col-sm">
+
+					<div class="col-sm-2">
 						Sort By...
 						<div class="custom-control custom-radio">
 						  <input type="radio" id="sortTitleAscRadio" value="sortTitleAsc" name="sortRadio" class="custom-control-input">
@@ -204,8 +204,8 @@ include_once PUBLIC_FILES . '/modules/header.php';
 						  <label class="custom-control-label" for="sortDateAscRadio">Date (Oldest)</label>
 						</div>
 					</div>
--->
-					<div class="col-sm">
+
+					<div class="col-sm-3">
 						<div class="form-check">
 							<input type="checkbox" class="form-check-input" id="ApprovalRequiredCheckBox">
 							<label for="ApprovalRequiredCheckBox">Hide projects do NOT need Admin Approval</label>
@@ -238,7 +238,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 
 
 			<div class="col-sm scroll jumbotron capstoneJumbotron">
-				<div class="card-columns capstoneCardColumns" id="projectCardGroup">
+				<div class="masonry" id="projectCardGroup">
 					<!-- createCardGroup() is found in ../modules/createCards.php -->
 					<?php 
 					$projects = $projectsDao->getCapstoneProjectsForAdmin($userId);
@@ -415,6 +415,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 		
 		// Automatically check the Hide Projects that do NOT need Admin Approval Checkbox and trigger ajax
 		$('#ApprovalRequiredCheckBox').prop('checked', true).change();
+		$("#sortTitleAscRadio").prop("checked", true);
 
     });
 
