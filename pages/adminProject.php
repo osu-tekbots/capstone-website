@@ -85,89 +85,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 				<li class="breadcrumb-item active">Approval Proccess</li>
 			</ol>
 
-			<!--
-				<div class="form-check">
-							<input type="checkbox" class="form-check-input" id="ApprovalRequiredCheckBox">
-							<label for="ApprovalRequiredCheckBox">Hide projects do NOT need Admin Approval</label>
-						</div>
-
-						<div class="form-check">
-							<input type="checkbox" class="form-check-input" id="archivedCheckBox">
-							<label for="archivedCheckBox">Hide Archived projects</label>
-						</div>
-
-						<div class="form-check">
-							<input type="checkbox" class="form-check-input" id="notSubmittedCheckBox">
-							<label for="notSubmittedCheckBox">Hide Not-Submitted projects</label>
-						</div>
-
-						<div class="form-check">
-							<input type="checkbox" class="form-check-input" id="NDAFilterCheckBox">
-							<label for="NDAFilterCheckBox">Hide projects that require an NDA/IP</label>
-						</div>
-
-						
-						<div class="form-group">
-							<label for="projectTypeFilterSelect">Filter by Keyword</label>
-							<select class="form-control" id="keywordFilterSelect" onchange="filterSelectChanged(this)">
-								<option></option>
-								<?php
-								//Generate content for dropdown list.
-								$availableKeywords = $keywordsDao->getAllKeywords();
-								foreach ($availableKeywords as $k) {
-									echo '<option>' . $k->getName() . '</option>';
-								}
-								?>
-							</select>
-						</div>
-
--->
-	
-
-		<h1>Admin Project Approval</h1>
-		<div class="row">
-		<div class="col-sm">
-				<h2>Search and Filter</h2>
-				<div class="row">
-					<div class="col-sm-3">
-						<label for="filterInput">Search</label>
-						<input class="form-control" id="filterInput" type="text" placeholder="Search...">
-					</div>
-
-					<div class="col-sm-2">
-						<div class="form-group">
-							<label for="projectTypeFilterSelect">Filter by Project Type</label>
-							<select class="form-control" id="projectTypeFilterSelect" onchange="filterSelectChanged(this)">
-								<option></option>
-								<?php
-								$types = $projectsDao->getCapstoneProjectTypes();
-								if ($types) {
-								    foreach ($types as $t) {
-								        $name = $t->getName();
-								        echo "<option>$name</option>";
-								    }
-								}
-								?>
-							</select>
-						</div>
-					</div>
-
-
-					<div class="col-sm">
-						<div class="form-group">
-							<label for="yearFilterSelect">Filter by Year</label>
-							<select class="form-control" id="yearFilterSelect" onchange="filterSelectChanged(this)">
-								<option></option>
-								<option><?php echo date('Y'); ?></option>
-								<option><?php echo date('Y') - 1; ?></option>
-								<option><?php echo date('Y') - 2; ?></option>
-								<option><?php echo date('Y') - 3; ?></option>
-								<option><?php echo date('Y') - 4; ?></option>
-								<option><?php echo date('Y') - 5; ?></option>
-							</select>
-						</div>
-					</div>
-<!--
+		<!--
 					<div class="col-sm-3">
 						<div class="form-group">
 							<label for="projectShowSelect">Show..</label>
@@ -181,31 +99,32 @@ include_once PUBLIC_FILES . '/modules/header.php';
 							</select>
 						</div>
 					</div>
+
+					
+
+							
 -->
+
+		<h1>Admin Project Approval</h1>
+		<div class="row">
+		<div class="col-sm-3">
+            <h2>Search and Filter</h2>
+            <div class="row">
+                <div class="col-sm-12">
+                    <input class="form-control" id="filterInput" type="text" placeholder="Search..." />
+                    <br />
+
+<!-- CHECKBOX HIDE IF PROJECTS REQUIRE NDA NOT FUNCTIONING
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="NDAFilterCheckBox" />
+                        <label for="NDAFilterCheckBox">Hide projects that require an NDA/IP</label>
+                    </div>
+-->
+                </div>
+
+
+                <div class="col-sm-12">
 				
-		
-
-					<div class="col-sm-2">
-						Sort By...
-						<div class="custom-control custom-radio">
-						  <input type="radio" id="sortTitleAscRadio" value="sortTitleAsc" name="sortRadio" class="custom-control-input">
-						  <label class="custom-control-label" for="sortTitleAscRadio">Title (A..Z)</label>
-						</div>
-						<div class="custom-control custom-radio">
-						  <input type="radio" id="sortTitleDescRadio" value="sortTitleDesc" name="sortRadio" class="custom-control-input">
-						  <label class="custom-control-label" for="sortTitleDescRadio">Title (Z..A)</label>
-						</div>
-						<div class="custom-control custom-radio">
-						  <input type="radio" id="sortDateDescRadio" value="sortDateDesc" name="sortRadio" class="custom-control-input">
-						  <label class="custom-control-label" for="sortDateDescRadio">Date (Recent)</label>
-						</div>
-						<div class="custom-control custom-radio">
-						  <input type="radio" id="sortDateAscRadio" value="sortDateAsc" name="sortRadio" class="custom-control-input">
-						  <label class="custom-control-label" for="sortDateAscRadio">Date (Oldest)</label>
-						</div>
-					</div>
-
-					<div class="col-sm-3">
 						<div class="form-check">
 							<input type="checkbox" class="form-check-input" id="ApprovalRequiredCheckBox">
 							<label for="ApprovalRequiredCheckBox">Hide projects do NOT need Admin Approval</label>
@@ -225,35 +144,64 @@ include_once PUBLIC_FILES . '/modules/header.php';
 							<input type="checkbox" class="form-check-input" id="NDAFilterCheckBox">
 							<label for="NDAFilterCheckBox">Hide projects that require an NDA/IP</label>
 						</div>
-					</div>
-							
-
-
+				
+                    
+                    Sort By...
+                    <div class="custom-control custom-radio">
+                        <input
+                            type="radio"
+                            id="sortTitleAscRadio"
+                            value="sortTitleAsc"
+                            name="sortRadio"
+                            class="custom-control-input"
+                        />
+                        <label class="custom-control-label" for="sortTitleAscRadio">Title (A..Z)</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input
+                            type="radio"
+                            id="sortTitleDescRadio"
+                            value="sortTitleDesc"
+                            name="sortRadio"
+                            class="custom-control-input"
+                        />
+                        <label class="custom-control-label" for="sortTitleDescRadio">Title (Z..A)</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input
+                            type="radio"
+                            id="sortDateDescRadio"
+                            value="sortDateDesc"
+                            name="sortRadio"
+                            class="custom-control-input"
+                        />
+                        <label class="custom-control-label" for="sortDateDescRadio">Date (Recent)</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input
+                            type="radio"
+                            id="sortDateAscRadio"
+                            value="sortDateAsc"
+                            name="sortRadio"
+                            class="custom-control-input"
+                        />
+                        <label class="custom-control-label" for="sortDateAscRadio">Date (Oldest)</label>
+                    </div>
+                    
 				</div>
-			</div>
-		</div>
+            </div>
+        </div>
 
-		<div class="row">
-
-
-
-			<div class="col-sm scroll jumbotron capstoneJumbotron">
-				<div class="masonry" id="projectCardGroup">
-					<!-- createCardGroup() is found in ../modules/createCards.php -->
-					<?php 
-					$projects = $projectsDao->getCapstoneProjectsForAdmin($userId);
-					renderAdminProjectCardGroup($projects, $keywordsDao, false); 
+        <div class="col-sm-9 scroll jumbotron capstoneJumbotron">
+            <div class="masonry" id="projectCardGroup">
+                <?php
+					$projects = $projectsDao->getCapstoneProjectsForAdmin();
+					renderAdminProjectCardGroup($projects, $keywordsDao, false);
 					?>
-				</div>
-			</div>
-
-		</div>
-
-	</div>
-	</div>
-
+            </div>
+       </div> 
+    </div>
 </div>
-
 <script type="text/javascript">
 
     /*********************************************************************************

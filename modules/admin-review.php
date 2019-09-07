@@ -46,11 +46,11 @@ function renderAdminReviewPanel($project, $categories, $singleView) {
         $options .= "<option $selected value='$id'>$name</option>";
     }
 
-    $viewButtonStyle = $pIsHidden ? 'display: none;' : '';
+    
     if ($singleView){
         $button = "
         <a href='pages/editProject.php?id=$pId'>
-        <button class='btn btn-lg btn-primary admin-btn' type='button' style='$viewButtonStyle' 
+        <button class='btn btn-lg btn-primary admin-btn' type='button'  
             id='adminViewProjectBtn'>
             &laquo Edit Project
         </button>
@@ -58,7 +58,7 @@ function renderAdminReviewPanel($project, $categories, $singleView) {
     } else {
         $button = "
         <a href='pages/viewSingleProject.php?id=$pId'>
-        <button class='btn btn-lg btn-primary admin-btn' type='button' style='$viewButtonStyle' 
+        <button class='btn btn-lg btn-primary admin-btn' type='button' 
             id='adminViewProjectBtn'>
             &laquo View Project
         </button>

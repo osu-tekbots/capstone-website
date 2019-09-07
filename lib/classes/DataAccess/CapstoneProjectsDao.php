@@ -113,7 +113,7 @@ class CapstoneProjectsDao {
      *
      * @return \Model\CapstoneProject[]|boolean an array of projects on success, false otherwise
      */
-    public function getCapstoneProjectsForAdmin($userId) {
+    public function getCapstoneProjectsForAdmin() {
         try {
             $sql = '
             SELECT * 
