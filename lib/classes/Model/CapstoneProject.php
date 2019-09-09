@@ -61,7 +61,10 @@ class CapstoneProject {
 	
     /** @var CapstoneProjectNDAIP */
     private $ndaIp;
-	
+    
+    /** @var int */
+    private $numberGroups;
+    
     /** @var string */
     private $websiteLink;
 	
@@ -110,6 +113,7 @@ class CapstoneProject {
             $this->setDateCreated(new \DateTime()); //No idea why there is a '\' here... Don 7/29/2019
             $this->setIsHidden(true);
             $this->setIsArchived(false);
+            $this->setNumberGroups(1);
         }
         $this->setId($id);
     }
@@ -419,6 +423,25 @@ class CapstoneProject {
 
         return $this;
     }
+
+    /**
+     * Get the value of numbergroups
+     */ 
+    public function getNumberGroups() {
+        return $this->numberGroups;
+    }
+
+    /**
+     * Set the value of numbergroups
+     *
+     * @return  self
+     */ 
+    public function setNumberGroups($numberGroups) {
+        $this->numberGroups = $numberGroups;
+
+        return $this;
+    }
+
 
     /**
      * Get the value of websiteLink

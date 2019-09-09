@@ -20,6 +20,11 @@ $css = array(
 );
 include_once PUBLIC_FILES . '/modules/header.php';
 
+$tooltipApprovedProjects = "";
+$tooltipPendingProjects = "";
+$tooltipCreatedProjects = "";
+$tooltipAllProjects = "";
+
 ?>
 <br/>
 <div id="page-top">
@@ -168,9 +173,10 @@ include_once PUBLIC_FILES . '/modules/header.php';
 						Export Options</div>
 						<form method="post" action="modules/export.php">
 						<div class="row">
-							<div class="col-sm">		
+							<div class="col-sm">
 								<input type="submit" name="exportApprovedProjects" class="csvExport btn btn-success" value="APPROVED Projects CSV" />
-							
+								<input type="submit" name="exportPendingProjects" class="csvExport btn btn-success" value="PENDING Projects CSV" />
+								<input type="submit" name="exportCreatedProjects" class="csvExport btn btn-success" value="CREATED Projects CSV" />
 								<input type="submit" name="exportAllProjects" class="csvExport btn btn-success" value="ALL Projects CSV" />
 
 

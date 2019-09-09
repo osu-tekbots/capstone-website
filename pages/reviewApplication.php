@@ -22,7 +22,7 @@ $dao = new CapstoneApplicationsDao($dbConn, $logger);
 $application = $dao->getApplication($aid);
 
 $authorizedToProceed = ($application->getCapstoneProject()->getProposerId() == $_SESSION['userID']) || $isAdmin;
-allowIf($authorizedToProceed, '/index.php');
+allowIf($authorizedToProceed);
 
 $title = 'Review Application';
 include_once PUBLIC_FILES . '/modules/header.php';

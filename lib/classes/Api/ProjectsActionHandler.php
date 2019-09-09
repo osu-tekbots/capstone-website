@@ -110,6 +110,7 @@ class ProjectsActionHandler extends ActionHandler {
         $compensationId = $this->getFromBody('compensationId');
         $focusId = $this->getFromBody('focusId');
         $ndaIpId = $this->getFromBody('ndaIpId');
+        $numberGroups = $this->getFromBody('numberGroupsId');
         $additionalEmails = $this->getFromBody('additionalEmails');
         $comments = $this->getFromBody('comments');
         $dateStart = $this->getFromBody('dateStart');
@@ -161,6 +162,7 @@ class ProjectsActionHandler extends ActionHandler {
             ->setDescription($description)
             ->setMotivation($motivation)
             ->setObjectives($objectives)
+            ->setNumberGroups($numberGroups)
             ->setMinQualifications($minQualifications)
             ->setPreferredQualifications($preferredQualifications)
             ->setVideoLink($videoLink)
@@ -196,6 +198,7 @@ class ProjectsActionHandler extends ActionHandler {
         $compensationId = $this->getFromBody('compensationId');
         $focusId = $this->getFromBody('focusId');
         $ndaIpId = $this->getFromBody('ndaIpId');
+        $numberGroups = $this->getFromBody('numberGroupsId');
         $additionalEmails = $this->getFromBody('additionalEmails');
         $comments = $this->getFromBody('comments');
         $dateStart = $this->getFromBody('dateStart');
@@ -222,6 +225,7 @@ class ProjectsActionHandler extends ActionHandler {
             ->setDateEnd($dateEnd)
             ->setDescription($description)
             ->setMotivation($motivation)
+            ->setNumberGroups($numberGroups)
             ->setObjectives($objectives)
             ->setMinQualifications($minQualifications)
             ->setPreferredQualifications($preferredQualifications)

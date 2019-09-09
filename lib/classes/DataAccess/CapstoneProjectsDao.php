@@ -217,6 +217,41 @@ class CapstoneProjectsDao {
         }
     }
 
+        /**
+     * Fetches all the Created capstone projects for admins to review.
+     *
+     * @return \Model\CapstoneProject[]|boolean an array of the projects to review on success, false otherwise
+     */
+    public function getCreatedCapstoneProjects() {
+        try {
+            $sql = '
+            SELECT * 
+            FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+                capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
+            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+                AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND cp_cps_id = :status 
+                AND u_id = cp_u_id AND cp_archived = :archived
+            ';
+            $params = array(
+                ':status' => CapstoneProjectStatus::CREATED, 
+                ':archived' => false
+            );
+            $results = $this->conn->query($sql, $params);
+
+            $projects = array();
+            foreach ($results as $row) {
+                $project = self::ExtractCapstoneProjectFromRow($row, true);
+                $this->getCapstoneProjectImages($project, true);
+                $projects[] = $project;
+            }
+           
+            return $projects;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to get pending capstone projects: ' . $e->getMessage());
+            return false;
+        }
+    }
+
     /**
      * Fetches various statistical information about the types of capstone projects in the database and their status.
      * 
@@ -331,6 +366,7 @@ class CapstoneProjectsDao {
                 :cpfid,
                 :cpcopid,
                 :cpniid,
+                :numgroups,
                 :website,
                 :video,
                 :hidden,
@@ -359,6 +395,7 @@ class CapstoneProjectsDao {
                 ':cpfid' => $project->getFocus()->getId(),
                 ':cpcopid' => $project->getCop()->getId(),
                 ':cpniid' => $project->getNdaIp()->getId(),
+                ':numgroups' => $project->getNumberGroups(),
                 ':website' => $project->getWebsiteLink(),
                 ':video' => $project->getVideoLink(),
                 ':hidden' => $project->getIsHidden(),
@@ -401,6 +438,7 @@ class CapstoneProjectsDao {
                 cp_cpf_id = :cpfid,
                 cp_cpcop_id = :cpcopid,
                 cp_cpni_id = :cpniid,
+                cp_number_groups = :numgroups,
                 cp_website_link = :website,
                 cp_video_link = :video,
                 cp_is_hidden = :hidden,
@@ -427,6 +465,7 @@ class CapstoneProjectsDao {
                 ':cpfid' => $project->getFocus()->getId(),
                 ':cpcopid' => $project->getCop()->getId(),
                 ':cpniid' => $project->getNdaIp()->getId(),
+                ':numgroups' => $project->getNumberGroups(),
                 ':website' => $project->getWebsiteLink(),
                 ':video' => $project->getVideoLink(),
                 ':hidden' => $project->getIsHidden(),
@@ -706,6 +745,7 @@ class CapstoneProjectsDao {
             ->setFocus(self::ExtractCapstoneProjectFocusFromRow($row, true))
             ->setCop(self::ExtractCapstoneProjectCopFromRow($row, true))
             ->setNdaIp(self::ExtractCapstoneProjectNdaIpFromRow($row, true))
+            ->setNumberGroups($row['cp_number_groups'])
             ->setWebsiteLink($row['cp_website_link'])
             ->setVideoLink($row['cp_video_link'])
             ->setIsHidden($row['cp_is_hidden'] ? true : false)

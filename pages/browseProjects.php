@@ -12,6 +12,8 @@ $dao = new CapstoneProjectsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
 
 $projects = $dao->getBrowsableCapstoneProjects();
+$categories = $dao->getCapstoneProjectCategories();
+$types = $dao->getCapstoneProjectTypes();
 
 ?> 
 <br /><br />
@@ -51,21 +53,32 @@ $projects = $dao->getBrowsableCapstoneProjects();
                     <div class="form-group">
                         <label for="projectTypeFilterSelect">Filter by Project Type</label>
                         <select class="form-control" id="projectTypeFilterSelect" onchange="filterSelectChanged(this)">
-                            <option></option>
-                            <option>Capstone</option>
-                            <option>Internship</option>
-                            <option>Long Term</option>
-                            <option>Other</option>
+                                <?php 
+                                    $options = '<option></option>';
+                                    foreach ($categories as $c) {
+                                        $name = $c->getName();
+                                        if ($name != 'None'){
+                                            $options .= "<option>$name</option>";
+                                        }
+                                    }
+                                    echo($options);
+                                ?>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label for="projectCategoryFilterSelect">Filter by Course Type</label>
                         <select class="form-control" id="projectCategoryFilterSelect" onchange="filterSelectChanged(this)">
-                            <option></option>
-                            <option>ECE and CS</option>
-                            <option>Computer Science</option>
-                            <option>Electrical Engineering</option>
+                            <?php 
+                                    $options = '<option></option>';
+                                    foreach ($types as $t) {
+                                        $name = $t->getName();
+                                        if ($name != 'None'){
+                                            $options .= "<option>$name</option>";
+                                        }
+                                    }
+                                    echo($options);
+                            ?>
                         </select>
                     </div>
 

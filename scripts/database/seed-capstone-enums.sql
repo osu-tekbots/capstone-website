@@ -24,7 +24,7 @@ INSERT INTO capstone_project_compensation (cpcmp_id, cpcmp_name) VALUES
     (1, 'None'), (2, 'Hourly'), (3, 'Stipend'), (4, 'Completion-dependent'), (5, 'Other');
 
 INSERT INTO capstone_project_category (cpc_id, cpc_name) VALUES 
-    (1, 'None'), (2, 'Electrical Engineering'), (3, 'Computer Science'), (4, 'EECS');
+    (1, 'None'), (2, 'Electrical Engineering'), (3, 'Computer Science'), (4, 'ECE and CS'), (5, 'ECE44X Fall 2019/20'), (6, 'CS46X Fall 2019/20');
 
 INSERT INTO capstone_project_type (cpt_id, cpt_name) VALUES 
     (1, 'Capstone'), (2, 'Long-term'), (3, 'Student Club Project');

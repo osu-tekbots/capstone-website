@@ -67,6 +67,7 @@ $comments = Security::HtmlEntitiesEncode($project->getProposerComments());
 $name = Security::HtmlEntitiesEncode($project->getProposer()->getFirstName()) 
 	. ' ' 
 	. Security::HtmlEntitiesEncode($project->getProposer()->getLastName());
+$numberGroups = $project->getNumberGroups();
 $preexistingKeywords = $keywordsDao->getKeywordsForEntity($pid);
 global $image_dir;
 $image = false;
@@ -185,19 +186,28 @@ if(!@getimagesize($image)){
 					<strong>Author:</strong>
 					<p><?php echo($name);?></p>
 			</address>
+			<?php
+			if ($type == 'Capstone'){
+			echo"
 			<address>
-					<strong>NDA/IPA:</strong>
-					<p><?php echo($nda);?></p>
+				<strong>NDA/IPA:</strong>
+				<p>$nda</p>
 			</address>
 			<address>
-					<strong>Project Status:</strong>
-	          <br><?php echo($status);?>
-	          <br>
+				<strong>Number Groups:</strong>
+				<p>$numberGroups</p>
+			</address>
+			<address>
+				<strong>Project Status:</strong>
+				<p>$status</p>
 	        </address>
 			<address>
-					<strong>Course Type:</strong>
-					<p><?php echo($category);?></p>
+				<strong>Course Type:</strong>
+				<p>$category</p>
 			</address>
+			";
+			}
+			?>
 	        <?php 
 			if ($type != 'Capstone')
 			echo "<address>

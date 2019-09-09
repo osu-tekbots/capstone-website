@@ -49,7 +49,8 @@ if ($project) {
     $pIsHidden = $project->getIsHidden();
     $pComments = $project->getProposerComments();
     $pStatusId = $project->getStatus()->getId();
-    $pStatusName = $project->getStatus()->getName();
+	$pStatusName = $project->getStatus()->getName();
+	$pNumberGroups = $project->getNumberGroups();
 }
 
 
@@ -227,7 +228,6 @@ var availableTags = [
 	<!-- Main Content -->
     <div class="row">
 
-
 		<!-- Sidebar -->
         <div class="col-sm-3">
             <div class="form-group">
@@ -339,9 +339,7 @@ var availableTags = [
 					<div class="col-sm-4" id="compensationDiv">
 						<div class="form-group">
 							<label for="compensationSelect">Compensation <?php displayInfoTooltip($tooltipCompensationSelect); ?></label>
-							<select class="form-control input" id="compensationSelect" name="compensationId" 
-								data-toggle="tooltip" data-placement="bottom"
-								title="<?php echo $tooltipCompensationSelect; ?>">
+							<select class="form-control input" id="compensationSelect" name="compensationId">
 								<?php
 								foreach ($compensations as $c) {
 								    $id = $c->getId();
@@ -352,7 +350,25 @@ var availableTags = [
 								?>
 							</select>
 						</div>
+					</div>	
+						
+					<div class="col-sm-4" id="numberGroupsDiv">
+						<div class="form-group">
+							<label for="numberGroupsSelect">Number of Groups <?php displayInfoTooltip($tooltipNumberGroupsDesiredText); ?></label>
+							<select class="form-control input" id="numberGroupsSelect" name="numberGroupsId">
+								<?php
+									for ($n = 1; $n <= 8; $n++) {
+										$selected = $n == $pNumberGroups ? 'selected' : '';
+										echo "<option $selected value='$n'>$n</option>";
+									}
+								?>
+							</select>
+						</div>
 					</div>
+
+
+
+				
 				</div>
 				<div class="row">
 					<div class="col-sm-12">

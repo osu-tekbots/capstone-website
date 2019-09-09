@@ -74,11 +74,13 @@ function updateEditProjectLayout() {
         $('#ndaDiv').show();
         $('#numberGroupsDesiredDiv').show();
         $('#compensationDiv').hide();
+        $('#numberGroupsDiv').show();
     } else {
         $('#dateDiv').show();
         $('#ndaDiv').hide();
         $('#numberGroupsDesiredDiv').hide();
         $('#compensationDiv').show();
+        $('#numberGroupsDiv').hide();
     }
 }
 $('#projectTypeSelect').change(updateEditProjectLayout);
@@ -173,7 +175,7 @@ function onSubmitForApprovalClick() {
     // Validate the form
     if (project.title == '') {
         return snackbar('Please provide a project title', 'error');
-    } else if (project.typeId == 1 && project.ndaIpId == '') {
+    } else if (project.typeId == 1 && project.ndaIpId == '' || project.ndaIpId == 1) {
         return snackbar('Please select an NDA/IP option', 'error');
     } else if (project.description == '') {
         return snackbar('Please provide a project description', 'error');
