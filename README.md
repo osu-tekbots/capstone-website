@@ -197,17 +197,12 @@ of these variables occur in the following workflow:
 - Mobile Support.
 
 # Current Migration onto official capstone site (eecs.oregonstate.edu/capstone/submission)
-1. Push all changes from STAGE directory (education/capstone/stage) to github for version maintence
-2. Clear all files from official capstone directory EXCEPT
-   - images dir
-   - .htaccess
-   - .config.ini
-3. Copy everything over from STAGE directory EXCEPT
-   - config.ini
-   - .git dir
-   - .gitignore
-
-Future Implementation: Move everything to a github branch and set up .gitignore for unecessary files and just git pull for new changes.
+Process current is to pull and overwrite all changes using git 
+1. Push all changes from STAGE directory (education/capstone/stage) to github
+2. Navigate to official site location (capstone/submission)
+3. Run - [ git fetch --all ]
+4. Run - [ git reset --hard origin/master ]
+5. From capstone/submission, run - [ sh scripts/allow.sh ] (Corrects all permission changes)
 
 ## Troubleshooting and Helpful Notes
 
