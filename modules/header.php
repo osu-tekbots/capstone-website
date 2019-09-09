@@ -102,6 +102,10 @@ if ($loggedIn) {
 } else {
     $buttons['Login'] = 'pages/login.php';
 }
+    
+function displayInfoTooltip($tooltip){
+	echo '<a data-toggle="tooltip" data-placement="bottom" title="'.$tooltip.'"><i class="fas fa-info-circle"></i></a>';
+}
 
 ?>
 

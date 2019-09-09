@@ -57,6 +57,12 @@ $prefQualifications = Security::HtmlEntitiesEncode($application->getCapstoneProj
 $reviewInterest = $application->getReviewInterestLevel()->getId();
 $comments = Security::HtmlEntitiesEncode($application->getReviewProposerComments());
 
+//Tooltips
+$applicationReviewInfo = "An OSU student has applied to be on your project. For ECE and CS capstone projects, the final selection of teams is done by the course instructors but you can help by giving feedback on this application. Select one of the options from the drop down and as needed give some comments for the instructors to read. This comment and your selection is only for instructors and does not go to the applicant. If you are uncomfortable ranking the applicant you can simply ignore this page and the course instructors will do the assigning.";
+$tooltipComments = "Comments";
+$tooltipInterestLevel = "Interest"; 
+$tooltipSaveBtn = "Save Btn";
+
 // Generate a selection for the interest level. If it is equal to the currently selected interest level,
 // mark it as selected.
 $interestLevels = $dao->getApplicationReviewInterestLevels();
@@ -85,22 +91,28 @@ $interestLevelSelectHtml .= '
 <br/>
 <div class="container">
 	<div class="row">
-		<div class="col-md-6 offset-md-3">
+		<div class="col-md-3">
+		<div class="alert alert-info" role="alert">
+			<?php echo $applicationReviewInfo; ?>
+		</div>
+		</div>
+		<div class="col-md-6">
 			<h1>Application Review</h1>
 			<h4>for <?php echo $title; ?></h4>
 			<form id="formReviewApplication">
 				<input type="hidden" name="applicationId" value="<?php echo $applicationId; ?>" />
 				<div class="form-group">
-					<label>Comments</label>
+					<label>Comments <?php displayInfoTooltip($tooltipComments); ?></label>
 					<textarea class="form-control" name="comments" rows="3"><?php echo $comments; ?></textarea>
 				</div>
 				<div class="form-group">
-					<label>Interest Level</label>
+					<label>Interest Level <?php displayInfoTooltip($tooltipInterestLevel); ?></label>
 					<?php echo $interestLevelSelectHtml; ?>
 				</div>
 				<div class="form-group">
-					<button type="submit" class="btn btn-outline-primary">
-						Submit
+					<button type="submit" class="btn btn-outline-primary" data-toggle="tooltip" 
+                data-placement="bottom" title="<?php echo $tooltipSaveBtn?>">
+						Save
 					</button>
 				</div>
 			</form>

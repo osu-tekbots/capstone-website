@@ -172,6 +172,20 @@ a:hover{
   font-size: 1.5rem;
 }
 
+.csvExport {
+  margin-left: 25px;
+  margin-top: 20px;
+}
+
+.csvArea {
+  border: 1px solid rgba(0,0,0,.125);
+  border-radius: .25rem;
+  background-clip: border-box;
+  background-color: #fff;
+  padding-bottom: 20px;
+
+}
+
 .card-signin .card-body {
   padding: 2rem;
 }

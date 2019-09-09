@@ -162,7 +162,7 @@ var availableTags = [
 	<!-- Title Row with Action Button -->
     <div class="row">
         <div class="col-sm-8">
-            Project Title: <font size="2" style="color: red;">*required</font>
+            Project Title: <?php displayInfoTooltip($tooltipProjectTitleInput); ?> <font size="2" style="color: red;">*required</font>
             <input id="projectTitleInput" value="<?php echo $pTitle; ?>" 
                 class="form-control form-control-lg" type="text" placeholder="Project Title"
                 data-toggle="tooltip" data-placement="auto" title="<?php echo $tooltipProjectTitleInput; ?>" />
@@ -305,7 +305,7 @@ var availableTags = [
 				<div class="row">
 					<div class="col-sm-4">
 						<div class="form-group">
-							<label for="projectTypeSelect">Project Type</label>
+							<label for="projectTypeSelect">Project Type <?php displayInfoTooltip($tooltipProjectTypeSelect); ?></label>
 							<select class="form-control input" id="projectTypeSelect" name="typeId" data-toggle="tooltip" 
 								data-placement="bottom" title="<?php echo $tooltipProjectTypeSelect?>">
 								<?php
@@ -321,7 +321,7 @@ var availableTags = [
 					</div>
 					<div class="col-sm-4">
 						<div class="form-group">
-							<label for="projectFocusSelect">Project Focus</label>
+							<label for="projectFocusSelect">Project Focus <?php displayInfoTooltip($tooltipProjectFocusSelect); ?></label>
 							<select class="form-control input" id="projectFocusSelect" name="focusId" data-toggle="tooltip" 
 								data-placement="bottom"
 								title="<?php echo $tooltipProjectFocusSelect; ?>">
@@ -338,7 +338,7 @@ var availableTags = [
 					</div>
 					<div class="col-sm-4" id="compensationDiv">
 						<div class="form-group">
-							<label for="compensationSelect">Compensation</label>
+							<label for="compensationSelect">Compensation <?php displayInfoTooltip($tooltipCompensationSelect); ?></label>
 							<select class="form-control input" id="compensationSelect" name="compensationId" 
 								data-toggle="tooltip" data-placement="bottom"
 								title="<?php echo $tooltipCompensationSelect; ?>">
@@ -358,7 +358,7 @@ var availableTags = [
 					<div class="col-sm-12">
 						<div class="form-group">
 							<label for="projectDescriptionText">
-								Project Description <font size="2" style="color:red;">*required</font>
+								Project Description <?php displayInfoTooltip($tooltipProjectDescriptionText); ?> <font size="2" style="color:red;">*required</font>
 							</label>
 							<textarea class="form-control input" id="projectDescriptionText" name="description"
 								rows="3" data-toggle="tooltip" 
@@ -373,11 +373,10 @@ var availableTags = [
 					<div class="col-sm-4">
 						<div class="form-group">
 							<label for="motivationText">
-								Motivation <font size="2" style="color:red;">*required</font>
+								Motivation <?php displayInfoTooltip($tooltipMotivationText); ?> <font size="2" style="color:red;">*required</font>
 							</label>
 							<textarea class="form-control input" id="motivationText" name="motivation"
-								rows="4" data-toggle="tooltip" 
-								data-placement="top" title="<?php echo $tooltipMotivationText; ?>"><?php
+								rows="4"><?php
 									echo $pMotivation;
 								?></textarea>
 						</div>
@@ -385,11 +384,10 @@ var availableTags = [
 					<div class="col-sm-4">
 						<div class="form-group">
 							<label for="objectivesText">
-								Objectives/Deliverables <font size="2" style="color:red;">*required</font>
+								Objectives/Deliverables <?php displayInfoTooltip($tooltipObjectivesText); ?> <font size="2" style="color:red;">*required</font>
 							</label>
 							<textarea class="form-control input" id="objectivesText" name="objectives" 
-								rows="4" data-toggle="tooltip" 
-								data-placement="top" title="<?php echo $tooltipObjectivesText; ?>"><?php
+								rows="4"><?php
 									echo $pObjectives;
 								?></textarea>
 						</div>
@@ -398,7 +396,7 @@ var availableTags = [
 						<div class="form-group">
 							<div class="ui-widget">
 								<label for="keywordsInput">
-									Add Keywords to Project: <br>
+									Add Keywords to Project: <?php displayInfoTooltip($tooltipKeywords); ?><br>
 									<font size="2">Press Enter after each keyword.</font>
 								</label>
 								<input id="keywordsInput" class="form-control input">
@@ -421,12 +419,11 @@ var availableTags = [
 				<div class="row" id="dateDiv">
 					<div class="col-sm-5">
 						<div class="form-group">
-							Start By
+							Start By <?php displayInfoTooltip($tooltipStartByText); ?>
 							<div class="input-group date" id="startbydate" data-target-input="nearest">
 									<input type="text" id="startByText" name="dateStart" 
 										class="form-control datetimepicker-input input" 
-										value="<?php echo $pDateStart; ?>" data-target="#startbydate" data-toggle="tooltip" 
-										data-placement="top" title="<?php echo $tooltipStartByText; ?>"/>
+										value="<?php echo $pDateStart; ?>" data-target="#startbydate"/>
 									<div class="input-group-append" data-target="#startbydate" 
 										data-toggle="datetimepicker">
 											<div class="input-group-text"><i class="fas fa-calendar-alt"></i></div>
@@ -434,12 +431,11 @@ var availableTags = [
 							</div>
 						</div>
 						<div class="form-group">
-							Complete By
+							Complete By <?php displayInfoTooltip($tooltipCompleteByText); ?>
 							<div class="input-group date" id="endbydate" data-target-input="nearest">
 								<input type="text" id="completeByText"  name="dateEnd"
 									class="form-control datetimepicker-input input" 
-									value="<?php echo $pDateEnd; ?>" data-target="#endbydate" data-toggle="tooltip" 
-									data-placement="top" title="<?php echo $tooltipCompleteByText; ?>"/>
+									value="<?php echo $pDateEnd; ?>" data-target="#endbydate"/>
 								<div class="input-group-append" data-target="#endbydate" data-toggle="datetimepicker">
 										<div class="input-group-text"><i class="fas fa-calendar-alt"></i></div>
 								</div>
@@ -473,9 +469,8 @@ var availableTags = [
 							This does not prevent a separate arrangement between you each student individually.
 							<br>
 							</div>
-							<label id="ndaSelectLabel" for="ndaSelect" data-toggle="tooltip" data-placement="right" 
-								title="<?php echo $tooltipNdaSelect; ?>">
-								NDA/IP <font size="2" style="color:red;">*required</font>
+							<label id="ndaSelectLabel" for="ndaSelect">
+								NDA/IP <?php displayInfoTooltip($tooltipNdaSelect); ?> <font size="2" style="color:red;">*required</font>
 							</label>
 							<select class="form-control input" id="ndaSelect" name="ndaIpId">
 								<?php
@@ -492,11 +487,10 @@ var availableTags = [
 					<div class="col-sm-3">
 						<div class="form-group">
 							<label for="minQualificationsText">
-								Minimum Qualifications
+								Minimum Qualifications <?php displayInfoTooltip($tooltipMinQualificationsText); ?>
 							</label>
 							<textarea class="form-control input" id="minQualificationsText" name="minQualifications" 
-								rows="9" data-toggle="tooltip" 
-								data-placement="top" title="<?php echo $tooltipMinQualificationsText; ?>"><?php
+								rows="9"><?php
 									echo $pMinQual;
 								?></textarea>
 						</div>
@@ -504,11 +498,10 @@ var availableTags = [
 					<div class="col-sm-3">
 						<div class="form-group">
 							<label for="preferredQualificationsText">
-								Preferred Qualifications
+								Preferred Qualifications <?php displayInfoTooltip($tooltipPrefQualificationsText); ?>
 							</label>
 							<textarea class="form-control input" id="preferredQualificationsText" name="preferredQualifications" 
-								rows="9" data-toggle="tooltip" 
-								data-placement="top" title="<?php echo $tooltipPrefQualificationsText; ?>"><?php
+								rows="9"><?php
 									echo $pPreferredQual;
 								?></textarea>
 						</div>
@@ -517,39 +510,35 @@ var availableTags = [
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="form-group">
-							<label for="commentsText">Special Comments (preferred contact number, requesting the project to be set to private)</label>
-							<textarea class="form-control input" id="commentsText" name="comments" rows="3" data-toggle="tooltip" 
-								data-placement="top" title='<?php echo $tooltipCommentsText; ?>'><?php
+							<label for="commentsText">Special Comments <?php displayInfoTooltip($tooltipCommentsText); ?></label>
+							<textarea class="form-control input" id="commentsText" name="comments" rows="3"><?php
 									echo $pComments; 
 								?></textarea>
 						</div>
 					</div>
 					<div class="col-sm-12">
 						<div class="form-group">
-							<label for="websiteText">Website</label>
+							<label for="websiteText">Website <?php displayInfoTooltip($tooltipWebsiteText); ?></label>
 							<textarea class="form-control input" id="websiteText" name="websiteLink" 
-								rows="1" data-toggle="tooltip" 
-								data-placement="top" title="<?php echo $tooltipWebsiteText; ?>"><?php 
+								rows="1"><?php 
 									echo $pWebsiteLink; 
 								?></textarea>
 						</div>
 					</div>
 					<div class="col-sm-12"> 
 						<div class="form-group">
-							<label for="videoText">Video</label>
+							<label for="videoText">Video <?php displayInfoTooltip($tooltipVideoText); ?></label>
 							<textarea class="form-control input" id="videoText" name="videoLink" 
-								rows="1" data-toggle="tooltip" 
-								data-placement="top" title="<?php echo $tooltipVideoText; ?>"><?php 
+								rows="1"><?php 
 									echo $pVideoLink; 
 								?></textarea>
 						</div>
 					</div>
 					<div class="col-sm-12">
 						<div class="form-group">
-							<label for="additionalEmailsText">Additional Emails</label>
+							<label for="additionalEmailsText">Additional Emails <?php displayInfoTooltip($tooltipAdditionalEmailsText); ?></label>
 							<textarea class="form-control input" id="additionalEmailsText" name="additionalEmails"
-								rows="1" data-toggle="tooltip" 
-								data-placement="top" title="<?php echo $tooltipAdditionalEmailsText; ?>"><?php
+								rows="1"><?php
 									echo $pAdditionalEmails;
 								?></textarea>
 						</div>

@@ -39,7 +39,7 @@ $project = $projectsDao->getCapstoneProject($application->getCapstoneProject()->
 allowIf($application && ($application->getStudent()->getId() == $userId || $isAdmin));
 
 // Get application information
-$justification = $application->getJustification();
+$justification = Security::HtmlEntitiesEncode($application->getJustification());
 $time_available = $application->getTimeAvailable();
 $skill_set = $application->getSkillSet();
 $external_link = $application->getPortfolioLink();
@@ -56,12 +56,13 @@ $minQualifications = Security::HtmlEntitiesEncode($project->getMinQualifications
 $prefQualifications = Security::HtmlEntitiesEncode($project->getPreferredQualifications());
 
 // Set tooltip texts
-$tooltipJustificationInput = '';
+$createApplicationInfo = 'When creating an application to a project it is important to present yourself in a clear and professional manner. The client, after getting your application, can indicate a preference to the course instructors but course instructors have the final word in assembling groups. You are only allowed to apply once to each project so plan accordingly.';
+$tooltipJustificationInput = 'input';
 $tooltipSkillSetInput = '';
 $tooltipTimeAvailableInput = '';
 $tooltipPortfolioLinkInput = '';
-$tooltipSaveDraftBtn = '';
-$tooltipSubmitBtn = '';
+$tooltipSaveDraftBtn = 'save btn';
+$tooltipSubmitBtn = 'submit btn';
 
 
 $buttonsHtml = $submitted ? "
@@ -90,39 +91,36 @@ include_once PUBLIC_FILES . '/modules/header.php';
     <div class="row">
         <div class="col">
             <h1>Student Application for <?php echo $projectTitle; ?></h1>
+            <div class="alert alert-info" role="alert">
+                <?php echo ($createApplicationInfo);?>
+            </div>
         </div>
     </div>
     <form id="formApplication">
         <input type="hidden" name="applicationId" value="<?php echo $applicationId; ?>" />
         <div class="form-group row">
             <div class="col-12">
-                <label>Justification</label>
-                <textarea required <?php echo $readOnly; ?> name="justification" class="form-control input" rows="4" data-toggle="tooltip" 
-                data-placement="bottom" title="<?php echo $tooltipJustificationInput?>" >
-                <?php 
-                    echo $justification; ?>
-                    </textarea>
+                <label>Justification <?php displayInfoTooltip($tooltipJustificationInput); ?></label>
+                <textarea required <?php echo $readOnly; ?> name="justification" class="form-control" rows="4" ><?php 
+                echo $justification; ?></textarea>
             </div>
         </div>
         <div class="row">
             <div class="form-group col-md-6">
-                <label>Skill Set</label>
-                <textarea required <?php echo $readOnly; ?> name="skillSet" class="form-control" rows="5" data-toggle="tooltip" 
-                data-placement="bottom" title="<?php echo $tooltipSkillSetInput?>"><?php 
+                <label>Skill Set <?php displayInfoTooltip($tooltipSkillSetInput); ?></label>
+                <textarea required <?php echo $readOnly; ?> name="skillSet" class="form-control" rows="5"><?php 
                     echo $skill_set; ?></textarea>
             </div>
             <div class="col-md-6">
                 <div class="form-group ">
-                    <label>Time Available</label>
+                    <label>Time Available <?php displayInfoTooltip($tooltipTimeAvailableInput); ?></label>
                     <input required <?php echo $readOnly; ?> name="timeAvailable" class="form-control" max="256" 
-                        value="<?php echo $time_available; ?> " data-toggle="tooltip" 
-                data-placement="bottom" title="<?php echo $tooltipTimeAvailableInput?>">
+                        value="<?php echo $time_available; ?> ">
                 </div>
                 <div class="form-group ">
-                    <label>Portfolio Link</label>
+                    <label>Portfolio Link <?php displayInfoTooltip($tooltipPortfolioLinkInput); ?></label>
                     <input <?php echo $readOnly; ?> name="portfolioLink" class="form-control" max="512" 
-                        value="<?php echo $external_link; ?>" data-toggle="tooltip" 
-                data-placement="bottom" title="<?php echo $tooltipPortfolioLinkInput?>">
+                        value="<?php echo $external_link; ?>">
                 </div>
             </div>
         </div>

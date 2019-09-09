@@ -162,21 +162,20 @@ include_once PUBLIC_FILES . '/modules/header.php';
 				</div>
 				
 				<!-- Area Chart Example-->
-				<div class="card mb-3">
+				<div class="csvArea mb-3">
 					<div class="card-header">
 						<i class="fas fa-chart-area"></i>
 						Export Options</div>
 						<form method="post" action="modules/export.php">
 						<div class="row">
-							<div class="col-sm-4">
-								<input type="submit" name="exportProjects" class="btn btn-success" value="APPROVED Projects CSV" />
-							</div>
-							<div class="col-sm-4">
+							<div class="col-sm">		
+								<input type="submit" name="exportApprovedProjects" class="csvExport btn btn-success" value="APPROVED Projects CSV" />
 							
+								<input type="submit" name="exportAllProjects" class="csvExport btn btn-success" value="ALL Projects CSV" />
+
+
 							</div>
-							<div class="col-sm-4">
-							
-							</div>
+			
 						</div>
 						</form>
 				

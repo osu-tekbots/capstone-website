@@ -72,7 +72,7 @@ include_once PUBLIC_FILES . '/modules/applications.php';
                     }
                 }
                 if ($isAdmin) {
-                    echo '<h2>My Applications in Progress</h2>';
+                    echo '<h2>My Applications</h2>';
                     renderApplicationTable($userApplications, false);
                 }
             } else {
