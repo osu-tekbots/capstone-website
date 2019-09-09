@@ -4,6 +4,7 @@ include_once '../bootstrap.php';
 use DataAccess\CapstoneProjectsDao;
 use DataAccess\KeywordsDao;
 use Model\CapstoneProjectStatus;
+use Util\Security;
 
 if (!session_id()) {
     session_start();
@@ -27,27 +28,27 @@ $keywordsDao = new KeywordsDao($dbConn, $logger);
 // Get the project and store properly formatted values into local variables
 $project = $dao->getCapstoneProject($pId);
 if ($project) {
-    $pTitle = $project->getTitle();
-    $pMotivation = $project->getMotivation();
-    $pDescription = $project->getDescription();
-    $pObjectives = $project->getObjectives();
+    $pTitle = Security::HtmlEntitiesEncode($project->getTitle());
+    $pMotivation = Security::HtmlEntitiesEncode($project->getMotivation());
+    $pDescription = Security::HtmlEntitiesEncode($project->getDescription());
+    $pObjectives = Security::HtmlEntitiesEncode($project->getObjectives());
     $pDateStart = $project->getDateStart() != null ? $project->getDateStart()->format('m/d/Y') : '';
     $pDateEnd = $project->getDateEnd() != null ? $project->getDateEnd()->format('m/d/Y') : '';
-    $pMinQual = $project->getMinQualifications();
-    $pPreferredQual = $project->getPreferredQualifications();
+    $pMinQual = Security::HtmlEntitiesEncode($project->getMinQualifications());
+    $pPreferredQual = Security::HtmlEntitiesEncode($project->getPreferredQualifications());
     $pCompensationId = $project->getCompensation()->getId();
-    $pAdditionalEmails = $project->getAdditionalEmails();
+    $pAdditionalEmails = Security::HtmlEntitiesEncode($project->getAdditionalEmails());
     $pCategoryId = $project->getCategory()->getId();
     $pCategoryName = $project->getCategory()->getName();
     $pTypeId = $project->getType()->getId();
     $pFocusId = $project->getFocus()->getId();
     $pCopId = $project->getCop()->getId();
     $pNdaIpId = $project->getNdaIp()->getId();
-    $pWebsiteLink = $project->getWebsiteLink();
+    $pWebsiteLink = Security::HtmlEntitiesEncode($project->getWebsiteLink());
     $pImages = $project->getImages();
-    $pVideoLink = $project->getVideoLink();
+    $pVideoLink = Security::HtmlEntitiesEncode($project->getVideoLink());
     $pIsHidden = $project->getIsHidden();
-    $pComments = $project->getProposerComments();
+    $pComments = Security::HtmlEntitiesEncode($project->getProposerComments());
     $pStatusId = $project->getStatus()->getId();
 	$pStatusName = $project->getStatus()->getName();
 	$pNumberGroups = $project->getNumberGroups();
