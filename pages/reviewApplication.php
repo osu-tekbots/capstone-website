@@ -59,9 +59,9 @@ $comments = Security::HtmlEntitiesEncode($application->getReviewProposerComments
 
 //Tooltips
 $applicationReviewInfo = "An OSU student has applied to be on your project. For ECE and CS capstone projects, the final selection of teams is done by the course instructors but you can help by giving feedback on this application. Select one of the options from the drop down and as needed give some comments for the instructors to read. This comment and your selection is only for instructors and does not go to the applicant. If you are uncomfortable ranking the applicant you can simply ignore this page and the course instructors will do the assigning.";
-$tooltipComments = "Comments";
-$tooltipInterestLevel = "Interest"; 
-$tooltipSaveBtn = "Save Btn";
+$tooltipComments = "Enter any comments you have about this application. These are not viewable by the applicant.";
+$tooltipInterestLevel = "Please indicate your interest level in this applicant. Please note that the course instructors make final decisions on team formation."; 
+$tooltipSaveBtn = "Save your comments and interest level on the user.";
 
 // Generate a selection for the interest level. If it is equal to the currently selected interest level,
 // mark it as selected.
@@ -90,15 +90,13 @@ $interestLevelSelectHtml .= '
 <br/>
 <br/>
 <div class="container">
-	<div class="row">
-		<div class="col-md-3">
-		<div class="alert alert-info" role="alert">
-			<?php echo $applicationReviewInfo; ?>
-		</div>
-		</div>
-		<div class="col-md-6">
+	<div class="row justify-content-center">
+		<div class="col-md-8">
 			<h1>Application Review</h1>
 			<h4>for <?php echo $title; ?></h4>
+			<div class="alert alert-info" role="alert">
+				<?php echo $applicationReviewInfo; ?>
+			</div>
 			<form id="formReviewApplication">
 				<input type="hidden" name="applicationId" value="<?php echo $applicationId; ?>" />
 				<div class="form-group">

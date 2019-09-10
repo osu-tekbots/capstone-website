@@ -16,6 +16,7 @@ function renderAdminReviewPanel($project, $categories, $singleView) {
     $pIsHidden = $project->getIsHidden();
     $pIsArchived = $project->getIsArchived();
     $pComments = $project->getProposerComments();
+    $aComments = $project->getAdminComments();
 
     $actions = array();
     if ($pStatusName == 'Pending Approval') {
@@ -80,6 +81,9 @@ function renderAdminReviewPanel($project, $categories, $singleView) {
                 data-placement='top' title=''>
                 $options
             </select>
+            <br/>
+            <h6>Admin Comments (Only visible by admins)</h6>
+            <textarea class='form-control input' id='projectAdminComments'>$aComments</textarea>
             <center>
                 <button class='btn btn-lg btn-success admin-btn' type='button' 
                     id='adminApproveProjectBtn'>Approve Project</button>

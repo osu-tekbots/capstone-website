@@ -43,10 +43,10 @@ class UsersActionHandler extends ActionHandler {
         if($major == null) $major = '';
 
         $body = $this->requestBody;
-
+        $uid = $body['uid'];
         // Get the existing user. 
         // TODO: If it isn't found, send a NOT_FOUND back to the client
-        $user = $this->dao->getUser($body['uid']);
+        $user = $this->dao->getUser($uid);
 
         // Update the user
         $user->getSalutation()->setId($body['salutationId']);

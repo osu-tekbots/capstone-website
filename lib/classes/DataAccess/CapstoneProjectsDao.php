@@ -371,6 +371,7 @@ class CapstoneProjectsDao {
                 :video,
                 :hidden,
                 :comments,
+                :admincomments,
                 :cpsid,
                 :archived,
                 :dcreated,
@@ -400,6 +401,7 @@ class CapstoneProjectsDao {
                 ':video' => $project->getVideoLink(),
                 ':hidden' => $project->getIsHidden(),
                 ':comments' => $project->getProposerComments(),
+                ':admincomments' => $project->getAdminComments(),
                 ':cpsid' => $project->getStatus()->getId(),
                 ':archived' => $project->getIsArchived(),
                 ':dcreated' => QueryUtils::FormatDate($project->getDateCreated()),
@@ -443,6 +445,7 @@ class CapstoneProjectsDao {
                 cp_video_link = :video,
                 cp_is_hidden = :hidden,
                 cp_proposer_comments = :comments,
+                cp_admin_comments = :admincomments,
                 cp_cps_id = :cpsid,
                 cp_archived = :archived,
                 cp_date_updated = :dupdated
@@ -470,6 +473,7 @@ class CapstoneProjectsDao {
                 ':video' => $project->getVideoLink(),
                 ':hidden' => $project->getIsHidden(),
                 ':comments' => $project->getProposerComments(),
+                ':admincomments' => $project->getAdminComments(),
                 ':cpsid' => $project->getStatus()->getId(),
                 ':archived' => $project->getIsArchived(),
                 ':dupdated' => QueryUtils::FormatDate($project->getDateUpdated())
@@ -750,6 +754,7 @@ class CapstoneProjectsDao {
             ->setVideoLink($row['cp_video_link'])
             ->setIsHidden($row['cp_is_hidden'] ? true : false)
             ->setProposerComments($row['cp_proposer_comments'])
+            ->setAdminComments($row['cp_admin_comments'])
             ->setStatus(self::ExtractCapstoneProjectStatusFromRow($row, true))
             ->setIsArchived($row['cp_archived'] ? true : false)
             ->setDateCreated(new \DateTime($row['cp_date_created']))

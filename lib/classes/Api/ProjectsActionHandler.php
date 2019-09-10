@@ -98,6 +98,34 @@ class ProjectsActionHandler extends ActionHandler {
         ));
     }
 
+        /**
+     * Updates the projects admin comments in the database.
+     *
+     * @return void
+     */
+    public function handleUpdateProjectAdminComments() {
+        // Ensure all required parameters are present
+        $this->requireParam('projectId');
+        $this->requireParam('adminComments');
+
+        $body = $this->requestBody;
+
+        $project = $this->projectsDao->getCapstoneProject($body['projectId']);
+        // TODO: handle case when project is not found
+
+        $project->setAdminComments($body['adminComments']);
+
+        $ok = $this->projectsDao->updateCapstoneProject($project);
+        if (!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to update project'));
+        }
+
+        $this->respond(new Response(
+            Response::OK,
+            'Successfully updated the admin comments'
+        ));
+    }
+
     /**
      * Updates fields editable from the user interface in a project entry in the database.
      *
@@ -433,6 +461,9 @@ class ProjectsActionHandler extends ActionHandler {
 
             case 'updateCategory':
                 $this->handleUpdateProjectCategory();
+
+            case 'updateAdminComments':
+                $this->handleUpdateProjectAdminComments();
 
             case 'saveProject':
                 $this->handleSaveProject();

@@ -82,6 +82,9 @@ class CapstoneProject {
 	
     /** @var string */
     private $proposerComments;
+
+    /** @var string */
+    private $adminComments;
 	
     /** @var CapstoneProjectStatus */
     private $status;
@@ -532,6 +535,25 @@ class CapstoneProject {
 
         return $this;
     }
+
+        /**
+     * Get the value of adminComments
+     */ 
+    public function getAdminComments() {
+        return $this->adminComments;
+    }
+
+    /**
+     * Set the value of adminComments
+     *
+     * @return  self
+     */ 
+    public function setAdminComments($adminComments) {
+        $this->adminComments = $adminComments;
+
+        return $this;
+    }
+
 
     /**
      * Get the value of status

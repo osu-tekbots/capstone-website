@@ -31,6 +31,30 @@ function onProjectCategorySelect() {
 $('#projectCategorySelect').change(onProjectCategorySelect);
 
 /**
+ * Handler for when the project admincomments is updated by the admin. The result of the select will automatically
+ * update the category of the project in the database.
+ */
+function onProjectAdminCommentUpdate() {
+    projectAdminComments = $('#projectAdminComments').val();
+    projectID = getProjectId();
+
+    let body = {
+        action: 'updateAdminComments',
+        projectId: projectID,
+        adminComments: projectAdminComments
+    };
+
+    api.post('/projects.php', body)
+        .then(res => {
+            snackbar(res.message, 'success');
+        })
+        .catch(err => {
+            snackbar(err.message, 'error');
+        });
+}
+$('#projectAdminComments').change(onProjectAdminCommentUpdate);
+
+/**
  * Handler for click event on the 'Approve Project' button for admin project views.
  */
 function onProjectApprove() {

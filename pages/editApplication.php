@@ -57,12 +57,12 @@ $prefQualifications = Security::HtmlEntitiesEncode($project->getPreferredQualifi
 
 // Set tooltip texts
 $createApplicationInfo = 'When creating an application to a project it is important to present yourself in a clear and professional manner. The client, after getting your application, can indicate a preference to the course instructors but course instructors have the final word in assembling groups. You are only allowed to apply once to each project so plan accordingly.';
-$tooltipJustificationInput = 'input';
-$tooltipSkillSetInput = '';
-$tooltipTimeAvailableInput = '';
-$tooltipPortfolioLinkInput = '';
-$tooltipSaveDraftBtn = 'save btn';
-$tooltipSubmitBtn = 'submit btn';
+$tooltipJustificationInput = 'Use this field to explain why you are a good candidate for this project. You might want to include your motivations in addition to your experience.';
+$tooltipSkillSetInput = 'List your applicable skills here that make you an asset to this project.';
+$tooltipTimeAvailableInput = 'List the number of hours you can devote to this project a week or any time circumstances that will affect your time involved in the project.';
+$tooltipPortfolioLinkInput = 'Include a link to a publicly visible portfolio if you have one to show previous work.';
+$tooltipSaveDraftBtn = 'Save this application for later submission.';
+$tooltipSubmitBtn = 'Submit this application. You can not modify an application after submission.';
 
 
 $buttonsHtml = $submitted ? "

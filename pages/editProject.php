@@ -103,28 +103,28 @@ $js = array(
 include_once PUBLIC_FILES . '/modules/header.php';
 
 // Set Tooltip Texts
-$tooltipProjectTitleInput = '';
+$tooltipProjectTitleInput = 'What is the title of this proposal? Please choose a short title.';
 $tooltipSaveProjectDraftBtn = 'Allows you to save your progress on the project draft';
 $tooltipUpdateProjectDraftBtn = 'Allows you to update your entries on the project';
 $tooltipSubmitForApprovalBtn = 'Submit your project for approval. Once your project has been approved, you will receive a confirmation email indicating that it is available for public viewing. ';
-$tooltipImgBtn = 'Upload an image to be accompanied with your project when browsing. ';
+$tooltipImgBtn = 'Upload an image to be accompanied with your project when browsing.';
 $tooltipProjectTypeSelect = 'Capstone is the default category option and should be used for all projects related to Senior Design Capstone.';
-$tooltipProjectFocusSelect = '';
-$tooltipCompensationSelect = '';
-$tooltipProjectDescriptionText = '';
-$tooltipMotivationText = '';
-$tooltipObjectivesText = '';
+$tooltipProjectFocusSelect = 'For the options listed, which best describes the majority of this project?';
+$tooltipCompensationSelect = 'Is there compensation offered? For capstone projects, compensation is normally none.';
+$tooltipProjectDescriptionText = 'Enter your project description here. It is important to create a compelling story to ensure students want to bid on your project.';
+$tooltipMotivationText = 'Use this field to describe why you are offering this project. Does this project impact people? Is it helpful? What real life problems does this project solve?';
+$tooltipObjectivesText = 'List the items that you expect this project to achieve. This can include tangible deliverables as well as steps to be completed before the final completion. ';
 $tooltipKeywords = "Type keywords and hit 'Enter' between keywords.";
 $tooltipMinQualificationsText = 'Please enter a list of skills or prior experience needed to complete this project.';
-$tooltipPrefQualificationsText = '';
-$tooltipNdaSelect = '';
+$tooltipPrefQualificationsText = 'Please enter a list of skills or prior experience helpful to complete this project';
+$tooltipNdaSelect = "Select this project's NDA settings.";
 $tooltipWebsiteText = 'Enter a URL to link to relevant information.';
 $tooltipVideoText = 'Enter a URL to link to relevant information.';
 $tooltipAdditionalEmailsText = 'Enter additional emails (separated by a semi-colon) from your organization that should also receive updates on this project.';
-$tooltipStartByText = '';
-$tooltipCompleteByText = '';
+$tooltipStartByText = 'If this project is not a capstone project, when does it need to start by?';
+$tooltipCompleteByText = 'If this project is not a capstone project, when does it need to be completed by?';
 $tooltipNumberGroupsDesiredText = 'How many student teams would you like to work on your project? ';
-$tooltipCommentsText = 'Enter any comments you would like only the admins to see.';
+$tooltipCommentsText = "Enter any comments you would like only the admins to see. This is a good place to request specific students by name, request a call back, ask general questions, and tell us if you don't want this project publicly displayed.If you have not included your phone number on your profile, please do so here as we will likely call you.";
 
 /**
  * Renders the HTML for an option that will render an image to select as the default image.
