@@ -81,5 +81,6 @@ if ($_POST['action'] == 'uploadImage') {
         }
 
         respond(201, "Successfully uploaded a new image");
+        header("Refresh:1");
     }
 }
