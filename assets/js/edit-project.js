@@ -51,9 +51,10 @@ $('[data-toggle="tooltip"]').tooltip();
 
 $('#keywordsInput').on('change', function() {
     key = $('#keywordsInput').val();
+    var cleankey = key.replace(/[|&;$%@"<>()+,]/g, "");
     //Add user-generated keyword into the keywordsDiv.
     $('#keywordsDiv').append(
-        '<span class="badge badge-light keywordBadge">' + key + ' <i class="fas fa-times-circle"></i></span>'
+        '<span class="badge badge-light keywordBadge">' + cleankey + ' <i class="fas fa-times-circle"></i></span>'
     );
     $('#keywordsInput').val('');
 });

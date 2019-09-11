@@ -45,8 +45,8 @@ $title = Security::HtmlEntitiesEncode($project->getTitle());
 $status = $project->getStatus()->getName();
 $type = $project->getType()->getName();
 $year = $project->getDateCreated()->format('Y');
-$website = $project->getWebsiteLink();
-$video = $project->getVideoLink();
+$website = Security::HtmlEntitiesEncode($project->getWebsiteLink());
+$video = Security::HtmlEntitiesEncode($project->getVideoLink());
 $start_by = $project->getDateStart()->format('F j, Y');
 $complete_by = $project->getDateEnd()->format('F j, Y');
 $pref_qualifications = Security::HtmlEntitiesEncode($project->getPreferredQualifications());
@@ -253,8 +253,8 @@ if(!@getimagesize($image)){
 					
 				
 						foreach ($preexistingKeywords as $k) {
-							if (trim($k->getName()) != '') {
-								echo '<span class="badge badge-light keywordBadge">' . $k->getName() . '</span>';
+							if (trim(Security::HtmlEntitiesEncode($k->getName())) != '') {
+								echo '<span class="badge badge-light keywordBadge">' . Security::HtmlEntitiesEncode($k->getName()) . '</span>';
 							}
 						}
 					

@@ -67,8 +67,8 @@ function renderProjectCardGroup($projects, $keywordsDao, $browsing = false) {
 		$preexistingKeywords = $keywordsDao->getKeywordsForEntity($id);
 		if($preexistingKeywords){
 			foreach ($preexistingKeywords as $k) {
-				if (trim($k->getName()) != '') {
-					$extra .= '<span class="badge badge-light keywordBadge">' . $k->getName() . '</span>';
+				if (trim(Security::HtmlEntitiesEncode($k->getName())) != '') {
+					$extra .= '<span class="badge badge-light keywordBadge">' . Security::HtmlEntitiesEncode($k->getName()) . '</span>';
 				}
 			}
 		}

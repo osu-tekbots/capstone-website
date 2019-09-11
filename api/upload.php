@@ -6,6 +6,7 @@ include_once '../bootstrap.php';
 
 use DataAccess\CapstoneProjectsDao;
 use Model\CapstoneProjectImage;
+use Util\Security;
 
 /**
  * Simple function that allows us to respond with a response code and a message inside a JSON object.
@@ -43,6 +44,7 @@ if ($_POST['action'] == 'uploadImage') {
             'png'
         );
         $path_parts = pathinfo($file_name);
+        $file_name = Security::HtmlEntitiesEncode($file_name);
         $extension = strtolower($path_parts['extension']);
        
         if(!in_array($extension, $supported_image))

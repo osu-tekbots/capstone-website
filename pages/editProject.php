@@ -423,8 +423,8 @@ var availableTags = [
 									$preexistingKeywords = $keywordsDao->getKeywordsForEntity($pId);
 									if($preexistingKeywords){
 										foreach ($preexistingKeywords as $k) {
-											if (trim($k->getName()) != '') {
-												echo '<span class="badge badge-light keywordBadge">' . $k->getName() . ' <i class="fas fa-times-circle"></i></span>';
+											if (trim(Security::HtmlEntitiesEncode($k->getName())) != '') {
+												echo '<span class="badge badge-light keywordBadge">' . Security::HtmlEntitiesEncode($k->getName()) . ' <i class="fas fa-times-circle"></i></span>';
 											}
 										}
 									}

@@ -127,7 +127,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 				
 						<div class="form-check">
 							<input type="checkbox" class="form-check-input" id="ApprovalRequiredCheckBox">
-							<label for="ApprovalRequiredCheckBox">Hide projects do NOT need Admin Approval</label>
+							<label for="ApprovalRequiredCheckBox">Hide projects do NOT need Admin Action</label>
 						</div>
 
 						<div class="form-check">
