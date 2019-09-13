@@ -488,6 +488,114 @@ class CapstoneProjectsDao {
     }
 
     /**
+     * Removes user application from project
+     *
+     * 
+     * @return boolean true on success, false otherwise
+     */
+    public function deleteProjectUserApplication($pid, $uid) {
+        try {
+            $sql = '
+            DELETE FROM capstone_project_application 
+            WHERE ca_cp_id = :pid AND ca_u_id = :id';
+            $params = array(
+                ':id' => $id,
+                ':pid' => $pid
+            );
+            $this->conn->execute($sql, $params);
+
+            return true;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to remove application: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+        /**
+     * Removes all user application from project
+     *
+     *
+     * @return boolean true on success, false otherwise
+     */
+    public function deleteCapstoneProjectApplications($pid) {
+        try {
+            $sql = '
+            DELETE FROM capstone_application 
+            WHERE ca_cp_id = :pid';
+            $params = array(
+                ':pid' => $pid
+            );
+            $this->conn->execute($sql, $params);
+
+            return true;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to remove applications from project: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Removes all images from project
+     *
+     *
+     * @return boolean true on success, false otherwise
+     */
+    public function deleteCapstoneProjectDBImages($pid) {
+        try {
+            $sql = '
+            DELETE FROM capstone_project_image 
+            WHERE cpi_cp_id = :pid';
+            $params = array(
+                ':pid' => $pid
+            );
+            $this->conn->execute($sql, $params);
+
+            return true;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to remove applications from project: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Removes all images from project
+     *
+     *
+     * @return boolean true on success, false otherwise
+     */
+    public function deleteCapstoneProjectImage($imageId) {
+        try {
+            unlink(PUBLIC_FILES . '/images' . "/$imageId");
+            return true;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to delete image ' . $e->getMessage());
+            return false;
+        }
+    }
+
+        /**
+     * Removes all images from project
+     *
+     *
+     * @return boolean true on success, false otherwise
+     */
+    public function deleteCapstoneProject($pid) {
+        try {
+            $sql = '
+            DELETE FROM capstone_project 
+            WHERE cp_id = :pid';
+            $params = array(
+                ':pid' => $pid
+            );
+            $this->conn->execute($sql, $params);
+            return true;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to delete image ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Inserts metadata for a new image for a project in the databsae.
      *
      * @param \Model\CapstoneProjectImage $image the image metadata to insert into the database

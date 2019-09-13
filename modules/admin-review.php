@@ -17,6 +17,7 @@ function renderAdminReviewPanel($project, $categories, $singleView) {
     $pIsArchived = $project->getIsArchived();
     $pComments = $project->getProposerComments();
     $aComments = $project->getAdminComments();
+    $tooltipPurge = "This will complete remove a project as well as all of its connections.  (Deletes all applications and images related to the project and then deletes the project itself).  Use with caution";
 
     $actions = array();
     if ($pStatusName == 'Pending Approval') {
@@ -97,6 +98,8 @@ function renderAdminReviewPanel($project, $categories, $singleView) {
                     id='adminMakeProjectPrivateBtn'>Make Project Private</button>
                 <button class='btn btn-lg btn-outline-info admin-btn' type='button' 
                     id='adminMakeProjectNotPrivateBtn'>Make Project Public</button>
+                    <button class='btn btn-lg btn-outline-danger admin-btn' type='button' 
+                    data-toggle='tooltip' data-placement='bottom' title='$tooltipPurge' id='adminDeleteProjectBtn'>PURGE</button>
                 <br/>
                 $button
                 <a href='pages/adminProject.php'>

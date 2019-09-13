@@ -51,7 +51,7 @@ $types = $dao->getCapstoneProjectTypes();
 
                 <div class="col-sm-6">
                     <div class="form-group">
-                        <label for="projectTypeFilterSelect">Filter by Project Type</label>
+                        <label for="projectTypeFilterSelect">Filter by Course</label>
                         <select class="form-control" id="projectTypeFilterSelect" onchange="filterSelectChanged(this)">
                                 <?php 
                                     $options = '<option></option>';
@@ -67,7 +67,7 @@ $types = $dao->getCapstoneProjectTypes();
                     </div>
 
                     <div class="form-group">
-                        <label for="projectCategoryFilterSelect">Filter by Course Type</label>
+                        <label for="projectCategoryFilterSelect">Filter by Project Type</label>
                         <select class="form-control" id="projectCategoryFilterSelect" onchange="filterSelectChanged(this)">
                             <?php 
                                     $options = '<option></option>';

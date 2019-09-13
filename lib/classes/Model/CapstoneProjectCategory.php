@@ -11,6 +11,7 @@ class CapstoneProjectCategory {
     const ECE_AND_CS = 4;
     const ECE44X_Fall_2019_20 = 5;
     const CS46X_Fall_2019_20 = 6;
+    const ECE44X_AND_CS46X_FALL_2019_20 = 7;
 
     /** @var integer */
     private $id;

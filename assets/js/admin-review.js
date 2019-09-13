@@ -139,7 +139,7 @@ function onMakeProjectPrivate() {
 $('#adminMakeProjectPrivateBtn').on('click', onMakeProjectPrivate);
 
 /**
- * Event handler to unpublishing a project (making it not viewable to the public)
+ * Event handler to archive a project
  */
 function onArchiveProject() {
     let body = {
@@ -156,3 +156,42 @@ function onArchiveProject() {
         });
 }
 $('#adminMakeProjectArchivedBtn').on('click', onArchiveProject);
+
+
+$('#adminDeleteProjectBtn').on('click', function() {
+    let res = confirm('You are about to delete a project completely (Images, Applications, Project). This action cannot be undone.');
+    if(!res) return false;
+    let body = {
+        action: 'deleteProject',
+        id: getProjectId()
+    };
+
+    api.post('/projects.php', body)
+        .then(res => {
+            snackbar(res.message, 'success');
+        })
+        .catch(err => {
+            snackbar(err.message, 'error');
+        });
+});
+
+
+/**
+ * Event handler to delete a project 
+ 
+function onDeleteProject() {
+    let body = {
+        action: 'deleteProject',
+        id: getProjectId()
+    };
+
+    api.post('/projects.php', body)
+        .then(res => {
+            snackbar(res.message, 'success');
+        })
+        .catch(err => {
+            snackbar(err.message, 'error');
+        });
+}
+$('#adminDeleteProjectBtn').on('click', onDeleteProject);
+**/

@@ -440,6 +440,44 @@ class ProjectsActionHandler extends ActionHandler {
         ));
     }
 
+    public function handleDeleteProject() {
+        $id = $this->getFromBody('id');
+
+        $project = $this->projectsDao->getCapstoneProject($id);
+        // TODO: handle when not found
+        $pImages = $project->getImages();
+        if ($pImages){
+            foreach ($pImages as $image) {
+                $imageId = $image->getId();
+                $name = $image->getName();
+                $ok = $this->projectsDao->deleteCapstoneProjectImage($imageId);
+                if (!$ok) {
+                    $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to unlink image'));
+                }
+            }
+        }
+        
+        $ok = $this->projectsDao->deleteCapstoneProjectDBImages($id);
+        if (!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to delete image DB entries'));
+        }
+
+        $ok = $this->projectsDao->deleteCapstoneProjectApplications($id);
+        if (!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to delete project applications'));
+        }
+
+        $ok = $this->projectsDao->deleteCapstoneProject($id);
+        if (!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to delete project'));
+        }
+
+        $this->respond(new Response(
+            Response::OK,
+            'Successfully purged project.'
+        ));
+    }
+
     /**
      * Handles the HTTP request on the API resource. 
      * 
@@ -488,6 +526,9 @@ class ProjectsActionHandler extends ActionHandler {
 
             case 'archiveProject':
                 $this->handleArchiveProject();
+
+            case 'deleteProject':
+                $this->handleDeleteProject();
 
             default:
                 $this->respond(new Response(Response::BAD_REQUEST, 'Invalid action on project resource'));
