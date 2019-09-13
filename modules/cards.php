@@ -167,7 +167,7 @@ function renderAdminProjectCardGroup($projects, $keywordsDao, $browsing = false)
 		else if ($status == "Created") {
 			$extra = "";
 		}
-		else if ($CategoryName != 'Electrical Engineering' && $CategoryName != 'Computer Science' && $CategoryName != 'ECE and CS'){
+		else if ($CategoryName == 'None'){
 			$extra = "Category Placement";
 		}
 
