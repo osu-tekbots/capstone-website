@@ -1,6 +1,7 @@
 <?php
 use Model\CapstoneInterestLevel;
 use Util\Security;
+use Email\ApplicationMailer;
 
 /**
  * Renders the HTML for an application table in the user interface.

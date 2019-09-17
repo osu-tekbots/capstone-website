@@ -3,6 +3,10 @@ namespace Api;
 
 use Model\CapstoneApplication;
 use Model\CapstoneApplicationStatus;
+use Model\CapstoneInterestLevel;
+use DataAccess\QueryUtils;
+use Model\CapstoneProject;
+
 
 /**
  * Defines the logic for how to handle AJAX requests made to modify project application information.
@@ -68,6 +72,7 @@ class ApplicationsActionHandler extends ActionHandler {
             array('id' => $application->getId())
         ));
     }
+
 
     /**
      * Handles a request to save updated application information.
@@ -151,6 +156,53 @@ class ApplicationsActionHandler extends ActionHandler {
         ));
     }
 
+
+        /**
+     * Handles a request to send reminder emails to proposers.
+     *
+     * @return void
+     */
+    public function handleReviewApplicationReminder() {
+       
+        $applications = $this->applicationsDao->getAllApplications();
+        $proposersList = array();
+        // Filter applications that are not reviewed
+        if (count($applications) > 0){
+            foreach ($applications as $application){
+                $isApplicationSubmitted = $application->getStatus()->getId() == CapstoneApplicationStatus::SUBMITTED ? TRUE : FALSE;
+                $isCommentSet = trim($application->getReviewProposerComments()) != '' ? TRUE : FALSE;
+                $isInterestLevelSet = $application->getReviewInterestLevel()->getId() != CapstoneInterestLevel::NOT_SPECIFIED ? TRUE : FALSE;
+                $isWithinLastMonth = QueryUtils::FormatDate($application->getDateSubmitted()) < strtotime('-30 days') ? TRUE : FALSE;
+
+                if ($isApplicationSubmitted && !$isCommentSet && !$isInterestLevelSet && $isWithinLastMonth){
+                    $projectID = $application->getCapstoneProject()->getId();
+                    $project = $this->projectsDao->getCapstoneProject($projectID);
+                    $proposerID = $project->getProposer()->getId();
+                    if (!in_array($proposerID, $proposersList)){
+                        $first_name = $project->getProposer()->getFirstName();
+                        $last_name = $project->getProposer()->getLastName();
+                        $title = $project->getTitle();
+                        $email = $project->getProposer()->getEmail();
+                        $this->mailer->sendUnreviewedApplicationNotification($first_name, $last_name, $title, $email);
+                        array_push($proposersList, $proposerID);
+                    }
+                    
+                }
+            }
+        }
+
+
+        $ok = $this->mailer->sendLastApplicationSubmittedDate();
+        if (!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to submit application'));
+        }
+
+        $this->respond(new Response(
+            Response::OK,
+            'Successfully sent reminder emails to proposers'
+        ));
+    }
+
     /**
      * Handles a request to review a project application.
      *
@@ -205,6 +257,9 @@ class ApplicationsActionHandler extends ActionHandler {
 
             case 'reviewApplication':
                 $this->handleReviewApplication();
+            
+            case 'sendProposerApplicationReminders':
+                $this->handleReviewApplicationReminder();
 
             default:
                 $this->respond(new Response(Response::BAD_REQUEST, 'Invalid action on application resource'));

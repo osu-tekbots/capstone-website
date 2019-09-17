@@ -93,4 +93,60 @@ class ApplicationMailer extends Mailer {
 
         return $this->sendEmail($application->getCapstoneProject()->getProposer()->getEmail(), $subject, $message);
     }
+
+    public function sendUnreviewedApplicationNotification($first_name, $last_name, $title, $email_to){
+
+        $myapplicationLink = "http://eecs.oregonstate.edu/capstone/submission/pages/myApplications.php";
+
+        $subject = "You have submitted applications for: $title";
+
+        $message = "
+
+        Dear $first_name $last_name,
+
+        Atleast one application has been submitted for the following project:
+
+        ---------------------------
+        Project Title: $title
+        ---------------------------
+
+        You can view all of your existing applications at: $myapplicationLink.
+        
+        Thank you,
+
+        Senior Design Capstone Team
+        Oregon State University
+        ";
+
+        return $this->sendEmail($email_to, $subject, $message);
+    }
+
+    public function sendLastApplicationSubmittedDate(){
+        $email_to = "eecs_capstone_staff@engr.orst.edu";
+        $currentDate = date("Y-m-d");
+        $currentDateTime = date("Y-m-d h:i:sa");
+
+
+        $subject = "[LOG] Reminder Email Sent : $currentDate";
+
+        $message = "
+
+        Dear Capstone Administrators,
+
+        Please use this for logging and documentation processes.
+        
+        A reminder email sent to proposers:
+
+        ---------------------------
+        $currentDateTime
+        ---------------------------
+
+        Thank you,
+
+        Senior Design Capstone Team
+        Oregon State University
+        ";
+
+        return $this->sendEmail($email_to, $subject, $message);
+    }
 }

@@ -62,6 +62,7 @@ class CapstoneApplicationsDao {
         }
     }
 
+
     /**
      * Fetches all of the applications in the database associated with the project with the provided ID.
      *

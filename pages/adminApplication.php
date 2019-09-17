@@ -92,6 +92,9 @@ include_once PUBLIC_FILES . '/modules/applications.php';
 
     <div class="row">
         <div class="col">
+			<button class="btn btn-lg btn-outline-primary capstone-nav-btn" type="button" id="sendProposerReminderBtn">
+			Send Reminder Emails
+			</button>
             <?php
 			if (count($projects) == 0) {
 			    echo '<p>There are no published projects for students to apply for.</p>';
@@ -120,3 +123,22 @@ include_once PUBLIC_FILES . '/modules/applications.php';
 <?php 
 include_once PUBLIC_FILES . '/modules/footer.php'; 
 ?>
+
+<script>
+/**
+ * Event handler for creating a new application based on user input into the modal
+ */
+function handleReviewApplicationReminder() {
+    let body = {
+        action: 'sendProposerApplicationReminders'
+    };
+
+    api.post('/./applications.php', body).then(res => {
+        snackbar(res.message, 'success');
+    }).catch( err=> {
+        snackbar(err.message, 'error');
+    });
+}
+$('#sendProposerReminderBtn').on('click', handleReviewApplicationReminder);
+
+</script>
