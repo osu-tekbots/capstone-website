@@ -440,6 +440,25 @@ class ProjectsActionHandler extends ActionHandler {
         ));
     }
 
+    public function handleUnarchiveProject() {
+        $id = $this->getFromBody('id');
+
+        $project = $this->projectsDao->getCapstoneProject($id);
+        // TODO: handle when not found
+
+        $project->setIsArchived(false);
+
+        $ok = $this->projectsDao->updateCapstoneProject($project);
+        if (!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to unarchive project'));
+        }
+
+        $this->respond(new Response(
+            Response::OK,
+            'Successfully Unarchived project.'
+        ));
+    }
+
     public function handleDeleteProject() {
         $id = $this->getFromBody('id');
 
@@ -526,6 +545,9 @@ class ProjectsActionHandler extends ActionHandler {
 
             case 'archiveProject':
                 $this->handleArchiveProject();
+
+            case 'unarchiveProject':
+                $this->handleUnarchiveProject();
 
             case 'deleteProject':
                 $this->handleDeleteProject();

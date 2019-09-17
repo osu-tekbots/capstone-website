@@ -141,8 +141,9 @@ class ApplicationsActionHandler extends ActionHandler {
         $link = $this->getAbsoluteLinkTo("pages/editApplication.php?id=$applicationId");
         $this->mailer->sendApplicationSubmissionConfirmation($application, $link);
 
-        $link = $this->getAbsoluteLinkTo("pages/reviewApplication.php?id=$applicationId");
-        $this->mailer->sendApplicationSubmissionNotification($application, $link);
+        /** Email to client disabled at request of Don 9/16/2019 */ 
+        //$link = $this->getAbsoluteLinkTo("pages/reviewApplication.php?id=$applicationId");
+        //$this->mailer->sendApplicationSubmissionNotification($application, $link);
 
         $this->respond(new Response(
             Response::OK,

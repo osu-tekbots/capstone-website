@@ -286,6 +286,7 @@ function renderAdminProjectCard($id, $title, $description, $details, $imageLink,
     $viewButton = $published ? createLinkButton("pages/viewSingleProject.php?id=$id", 'View') : '';
 	$editButton = (!$browsing && !$archived) ? createLinkButton("pages/editProject.php?id=$id", 'Edit') : '';
 	$deleteButton = (!$browsing && !$archived) ? createProjectDeleteButton($id, $num) : '';
+	$unarchiveButton = (!$browsing && $archived) ? createProjectUnarchiveButton($id, $num) : '';
 	if ($status == 'Created') {
 		$status = 'Not Yet Submitted';
 	}
@@ -317,6 +318,7 @@ function renderAdminProjectCard($id, $title, $description, $details, $imageLink,
 				$viewButton
 				$editButton
 				$deleteButton
+				$unarchiveButton
 				<small id='small$id' class='text-muted lastUpdatedSmall'>$lastUpdated</small>
 			</div>
 		</div>
@@ -402,3 +404,38 @@ function createProjectDeleteButton($projectId, $cardNumber) {
 	</script>
 	";
 }
+
+/**
+ * Creates the HTML and associated JavaScript required for the project 'Delete' button functionality.
+ *
+ * @param string $title the title of the project
+ * @param string $projectId
+ * @param integer $cardNumber
+ * @return void
+ */
+function createProjectUnarchiveButton($projectId, $cardNumber) {
+	return "
+	<button class='btn btn-outline-warning' id='unarchiveProjectBtn$projectId' type='button'>
+		Unarchive
+	</button>
+	
+	<script type='text/javascript'>
+		$('#unarchiveProjectBtn$projectId').on('click', function() {
+			let res = confirm('You are about to unarchive a project.');
+			if(!res) return false;
+			let projectId = '$projectId';
+			let data = {
+				action: 'unarchiveProject',
+				id: projectId,
+			};
+			api.post('/projects.php', data).then(res => {
+
+				snackbar(res.message, 'success');
+			}).catch(err => {
+				snackbar(err.message, 'error');
+			});
+		});
+	</script>
+	";
+}
+

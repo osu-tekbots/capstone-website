@@ -314,9 +314,9 @@ class CapstoneProjectsDao {
                 capstone_project_status, user 
             WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
                 AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND cp_u_id = u_id 
-                AND cp_id = :id AND cp_archived = :archived
+                AND cp_id = :id
             ';
-            $params = array(':id' => $id, ':archived' => false);
+            $params = array(':id' => $id);
             $results = $this->conn->query($sql, $params);
             if (\count($results) == 0) {
                 return false;
