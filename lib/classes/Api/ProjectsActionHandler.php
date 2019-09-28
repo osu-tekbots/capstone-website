@@ -279,7 +279,7 @@ class ProjectsActionHandler extends ActionHandler {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to submit project for approval'));
         }
 
-        $link = $this->getAbsoluteLinkTo('pages/editProject.php?id=' . $id) ;
+        $link = $this->getAbsoluteLinkTo('pages/viewSingleProject.php?id=' . $id) ;
         $this->mailer->sendProjectSubmissionConfirmationEmail($project, $link);
 
         $this->respond(new Response(
