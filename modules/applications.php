@@ -53,7 +53,9 @@ function renderApplicationTable($applications, $isProposer) {
         $interestLevel = Security::HtmlEntitiesEncode($app->getReviewInterestLevel()->getName());
         
         //The interestLevel must be selected for an application to have been reviewed.
-        $isReviewed = $app->getReviewInterestLevel()->getId() != CapstoneInterestLevel::NOT_SPECIFIED ? 'Yes' : 'No';
+        $isInterestedSet = $app->getReviewInterestLevel()->getId() != CapstoneInterestLevel::NOT_SPECIFIED ? TRUE : FALSE;
+        $isCommented = Security::HtmlEntitiesEncode($app->getReviewProposerComments());
+        $isReviewed = $isInterestedSet || !empty($isCommented) ? 'Yes' : 'No';
         
         if ($isProposer) {
             //Display the name of the applicant for proposers.
@@ -153,8 +155,11 @@ function renderAdminApplicationTable($applications) {
         //Gather relevant application review data.
         $interestLevel = Security::HtmlEntitiesEncode($app->getReviewInterestLevel()->getName());
         
+       
         //The interestLevel must be selected for an application to have been reviewed.
-        $isReviewed = $app->getReviewInterestLevel()->getId() != CapstoneInterestLevel::NOT_SPECIFIED ? 'Yes' : 'No';
+        $isInterestedSet = $app->getReviewInterestLevel()->getId() != CapstoneInterestLevel::NOT_SPECIFIED ? TRUE : FALSE;
+        $isCommented = Security::HtmlEntitiesEncode($app->getReviewProposerComments());
+        $isReviewed = $isInterestedSet || !empty($isCommented) ? 'Yes' : 'No';
         
             //Display the name of the applicant for proposers.
             $name = Security::HtmlEntitiesEncode($app->getStudent()->getFirstName()) 

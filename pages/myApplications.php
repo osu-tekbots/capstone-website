@@ -5,6 +5,7 @@ use DataAccess\CapstoneProjectsDao;
 use DataAccess\CapstoneApplicationsDao;
 use DataAccess\UsersDao;
 use Model\UserType;
+use Model\CapstoneProjectStatus;
 use Util\Security;
 
 if (!session_id()) {
@@ -35,6 +36,7 @@ if ($isProposer || $isAdmin) {
     if ($projects) {
         foreach ($projects as $p) {
             $pid = $p->getId();
+            $projectStatus = $p->getStatus()->getId();
             $projectApplications = $applicationsDao->getAllApplicationsForProject($pid, true);
             $submittedApplications[$pid] = $projectApplications;
         }
@@ -67,8 +69,15 @@ include_once PUBLIC_FILES . '/modules/applications.php';
                         echo '<h2>Applications for Review</h2>';
                     }
                     foreach ($projects as $project) {
+                        $isProjectSubmitted = $project->getStatus()->getId() == CapstoneProjectStatus::ACCEPTING_APPLICANTS ? TRUE : FALSE;
+                        if ($isProjectSubmitted){
                         echo '<h3>' . Security::HtmlEntitiesEncode($project->getTitle()) . '</h3>';
                         renderApplicationTable($submittedApplications[$project->getId()], true);
+                        }
+                        else {
+                            echo '<h3>' . Security::HtmlEntitiesEncode($project->getTitle()) . '</h3>';
+                            echo "<p>This project is not yet submitted.</p>";
+                        }
                     }
                 }
                 if ($isAdmin) {

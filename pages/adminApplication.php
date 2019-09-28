@@ -23,6 +23,8 @@ $projectsDao = new CapstoneProjectsDao($dbConn, $logger);
 $userApplications = array();
 $submittedApplications = array();
 
+$tooltipSendApplicationReminders = "This button will send out an email to all proposers who have pending unreviewed applications.  This process will take a while due to all the emails being sent out so please only press this once.";
+
 $projects = $projectsDao->getCapstoneProjectsForAdmin($uId);
 foreach ($projects as $p) {
     $pid = $p->getId();
@@ -92,7 +94,8 @@ include_once PUBLIC_FILES . '/modules/applications.php';
 
     <div class="row">
         <div class="col">
-			<button class="btn btn-lg btn-outline-primary capstone-nav-btn" type="button" id="sendProposerReminderBtn">
+			<button class="btn btn-lg btn-outline-primary capstone-nav-btn" type="button" id="sendProposerReminderBtn" data-toggle="tooltip" 
+                data-placement="bottom" title="<?php echo $tooltipSendApplicationReminders?>">
 			Send Reminder Emails
 			</button>
             <?php

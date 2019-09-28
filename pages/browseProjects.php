@@ -152,6 +152,7 @@ $types = $dao->getCapstoneProjectTypes();
 					renderProjectCardGroup($projects, $keywordsDao, true);
 					?>
             </div>
+
        </div> 
     </div>
 </div>

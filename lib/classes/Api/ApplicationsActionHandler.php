@@ -165,7 +165,7 @@ class ApplicationsActionHandler extends ActionHandler {
     public function handleReviewApplicationReminder() {
        
         $applications = $this->applicationsDao->getAllApplications();
-        $proposersList = array();
+        $projectsList = array();
         // Filter applications that are not reviewed
         if (count($applications) > 0){
             foreach ($applications as $application){
@@ -178,13 +178,13 @@ class ApplicationsActionHandler extends ActionHandler {
                     $projectID = $application->getCapstoneProject()->getId();
                     $project = $this->projectsDao->getCapstoneProject($projectID);
                     $proposerID = $project->getProposer()->getId();
-                    if (!in_array($proposerID, $proposersList)){
+                    if (!in_array($projectID, $projectsList)){
                         $first_name = $project->getProposer()->getFirstName();
                         $last_name = $project->getProposer()->getLastName();
                         $title = $project->getTitle();
                         $email = $project->getProposer()->getEmail();
-                        $this->mailer->sendUnreviewedApplicationNotification($first_name, $last_name, $title, $email);
-                        array_push($proposersList, $proposerID);
+                        $this->mailer->sendUnreviewedApplicationNotification($first_name, $last_name, $title, $email); // Added perssonal email for testing and debugging
+                        array_push($projectsList, $projectID);
                     }
                     
                 }

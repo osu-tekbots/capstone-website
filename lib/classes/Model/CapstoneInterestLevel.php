@@ -7,8 +7,8 @@ namespace Model;
 class CapstoneInterestLevel {
     const NOT_SPECIFIED = 1;
     const IMPARTIAL = 2;
-    const DESIREABLE = 3;
-    const UNDESIREABLE = 4;
+    const DESIRABLE = 3;
+    const UNDESIRABLE = 4;
 
     /** @var string */
     private $id;
