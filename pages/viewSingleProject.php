@@ -33,6 +33,7 @@ if($isLoggedIn) {
 include_once PUBLIC_FILES . '/modules/admin-review.php';
 
 $dao = new CapstoneProjectsDao($dbConn, $logger);
+$usersDao = new UsersDao($dbConn, $logger);
 $applicationsDao = new CapstoneApplicationsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
 $project = $dao->getCapstoneProject($pid);
@@ -101,7 +102,7 @@ if(!@getimagesize($image)){
 	      <div class="row h-100 align-items-center">
 	        <div class="col-lg-12">
 	          <h1 class="display-4 text-white mt-5 mb-2"><?php echo($title);?></h1>
-	          <p class="lead mb-5"><?php echo($description);?></p>
+	          <p class="lead mb-5"><?php echo nl2br($description);?></p>
 	        </div>
 	      </div>
 	    </div>
@@ -114,17 +115,17 @@ if(!@getimagesize($image)){
 	      <div class="col-md-8 mb-5">
 	        <h2>Objectives</h2>
 	        <hr>
-	        <p><?php echo($objectives);?></p>
+	        <p><?php echo nl2br($objectives);?></p>
 					<h2>Motivations</h2>
 				 	<hr>
-				 	<p><?php echo($motivation);?></p>
+				 	<p><?php echo nl2br($motivation);?></p>
 					<h2>Qualifications</h2>
 				 	<hr>
 					<strong>Minimum Qualifications:</strong>
- 				 	<br><?php echo($min_qualifications);?>
+ 				 	<br><?php echo nl2br($min_qualifications);?>
  				 	<p></p>
 					<strong>Preferred Qualifications:</strong>
-					<br><?php echo($pref_qualifications);?>
+					<br><?php echo nl2br($pref_qualifications);?>
 					<p></p>
                     <br>
                     
@@ -174,7 +175,9 @@ if(!@getimagesize($image)){
                     if ($isAdmin) {
 						echo'<br><br>';
                         $categories = $dao->getCapstoneProjectCategories();
-                        renderAdminReviewPanel($project, $categories, true);
+						$users = $usersDao->getAllUsers();
+						
+                        renderAdminReviewPanel($project, $categories, $users, true);
                     }
 					?>
 	      </div>
@@ -183,11 +186,11 @@ if(!@getimagesize($image)){
 	        <h2>Details</h2>
 	        <hr>
 					<address>
-					<strong>Author:</strong>
+					<strong>Project Partner:</strong>
 					<p><?php echo($name);?></p>
 			</address>
 			<?php
-			if ($type == 'Capstone'){
+			if ($type == 'Class Projects'){
 			echo"
 			<address>
 				<strong>NDA/IPA:</strong>
@@ -209,13 +212,13 @@ if(!@getimagesize($image)){
 			}
 			?>
 	        <?php 
-			if ($type != 'Capstone')
+			if ($type != 'Class Projects')
 			echo "<address>
 	          <strong>Start Date:</strong>
 	          <br>$start_by<br>
 	        </address>";
 	
-			if ($type != 'Capstone')
+			if ($type != 'Class Projects')
 			echo "<address>
 						<strong>End Date:</strong>
 	          <br>$complete_by
@@ -236,10 +239,10 @@ if(!@getimagesize($image)){
 	          <br>
 			</address>";
 			}
-			if ($type != 'Capstone') {
+			if ($type != 'Class Projects') {
 			echo "<address>
 			<strong>Compensation:</strong>
-	          <br>$compensation)
+	          <br>$compensation
 	          <br>
 			</address>";
 			}

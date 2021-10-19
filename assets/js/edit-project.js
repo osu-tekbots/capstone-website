@@ -3,6 +3,20 @@
  * won't execute until the page has finished parsing.
  */
 
+
+/**
+ * Since we require the user to click a save button, warn them before leaving page.
+ * @returns {string}
+ */
+$(window).bind('beforeunload', function(e){
+    var confirmationMessage = "Any edits you made to this page need to be saved by clicking 'Save Project Draft'";
+
+    (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+    return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+});
+
+
+
 /**
  * Fetches the project ID from the HTML
  * @returns {string}
@@ -176,7 +190,7 @@ function onSubmitForApprovalClick() {
     // Validate the form
     if (project.title == '') {
         return snackbar('Please provide a project title', 'error');
-    } else if (project.typeId == 1 && project.ndaIpId == '' || project.ndaIpId == 1) {
+    } else if (project.typeId == 1 && project.ndaIpId == 1) {
         return snackbar('Please select an NDA/IP option', 'error');
     } else if (project.description == '') {
         return snackbar('Please provide a project description', 'error');

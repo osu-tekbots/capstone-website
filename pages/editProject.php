@@ -2,6 +2,7 @@
 include_once '../bootstrap.php';
 
 use DataAccess\CapstoneProjectsDao;
+use DataAccess\UsersDao;
 use DataAccess\KeywordsDao;
 use Model\CapstoneProjectStatus;
 use Util\Security;
@@ -24,6 +25,7 @@ allowIf($authorizedToProceed, 'pages/login.php');
 
 $dao = new CapstoneProjectsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
+$usersDao = new UsersDao($dbConn, $logger);
 
 // Get the project and store properly formatted values into local variables
 $project = $dao->getCapstoneProject($pId);
@@ -48,6 +50,7 @@ if ($project) {
     $pImages = $project->getImages();
     $pVideoLink = Security::HtmlEntitiesEncode($project->getVideoLink());
     $pIsHidden = $project->getIsHidden();
+    $pIsSponsored = $project->getIsSponsored();
     $pComments = Security::HtmlEntitiesEncode($project->getProposerComments());
     $pStatusId = $project->getStatus()->getId();
 	$pStatusName = $project->getStatus()->getName();
@@ -61,6 +64,7 @@ $authorizedToProceed = $project->getProposer()->getId() == $_SESSION['userID'] |
 
 // Get all the various enumerations from the database
 $categories = $dao->getCapstoneProjectCategories();
+$users = $usersDao->getAllUsers();
 $types = $dao->getCapstoneProjectTypes();
 $focuses = $dao->getCapstoneProjectFocuses();
 $compensations = $dao->getCapstoneProjectCompensations();
@@ -125,6 +129,8 @@ $tooltipStartByText = 'If this project is not a capstone project, when does it n
 $tooltipCompleteByText = 'If this project is not a capstone project, when does it need to be completed by?';
 $tooltipNumberGroupsDesiredText = 'How many student teams would you like to work on your project? ';
 $tooltipCommentsText = "Enter any comments you would like only the admins to see. This is a good place to request specific students by name, request a call back, ask general questions, and tell us if you don't want this project publicly displayed.If you have not included your phone number on your profile, please do so here as we will likely call you.";
+$tooltipSponsored = "Thank you for your interest in supporting our students. Sponsorship for Capstone projects is vital for our program. Our sponsorship levels vary depending on the size of your company. Please contact Tina Batten <tina.batten@oregonstate.edu> for details.";
+
 
 /**
  * Renders the HTML for an option that will render an image to select as the default image.
@@ -155,6 +161,8 @@ var availableTags = [
 ?>
 ];
 </script>
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 
 <br/>
 <br/>
@@ -236,7 +244,7 @@ var availableTags = [
                     <span class="input-group-btn">
                         <span class="btn btn-outline-secondary btn-file" data-toggle="tooltip" 
                             data-placement="bottom" title="<?php echo $tooltipImgBtn; ?>">
-                            Upload Image<input type="file" id="imgInp" accept="image/*">
+                            Upload Image<input type="file" id="imgInp" accept=".jpg,.jpeg,.gif,.png">
                         </span>
                     </span>
                     <input type="text" class="form-control" id="nameOfImageInput" value="" readonly>
@@ -250,7 +258,7 @@ var availableTags = [
 					}
                 </style>
                 <div id="indexDiv" style="width:100%;max-height:300px;display:grid;">
-                    <select id="defaultImageSelect" class="image-picker show-html">
+				   <select id="defaultImageSelect" class="image-picker show-html">
 						<?php
 						$defaultImage = '';
 						foreach ($pImages as $image) {
@@ -279,18 +287,24 @@ var availableTags = [
 			<div id="helpDiv">
 				<a href="mailto:eecs_capstone_staff@engr.oregonstate.edu" target="_blank" class="btn btn-help">Questions?</a>
 			</div>
+			
+<!-- TODO: Need to put this icon on the image displayed and connect it to the delete functions in the DAO-->
+			<i class="fas fa-trash-alt" style="color:red;display:block;position:absolute;bottom:3px;right:3px;" onclick="deleteImg();"></i>
+					
 		</div>
 
 
 		<!-- Form for editing -->
-		<div class="col-sm-9 scroll formSection rounded">
+		<div class="col-sm-9 formSection rounded">
 			
 			<?php
 			//
 			// Generate the Admin interface if the user is an admin
 			//
 			if ($isAdmin && ($submitted || $approved)) {
-			    renderAdminReviewPanel($project, $categories, false);
+			    renderAdminReviewPanel($project, $categories, $users, false);
+			} else if ($isAdmin) {
+				echo "<h4>Project has not been submitted.</h4>";
 			}
 			?>
 
@@ -467,9 +481,10 @@ var availableTags = [
 					<div class="col-sm-6">
 						<div class="form-group" id="ndaDiv">
 							<div id="ndaDisclaimerDiv" class="ndaDisclaimer border rounded border-secondary">
-								<b>If your project requires an NDA and/or IP agreement, it must be indicated at the time the students 
-									select the projects.</b>
-							<br><br>
+								<font style="font-weight: bold;">If your project requires an NDA and/or IP agreement, it must be indicated at the time the students 
+									select the projects.</font>
+							<p>
+							<BR>
 							If your company intends to provide proprietary materials or confidential information requiring an NDA, OSU 
 							can arrange for a written agreement to reviewed and signed amongst the students, your company, and OSU.
 							<br><br>
@@ -484,11 +499,13 @@ var availableTags = [
 							parents or future employers.
 							<br><br>
 							This does not prevent a separate arrangement between you each student individually.
-							<br>
-							</div>
-							<label id="ndaSelectLabel" for="ndaSelect">
+							</p>
+							
+							
+							
+							<h6><label id="ndaSelectLabel" for="ndaSelect">
 								NDA/IP <?php displayInfoTooltip($tooltipNdaSelect); ?> <font size="2" style="color:red;">*required</font>
-							</label>
+							</label></h6>
 							<select class="form-control input" id="ndaSelect" name="ndaIpId">
 								<?php
 								foreach ($ndaips as $n) {
@@ -499,29 +516,46 @@ var availableTags = [
 								}
 								?>
 							</select>
+							
+							</div>
 						</div>
 					</div>
-					<div class="col-sm-3">
-						<div class="form-group">
-							<label for="minQualificationsText">
-								Minimum Qualifications <?php displayInfoTooltip($tooltipMinQualificationsText); ?>
-							</label>
-							<textarea class="form-control input" id="minQualificationsText" name="minQualifications" 
-								rows="9"><?php
-									echo $pMinQual;
-								?></textarea>
+					<div class="col-sm-6">
+					<div class="row">
+						<div class="col-sm-12">
+						<label id="sponsoredSelectLabel" for="sponsoredSelect">
+									Sponsored Project? <?php displayInfoTooltip($tooltipSponsored); ?>
+								</label>
+								<select class="form-control input" id="sponsoredSelect" name="isSponsored">
+									<?php
+									echo "<option value='1' ".($pIsSponsored == 1 ? 'selected' : '' ).">Yes</option>";
+									echo "<option value='0' ".($pIsSponsored == 0 ? 'selected' : '' ).">No</option>";
+									?>
+								</select>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label for="minQualificationsText">
+									Minimum Qualifications <?php displayInfoTooltip($tooltipMinQualificationsText); ?>
+								</label>
+								<textarea class="form-control input" id="minQualificationsText" name="minQualifications" 
+									rows="9"><?php
+										echo $pMinQual;
+									?></textarea>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label for="preferredQualificationsText">
+									Preferred Qualifications <?php displayInfoTooltip($tooltipPrefQualificationsText); ?>
+								</label>
+								<textarea class="form-control input" id="preferredQualificationsText" name="preferredQualifications" 
+									rows="9"><?php
+										echo $pPreferredQual;
+									?></textarea>
+							</div>
 						</div>
 					</div>
-					<div class="col-sm-3">
-						<div class="form-group">
-							<label for="preferredQualificationsText">
-								Preferred Qualifications <?php displayInfoTooltip($tooltipPrefQualificationsText); ?>
-							</label>
-							<textarea class="form-control input" id="preferredQualificationsText" name="preferredQualifications" 
-								rows="9"><?php
-									echo $pPreferredQual;
-								?></textarea>
-						</div>
 					</div>
 				</div>
 				<div class="row">

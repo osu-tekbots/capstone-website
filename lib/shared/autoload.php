@@ -6,12 +6,17 @@ spl_autoload_register(function ($className) {
     $phpFile = str_replace('\\', '/', $className) . '.php';
     $local = PUBLIC_FILES . '/lib/classes/' . $phpFile;
     $shared = PUBLIC_FILES . '/lib/shared/classes/' . $phpFile;
+    $external = PUBLIC_FILES . '/lib/shared/' . $phpFile;
     if(file_exists($local)) {
         include $local;
         return true;
     }
     if(file_exists($shared)) {
         include $shared;
+        return true;
+    }
+	if(file_exists($external)) {
+        include $external;
         return true;
     }
     return false;

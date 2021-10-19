@@ -31,18 +31,22 @@ include_once PUBLIC_FILES . '/modules/header.php';
 	<!-- Sidebar -->
 	<ul class="sidebar navbar-nav">
 		<li class="nav-item">
-			<a class="nav-link" href="pages/adminInterface.php">
-				<i class="fas fa-fw fa-tachometer-alt"></i>
-				<span>Dashboard</span>
-			</a>
+		<a class="nav-link" href="pages/adminInterface.php">
+			<i class="fas fa-fw fa-tachometer-alt"></i>
+			<span>Dashboard</span>
+		</a>
 		</li>
-
 		<li class="nav-item">
 			<a class="nav-link" href="pages/adminProject.php">
 				<i class="fas fa-fw fa-chart-area"></i>
-				<span>Projects</span></a>
+				<span>Active Projects</span></a>
 		</li>
-		<li class="nav-item active">
+		<li class="nav-item">
+			<a class="nav-link" href="pages/adminProject.php?archive">
+				<i class="fas fa-fw fa-chart-area"></i>
+				<span>Archived Projects</span></a>
+		</li>
+		<li class="nav-item">
 			<a class="nav-link" href="pages/adminUser.php">
 				<i class="fas fa-fw fa-table"></i>
 				<span>Users</span></a>

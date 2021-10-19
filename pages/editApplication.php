@@ -56,7 +56,7 @@ $minQualifications = Security::HtmlEntitiesEncode($project->getMinQualifications
 $prefQualifications = Security::HtmlEntitiesEncode($project->getPreferredQualifications());
 
 // Set tooltip texts
-$createApplicationInfo = 'When creating an application to a project it is important to present yourself in a clear and professional manner. The client, after getting your application, can indicate a preference to the course instructors but course instructors have the final word in assembling groups. You are only allowed to apply once to each project so plan accordingly.';
+$createApplicationInfo = 'When creating an application to a project it is important to present yourself in a clear and professional manner. The project partner, after getting your application, can indicate a preference to the course instructors but course instructors have the final word in assembling groups. You are only allowed to apply once to each project so plan accordingly. If you would like to communicate back and forth, be sure to include your email address in the application so that the project partner has it.';
 $tooltipJustificationInput = 'Use this field to explain why you are a good candidate for this project. You might want to include your motivations in addition to your experience.';
 $tooltipSkillSetInput = 'List your applicable skills here that make you an asset to this project.';
 $tooltipTimeAvailableInput = 'List the number of hours you can devote to this project a week or any time circumstances that will affect your time involved in the project.';

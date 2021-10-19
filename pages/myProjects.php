@@ -20,7 +20,8 @@ $isProposer = isset($_SESSION['accessLevel']) && $_SESSION['accessLevel'] == 'Pr
 $dao = new CapstoneProjectsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
 
-$projects = $dao->getCapstoneProjectsForUser($userId);
+$projects = $dao->getActiveCapstoneProjectsForUser($userId);
+$archived = $dao->getArchivedCapstoneProjectsForUser($userId);
 
 $title = 'My Projects';
 include_once PUBLIC_FILES . '/modules/header.php';
@@ -39,10 +40,20 @@ include_once PUBLIC_FILES . '/modules/cards.php';
 			<?php
 			endif; ?>
 		</div>
-
-		<div class="col-sm-9 scroll jumbotron capstoneJumbotron">
+	</div>
+	<div class='row'>
+		<h3>Active Projects</h3>
+		<div class="col-sm-12 scroll jumbotron capstoneJumbotron">
 			<div class="masonry" id="projectCardGroup">
 				<?php renderProjectCardGroup($projects, $keywordsDao); ?>
+			</div>
+		</div>
+	</div>
+	<div class="row">	
+		<h3>Archived Projects</h3>
+		<div class="col-sm-12 scroll jumbotron capstoneJumbotron">
+			<div class="masonry" id="projectArchiveCardGroup">
+				<?php renderProjectCardGroup($archived, $keywordsDao); ?>
 			</div>
 		</div>
 

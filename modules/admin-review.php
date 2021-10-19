@@ -7,19 +7,32 @@
  * @param \Model\CapstoneProjectCategory[] $categories an array of the available project categories
  * @return void
  */
-function renderAdminReviewPanel($project, $categories, $singleView) {
+function renderAdminReviewPanel($project, $categories, $users, $singleView) {
 
     $pId = $project->getId();
     $pStatusName = $project->getStatus()->getName();
     $pCategoryId = $project->getCategory()->getId();
+    $pProposerId = $project->getProposerId();
+    $pProposer = $project->getProposer(); //This gets a type User
     $pCategoryName = $project->getCategory()->getName();
     $pIsHidden = $project->getIsHidden();
     $pIsArchived = $project->getIsArchived();
     $pComments = $project->getProposerComments();
     $aComments = $project->getAdminComments();
-    $tooltipPurge = "This will complete remove a project as well as all of its connections.  (Deletes all applications and images related to the project and then deletes the project itself).  Use with caution";
+    $tooltipPurge = "This will completely remove a project as well as all of its connections and images.  (Deletes all applications and images related to the project and then deletes the project itself).  Use with caution not email generated to the proposer";
+	$tooltipArchive = "This will archive this project making it not visible to students. It is also removed from many Admin lists reducing clutter.";
+	$tooltipUnArchive = "This will Unarchive the project making it viewable by students and adding it to the current list of projects.";
+	$tooltipApprove = "SENDS EMAIL: This will inform the proposer vai email thier project is published and available for student sto view.";
+	$tooltipUnapprove = "SENDS EMAIL: This will unapprove a project and inform the propser. This is useful if the proposer wants to make changes to the project description.";
+	$tooltipUnhide = "This will reveal this project to a general search by students. Allows students to find and bid on project.";
+	$tooltipHide = "This hides a project from students. Useful for project that are already filled with selected students or has an NDA concern.";
 
-    $actions = array();
+    $usersHTML = "<select id='proposerSelect' class='form-control'>";
+	foreach ($users as $u)
+		$usersHTML .= "<option value='".$u->getId()."' ".($pProposerId == $u->getId() ? 'selected' : '' ).">" . $u->getLastname() . ", " . $u->getFirstname() . ": " .$u->getEmail(). "</option>";
+	$usersHTML .= "</select>";
+	
+	$actions = array();
     if ($pStatusName == 'Pending Approval') {
         $actions[] = 'Project Review';
     }
@@ -48,31 +61,14 @@ function renderAdminReviewPanel($project, $categories, $singleView) {
         $options .= "<option $selected value='$id'>$name</option>";
     }
 
-    
-    if ($singleView){
-        $button = "
-        <a href='pages/editProject.php?id=$pId'>
-        <button class='btn btn-lg btn-primary admin-btn' type='button'  
-            id='adminViewProjectBtn'>
-            &laquo Edit Project
-        </button>
-        </a>";
-    } else {
-        $button = "
-        <a href='pages/viewSingleProject.php?id=$pId'>
-        <button class='btn btn-lg btn-primary admin-btn' type='button' 
-            id='adminViewProjectBtn'>
-            &laquo View Project
-        </button>
-        </a>";
-    }
-
     echo "
     <br/>
     <div class='row'>
         <div class='col-sm border rounded border-dark' id='adminProjectStatusDiv'>
-            <center><h4><p style='color: black;'>-- Admin Project Status Review --</p></h4></center>
-            $actionsHtmlContent
+            <center><h4><p style='color: black;'>-- Administrator Options --</p></h4></center>
+            <div class='row'>
+			<div class='col-6'>
+			$actionsHtmlContent
             $visibility
             <h6><p style='color:red'>$isArchived</p></h6>
             $commentsHtml
@@ -82,31 +78,37 @@ function renderAdminReviewPanel($project, $categories, $singleView) {
                 data-placement='top' title=''>
                 $options
             </select>
-            <br/>
+            </div>
+			<div class='col-6'>
+			<h6><p style='color:black'>Project Proposer: $usersHTML</p></h6>
+			</div>
+			</div>
             <h6>Admin Comments (Only visible by admins)</h6>
             <textarea class='form-control input' id='projectAdminComments'>$aComments</textarea>
             <center>
-                <button class='btn btn-lg btn-success admin-btn' type='button' 
-                    id='adminApproveProjectBtn'>Approve Project</button>
-                <button class='btn btn-lg btn-danger admin-btn' type='button' 
-                    id='adminUnapproveProjectBtn'>Reject/Unapprove Project</button>
-                <button class='btn btn-lg btn-outline-danger admin-btn' type='button' 
-                id='adminMakeProjectArchivedBtn'>Archive Project</button>
-                <br/>
+                ";
+	if ($pStatusName == 'Pending Approval')
+		echo "<button class='btn btn-lg btn-success admin-btn' type='button' data-toggle='tooltip' data-placement='bottom' title='$tooltipApprove' id='adminApproveProjectBtn'>Approve Project</button>";
+	else
+		echo "<button class='btn btn-lg btn-danger admin-btn' type='button' data-toggle='tooltip' data-placement='bottom' title='$tooltipUnapprove' id='adminUnapproveProjectBtn'>Unapprove Project</button>";
+                
+	if ($isArchived == false)
+		echo "<button class='btn btn-lg btn-warning admin-btn' type='button' data-toggle='tooltip' data-placement='bottom' title='$tooltipArchive' id='adminMakeProjectArchivedBtn'>Archive Project</button>";
+	else
+		echo "<button class='btn btn-lg btn-warning admin-btn' type='button' data-toggle='tooltip' data-placement='bottom' title='$tooltipUnarchive' id='adminUnarchiveProjectBtn'>Unarchive Project</button>";
 
-                <button class='btn btn-lg btn-outline-danger admin-btn' type='button' 
-                    id='adminMakeProjectPrivateBtn'>Make Project Private</button>
-                <button class='btn btn-lg btn-outline-info admin-btn' type='button' 
-                    id='adminMakeProjectNotPrivateBtn'>Make Project Public</button>
-                    <button class='btn btn-lg btn-outline-danger admin-btn' type='button' 
-                    data-toggle='tooltip' data-placement='bottom' title='$tooltipPurge' id='adminDeleteProjectBtn'>PURGE</button>
-                <br/>
-                $button
-                <a href='pages/adminProject.php'>
-                    <button class='btn btn-lg btn-primary admin-btn' type='button' 
-                        id='adminReturnBtn'>Return &raquo</button>
-                </a>
-            </center>
+	if ($pIsHidden == false)
+		echo "<button class='btn btn-lg btn-outline-danger admin-btn' type='button' data-toggle='tooltip' data-placement='bottom' title='$tooltipHide' id='adminMakeProjectPrivateBtn'>Hide Project</button>";
+	else
+		echo "<button class='btn btn-lg btn-outline-info admin-btn' type='button' data-toggle='tooltip' data-placement='bottom' title='$tooltipUnhide' id='adminMakeProjectNotPrivateBtn'>Show Project</button>";	
+               
+                
+    echo "<button class='btn btn-lg btn-outline-danger admin-btn' type='button' data-toggle='tooltip' data-placement='bottom' title='$tooltipPurge' id='adminDeleteProjectBtn'>PURGE</button>
+                <br/>";
+	if ($singleView == true)
+		echo "<a href='pages/editProject.php?id=$pId'><button class='btn btn-lg btn-info admin-btn' type='button' data-toggle='tooltip' data-placement='bottom' title='$tooltipEdit' id='adminDeleteProjectBtn'>Edit Project</button></a>";
+				
+        echo"</center>
             <div id='approvedText' class='adminText' 
                 style='color: green;'>Project Approved!</div>
             <div id='rejectedText' class='adminText' 

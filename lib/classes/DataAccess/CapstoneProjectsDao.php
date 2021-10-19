@@ -74,8 +74,82 @@ class CapstoneProjectsDao {
             return false;
         }
     }
+	
+	/**
+     * Fetches several capstone projects from a specified range.
+     *
+     * @param integer $offset the offset into the results to fetch
+     * @param integer $limit the max number of results to fetch in this batch
+     * @return \Model\CapstoneProject[]|boolean an array of projects on success, false otherwise
+     */
+    public function getBrowsableCapstoneProjectsByCategory($categoryId) {
+        try {
+            $sql = '
+            SELECT * 
+            FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+                capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
+            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id 
+                AND cp_cpf_id = cpf_id AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id 
+                AND cp_cps_id = cps_id AND cp_u_id = u_id AND cp_is_hidden = :hidden AND cp_cps_id = :status 
+                AND cp_archived = :archived AND cp_cpc_id = :category 
+            ORDER BY cp_title ASC;
+            ';
+            // TODO: enable pagination with the offset and limit
+            $params = array(
+                ':hidden' => false, 
+                ':status' => CapstoneProjectStatus::ACCEPTING_APPLICANTS,
+                ':archived' => false,
+				':category' => $categoryId);
+            $results = $this->conn->query($sql, $params);
+
+            $projects = array();
+            foreach ($results as $row) {
+                $project = self::ExtractCapstoneProjectFromRow($row, true);
+                $this->getCapstoneProjectImages($project, true);
+                $projects[] = $project;
+            }
+
+            return $projects;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to get many projects: ' . $e->getMessage());
+            return false;
+        }
+    }
 
     /**
+     * Fetches capstone projects associated with a user.
+     *
+     * @param string $userId the ID of the user whose projects to fetch
+     * @return \Model\CapstoneProject[]|boolean an array of projects on success, false otherwise
+     */
+    public function getActiveCapstoneProjectsForUser($userId) {
+        try {
+            $sql = '
+            SELECT * 
+            FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+                capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
+            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+                AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND cp_u_id = u_id 
+                AND cp_u_id = :uid AND cp_archived = :archived
+            ';
+            $params = array(':uid' => $userId, ':archived' => false);
+            $results = $this->conn->query($sql, $params);
+
+            $projects = array();
+            foreach ($results as $row) {
+                $project = self::ExtractCapstoneProjectFromRow($row, true);
+                $this->getCapstoneProjectImages($project, true);
+                $projects[] = $project;
+            }
+           
+            return $projects;
+        } catch (\Exception $e) {
+            $this->logger->error("Failed to get capstone project for user '$userId': " . $e->getMessage());
+            return false;
+        }
+    }
+	
+	/**
      * Fetches capstone projects associated with a user.
      *
      * @param string $userId the ID of the user whose projects to fetch
@@ -89,9 +163,42 @@ class CapstoneProjectsDao {
                 capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
             WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
                 AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND cp_u_id = u_id 
-                AND cp_u_id = :uid AND cp_archived = :archived
+                AND cp_u_id = :uid
             ';
             $params = array(':uid' => $userId, ':archived' => false);
+            $results = $this->conn->query($sql, $params);
+
+            $projects = array();
+            foreach ($results as $row) {
+                $project = self::ExtractCapstoneProjectFromRow($row, true);
+                $this->getCapstoneProjectImages($project, true);
+                $projects[] = $project;
+            }
+           
+            return $projects;
+        } catch (\Exception $e) {
+            $this->logger->error("Failed to get capstone project for user '$userId': " . $e->getMessage());
+            return false;
+        }
+    }
+	
+	/**
+     * Fetches capstone projects associated with a user.
+     *
+     * @param string $userId the ID of the user whose projects to fetch
+     * @return \Model\CapstoneProject[]|boolean an array of projects on success, false otherwise
+     */
+    public function getArchivedCapstoneProjectsForUser($userId) {
+        try {
+            $sql = '
+            SELECT * 
+            FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+                capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
+            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+                AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND cp_u_id = u_id 
+                AND cp_u_id = :uid AND cp_archived = :archived
+            ';
+            $params = array(':uid' => $userId, ':archived' => true);
             $results = $this->conn->query($sql, $params);
 
             $projects = array();
@@ -370,6 +477,7 @@ class CapstoneProjectsDao {
                 :website,
                 :video,
                 :hidden,
+                :sponsored,
                 :comments,
                 :admincomments,
                 :cpsid,
@@ -400,6 +508,7 @@ class CapstoneProjectsDao {
                 ':website' => $project->getWebsiteLink(),
                 ':video' => $project->getVideoLink(),
                 ':hidden' => $project->getIsHidden(),
+                ':sponsored' => $project->getIsSponsored(),
                 ':comments' => $project->getProposerComments(),
                 ':admincomments' => $project->getAdminComments(),
                 ':cpsid' => $project->getStatus()->getId(),
@@ -426,6 +535,7 @@ class CapstoneProjectsDao {
             $sql = '
             UPDATE capstone_project SET
                 cp_title = :title,
+                cp_u_id = :uid,
                 cp_motivation = :mot,
                 cp_description = :desc,
                 cp_objectives = :obj,
@@ -444,6 +554,7 @@ class CapstoneProjectsDao {
                 cp_website_link = :website,
                 cp_video_link = :video,
                 cp_is_hidden = :hidden,
+                cp_is_sponsored = :sponsored,
                 cp_proposer_comments = :comments,
                 cp_admin_comments = :admincomments,
                 cp_cps_id = :cpsid,
@@ -453,6 +564,7 @@ class CapstoneProjectsDao {
             ';
             $params = array(
                 ':id' => $project->getId(),
+                ':uid' => $project->getProposer()->getId(),
                 ':title' => $project->getTitle(),
                 ':mot' => $project->getMotivation(),
                 ':desc' => $project->getDescription(),
@@ -472,6 +584,7 @@ class CapstoneProjectsDao {
                 ':website' => $project->getWebsiteLink(),
                 ':video' => $project->getVideoLink(),
                 ':hidden' => $project->getIsHidden(),
+                ':sponsored' => $project->getIsSponsored(),
                 ':comments' => $project->getProposerComments(),
                 ':admincomments' => $project->getAdminComments(),
                 ':cpsid' => $project->getStatus()->getId(),
@@ -552,13 +665,37 @@ class CapstoneProjectsDao {
 
             return true;
         } catch (\Exception $e) {
-            $this->logger->error('Failed to remove applications from project: ' . $e->getMessage());
+            $this->logger->error('Failed to remove all images from project: ' . $e->getMessage());
+            return false;
+        }
+    }
+	
+	/**
+     * Removes specific images from project
+     *
+     *
+     * @return boolean true on success, false otherwise
+     */
+    public function deleteCapstoneProjectDBImage($pid, $image) {
+        try {
+            $sql = '
+            DELETE FROM capstone_project_image 
+            WHERE cpi_cp_id = :pid AND cpi_id = :image';
+            $params = array(
+                ':pid' => $pid,
+				':image' => $image
+            );
+            $this->conn->execute($sql, $params);
+
+            return true;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to remove image from project: ' . $e->getMessage());
             return false;
         }
     }
 
     /**
-     * Removes all images from project
+     * Deletes a single image from file tree
      *
      *
      * @return boolean true on success, false otherwise
@@ -573,7 +710,9 @@ class CapstoneProjectsDao {
         }
     }
 
-        /**
+
+
+     /**
      * Removes all images from project
      *
      *
@@ -595,7 +734,8 @@ class CapstoneProjectsDao {
         }
     }
 
-    /**
+    
+	/**
      * Inserts metadata for a new image for a project in the databsae.
      *
      * @param \Model\CapstoneProjectImage $image the image metadata to insert into the database
@@ -627,6 +767,38 @@ class CapstoneProjectsDao {
             return false;
         }
     }
+	
+	/**
+     * Updates metadata for an image for a project in the databsae.
+     *
+     * @param \Model\CapstoneProjectImage $image the image metadata to insert into the database
+     * @return boolean true on success, false otherwise
+     */
+    public function updateCapstoneProjectImage($image) {
+        try {
+            $sql = '
+            UPDATE capstone_project_image SET
+			cpi_cp_id = :pid, 
+			cpi_name = :name, 
+			cpi_is_default = :default 
+			WHERE
+			cpi_id = :id
+			';
+            $params = array(
+                ':id' => $image->getId(),
+                ':pid' => $image->getProject()->getId(),
+                ':name' => $image->getName(),
+                ':default' => $image->getIsDefault()
+            );
+            $this->conn->execute($sql, $params);
+
+            return true;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to add new image metadata: ' . $e->getMessage());
+            return false;
+        }
+    }
+	
 
     /**
      * Fetches image metadata for an image associated with a project.
@@ -734,6 +906,28 @@ class CapstoneProjectsDao {
             return false;
         }
     }
+	
+	 /**
+     * Fetches a list of statuses for capstone projects
+     *
+     * @return \Model\CapstoneProjectType[]|boolean an array of statuses on success, false otherwise
+     */
+    public function getCapstoneProjectStatuses() {
+        try {
+            $sql = 'SELECT * FROM `capstone_project_status`';
+            $results = $this->conn->query($sql);
+
+            $statuses = array();
+            foreach ($results as $row) {
+                $statuses[] = self::ExtractCapstoneProjectStatusFromRow($row);
+            }
+            return $statuses;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to get project statuses: ' . $e->getMessage());
+            return false;
+        }
+    }
+
 
     /**
      * Fetches a list of focuses for capstone projects
@@ -861,6 +1055,7 @@ class CapstoneProjectsDao {
             ->setWebsiteLink($row['cp_website_link'])
             ->setVideoLink($row['cp_video_link'])
             ->setIsHidden($row['cp_is_hidden'] ? true : false)
+            ->setIsSponsored($row['cp_is_sponsored'] ? true : false)
             ->setProposerComments($row['cp_proposer_comments'])
             ->setAdminComments($row['cp_admin_comments'])
             ->setStatus(self::ExtractCapstoneProjectStatusFromRow($row, true))
@@ -964,7 +1159,7 @@ class CapstoneProjectsDao {
      */
     public static function ExtractCapstoneProjectStatusFromRow($row, $projectInRow = false) {
         $id = $projectInRow ? 'cp_cps_id' : 'cps_id';
-        $name = isset( $row['cps_name']) ?  $row['cps_name'] : null;
+        $name = isset($row['cps_name']) ?  $row['cps_name'] : null;
         return new CapstoneProjectStatus($row[$id], $name);
     }
 

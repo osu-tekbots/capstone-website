@@ -12,6 +12,10 @@ use DataAccess\KeywordsDao;
 use Api\ProjectsActionHandler;
 use Email\ProjectMailer;
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 
 // Setup our data access and handler classes
@@ -26,5 +30,5 @@ if (isset($_SESSION['userID']) && !empty($_SESSION['userID'])) {
     // Handle the request
     $handler->handleRequest();
 } else {
-    $handler->respond(new Response(Response::UNAUTHORIZED, 'You do not have permission to access this resource'));
+	$handler->respond(new Response(Response::UNAUTHORIZED, 'You do not have permission to access this resource'));
 }

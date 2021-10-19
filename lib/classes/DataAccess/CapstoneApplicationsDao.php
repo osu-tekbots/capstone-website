@@ -264,6 +264,26 @@ class CapstoneApplicationsDao {
             return false;
         }
     }
+	
+	/**
+     * Update selected fields for an existing capstone application in the database.
+     * 
+     * @param \Model\CapstoneApplication $application the capstone application to update
+     * @return boolean true if the update succeeds, false otherwise
+     */
+    public function deleteAllApplications() {
+        try {
+            $sql = '
+            DELETE FROM capstone_application
+			';
+            $this->conn->execute($sql);
+			
+            return true;
+        } catch (\Exception $e) {
+            $this->logError('Failed to delete all appliactions: ' . $e->getMessage());
+            return false;
+        }
+    }
 
     /**
      * Fetches the enumerated interest level values for indicating how interested a proposer is in the user that

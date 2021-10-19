@@ -77,6 +77,9 @@ class CapstoneProject {
     /** @var boolean */
     private $isHidden;
 
+	/** @var boolean */
+    private $isSponsored;
+
     /** @var boolean */
     private $isArchived;
 	
@@ -116,6 +119,7 @@ class CapstoneProject {
             $this->setDateCreated(new \DateTime()); //No idea why there is a '\' here... Don 7/29/2019
             $this->setIsHidden(true);
             $this->setIsArchived(false);
+            $this->setIsSponsored(false);
             $this->setNumberGroups(1);
         }
         $this->setId($id);
@@ -514,6 +518,25 @@ class CapstoneProject {
      */ 
     public function setIsHidden($isHidden) {
         $this->isHidden = $isHidden;
+
+        return $this;
+    }
+	
+	
+	/**
+     * Get the value of isSponsored
+     */ 
+    public function getIsSponsored() {
+        return $this->isSponsored;
+    }
+
+    /**
+     * Set the value of isSponsored
+     *
+     * @return  self
+     */ 
+    public function setIsSponsored($isSponsored) {
+        $this->isSponsored = $isSponsored;
 
         return $this;
     }

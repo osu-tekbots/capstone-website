@@ -14,7 +14,7 @@ const api = {
  * 
  * @param {string} method the HTTP method to use in the request (GET, POST, PUT, DELETE)
  * @param {string} url the resource URL location. A base prefix of `api` will be applied to the url.
- * @param {object|FormData|undefined} data the body to send in the request
+ * @param {object|FormData|undefined} data the body to send in the requestarray_key_exists
  * @param {boolean} encoded whether the request body is being sent as `multipart/form-data` or 
  * `application/x-www-form-urlencoded`
  */
@@ -23,11 +23,13 @@ function request(method, url, data, encoded) {
         let xhr = new XMLHttpRequest();
         xhr.onload = function () {
             let data;
-            try {        
+            //alert(this.response);
+			try {        
                 data = JSON.parse(this.response);
-            } catch(err) {
-                console.log(err);
-                reject(new Error('Failed to parse response from server'));
+            } catch(err) { 
+				console.log(this.response);
+				console.log(err);
+                reject(new Error('Failed to parse response from server (Expecting JSON)'));
             }
             if (this.status >= 200 && this.status < 300) {
                 return resolve(data);

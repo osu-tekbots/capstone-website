@@ -21,7 +21,7 @@ function renderApplicationTable($applications, $isProposer) {
         if ($isProposer) {
             echo '<p>No applications have been submitted for this project</p>';
         } else {
-            echo "<p>You don't have any applications yet</p>";
+            echo "<p>You have not submitted any application to other projects yet.</p>";
         }
         echo '</div></div>';
         return;

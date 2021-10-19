@@ -1,8 +1,8 @@
 <?php
 
 // Uncomment the lines below to display errors before configuration has been loaded
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+//ini_set('display_errors', 1);
+//error_reporting(E_ALL);
 
 define('PUBLIC_FILES', __DIR__);
 

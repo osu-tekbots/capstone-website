@@ -30,7 +30,7 @@ function authenticateStudent() {
     } else {
         $u = new User();
         $u->setAuthProvider(new UserAuthProvider(UserAuthProvider::ONID, 'ONID'))
-            ->setType(new UserType(UserType::STUDENT, 'Student'))
+            ->setType(new UserType(UserType::PROPOSER, 'Proposer'))
             ->setOnid($onid)
             ->setFirstName($_SESSION['auth']['firstName'])
             ->setLastName($_SESSION['auth']['lastName'])

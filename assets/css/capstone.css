@@ -76,18 +76,17 @@ button h6{
 }
 
 .ndaDisclaimer{
+	background: white;
 	font-size: 13px;
-	max-height: 200px;
-	overflow-y: scroll;
-
+	padding: 5px;
 }
 
 .navbarColor{
-	background: linear-gradient(to bottom right, #D1D1D1, #ffffff 100%);
+/*	background: linear-gradient(to bottom right, #D1D1D1, #ffffff 100%);*/
 }
 
 .jumbotron, .formSection{
-	background: linear-gradient(to bottom, #B1B1B1, #ffffff 100%);
+/*	background: linear-gradient(to bottom, #B1B1B1, #ffffff 100%); */
 }
 
 .keywordBadge{
@@ -321,8 +320,16 @@ a:hover{
 
 
 
-.card-img-top{
+.card-img-top {
 	width:100%;
+	border-top-left-radius: calc(0.25rem - 1px);
+	border-top-right-radius: calc(0.25rem - 1px);
+}
+
+.card-img-admin{
+	max-height:100px;
+	height: auto;
+	max-width:100%;
 }
 
 .capstoneCardColumns{

@@ -11,7 +11,12 @@ include_once PUBLIC_FILES . '/modules/cards.php';
 $dao = new CapstoneProjectsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
 
-$projects = $dao->getBrowsableCapstoneProjects();
+if (isset($_REQUEST['category']))
+	$projects = $dao->getBrowsableCapstoneProjectsByCategory($_REQUEST['category']);
+else
+	$projects = $dao->getBrowsableCapstoneProjects();
+
+
 $categories = $dao->getCapstoneProjectCategories();
 $types = $dao->getCapstoneProjectTypes();
 
@@ -28,12 +33,12 @@ $types = $dao->getCapstoneProjectTypes();
                     <br />
                     <button type="button" style="float:right;" class="btn btn-outline-secondary">Search</button>
                     <br /><br />
-<!-- CHECKBOX HIDE IF PROJECTS REQUIRE NDA NOT FUNCTIONING
+
                     <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="NDAFilterCheckBox" />
-                        <label for="NDAFilterCheckBox">Hide projects that require an NDA/IP</label>
+                        <input type="checkbox" class="form-check-input" id="NDAFilterCheckBox" onchange="toggleNDA();"/>
+                        <label for="NDAFilterCheckBox">Hide projects that require NDA/IP agreements</label>
                     </div>
--->
+
                     <div class="form-group">
                         <label for="projectTypeFilterSelect">Filter by Keyword</label>
                         <select class="form-control" id="keywordFilterSelect" onchange="filterSelectChanged(this)">
@@ -58,7 +63,7 @@ $types = $dao->getCapstoneProjectTypes();
                                     foreach ($categories as $c) {
                                         $name = $c->getName();
                                         if ($name != 'None'){
-                                            $options .= "<option>$name</option>";
+                                            $options .= "<option ".($c->getId() == $_REQUEST['category'] ? 'selected':'').">$name</option>";
                                         }
                                     }
                                     echo($options);
@@ -82,19 +87,22 @@ $types = $dao->getCapstoneProjectTypes();
                         </select>
                     </div>
 
-                    <div class="form-group">
+                   <?php /*echo '<div class="form-group">
                         <label for="yearFilterSelect">Filter by Year</label>
                         <select class="form-control" id="yearFilterSelect" onchange="filterSelectChanged(this)">
                             <option></option>
-                            <!-- Per user design, allow the user to filter through the last 5 years. -->
-                            <option><?php echo date('Y'); ?></option>
-                            <option><?php echo date('Y') - 1; ?></option>
-                            <option><?php echo date('Y') - 2; ?></option>
-                            <option><?php echo date('Y') - 3; ?></option>
-                            <option><?php echo date('Y') - 4; ?></option>
-                            <option><?php echo date('Y') - 5; echo ' and earlier'; ?></option>
+                            <option>'. date('Y') . '</option>
+                            <option>'. (date('Y') - 1) . '</option>
+                            <option>'. (date('Y') - 2) . '</option>
+                            <option>'. (date('Y') - 3) . '</option>
+                            <option>'. (date('Y') - 4) . '</option>
+                            <option>'. (date('Y') - 5) . ' and earlier</option>
                         </select>
-                    </div>
+                    </div>';*/
+				?>
+
+
+                    
                 </div>
 
                 <div class="col-sm-6">
@@ -157,6 +165,24 @@ $types = $dao->getCapstoneProjectTypes();
     </div>
 </div>
 <script type="text/javascript">
+
+function toggleNDA(){
+	
+	var nonstockItems = document.getElementsByClassName('reqNDA');
+	var checkBox = document.getElementById("NDAFilterCheckBox");
+	
+	if (checkBox.checked == true){
+		for (var i = 0; i < nonstockItems.length; i ++) {
+			nonstockItems[i].style.display = 'none';
+		}
+	} else {
+		for (var i = 0; i < nonstockItems.length; i ++) {
+			nonstockItems[i].style.display = '';
+		}
+	} 
+		
+}
+
 
     /*********************************************************************************
     * Function Name: strstr()

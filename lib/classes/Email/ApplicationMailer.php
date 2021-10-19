@@ -67,7 +67,7 @@ class ApplicationMailer extends Mailer {
         $first_name = $application->getCapstoneProject()->getProposer()->getFirstName();
         $last_name = $application->getCapstoneProject()->getProposer()->getLastName();
         $title = $application->getCapstoneProject()->getTitle();
-        $myapplicationLink = "http://eecs.oregonstate.edu/capstone/submission/pages/myApplications.php";
+        $myapplicationLink = "https://eecs.oregonstate.edu/capstone/submission/pages/myApplications.php";
 
         $subject = "An Application has been submitted for: $title";
 
@@ -96,19 +96,15 @@ class ApplicationMailer extends Mailer {
 
     public function sendUnreviewedApplicationNotification($first_name, $last_name, $title, $email_to){
 
-        $myapplicationLink = "http://eecs.oregonstate.edu/capstone/submission/pages/myApplications.php";
+        $myapplicationLink = "https://eecs.oregonstate.edu/capstone/submission/pages/myApplications.php";
 
-        $subject = "You have submitted applications for: $title";
+        $subject = "Student Applications for your project: $title";
 
         $message = "
 
         Dear $first_name $last_name,
 
-        Atleast one application has been submitted for the following project:
-
-        ---------------------------
-        Project Title: $title
-        ---------------------------
+        There is at least one application submitted for your project, $title that has yet to be reviewed.
 
         You can view all of your existing applications at: $myapplicationLink.
         

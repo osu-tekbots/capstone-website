@@ -229,6 +229,24 @@ class ApplicationsActionHandler extends ActionHandler {
             'Successfully saved application review'
         ));
     }
+	
+	/**
+     * Handles a request to review a project application.
+     *
+     * @return void
+     */
+    public function handleClearApplications() {
+        
+		$ok = $this->applicationsDao->deleteAllApplications();
+        if (!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to clear applications.'));
+        }
+
+        $this->respond(new Response(
+            Response::OK,
+            'Successfully cleared all applications'
+        ));
+    }
 
     /**
      * Handles the HTTP request on the API resource. 
@@ -260,6 +278,9 @@ class ApplicationsActionHandler extends ActionHandler {
             
             case 'sendProposerApplicationReminders':
                 $this->handleReviewApplicationReminder();
+
+			case 'clearApplications':
+                $this->handleClearApplications();
 
             default:
                 $this->respond(new Response(Response::BAD_REQUEST, 'Invalid action on application resource'));

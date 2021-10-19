@@ -62,7 +62,12 @@ $tooltipAllProjects = "";
 			<li class="nav-item">
 				<a class="nav-link" href="pages/adminProject.php">
 					<i class="fas fa-fw fa-chart-area"></i>
-					<span>Projects</span></a>
+					<span>Active Projects</span></a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="pages/adminProject.php?archive">
+					<i class="fas fa-fw fa-chart-area"></i>
+					<span>Archived Projects</span></a>
 			</li>
 			<li class="nav-item">
 				<a class="nav-link" href="pages/adminUser.php">

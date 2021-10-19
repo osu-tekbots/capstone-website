@@ -105,7 +105,7 @@ function renderProjectCardGroup($projects, $keywordsDao, $browsing = false) {
 		$published = !$p->getIsHidden();
 		
 		renderProjectCard($id, $title, $description, $details, $image, $status, $category, $lastUpdated, 
-			$numCardsCreated, $browsing, $published, $extra);
+			$numCardsCreated, $browsing, $published, $extra, $nda);
 
         $numCardsCreated++;
     }
@@ -122,7 +122,8 @@ function renderProjectCardGroup($projects, $keywordsDao, $browsing = false) {
  * @param boolean $showActions determines whether to show the actionable (Edit, Delete) buttons
  * @return void
  */
-function renderAdminProjectCardGroup($projects, $keywordsDao, $browsing = false) {
+
+function renderAdminProjectCardGroup($projects, $keywordsDao, $types, $categories, $statuses, $browsing = false) {
 	global $numCardsCreated;
 	global $image_dir;
 	
@@ -139,56 +140,64 @@ function renderAdminProjectCardGroup($projects, $keywordsDao, $browsing = false)
             $title = substr($title, 0, 60) . '...';
         }
         $description = Security::HtmlEntitiesEncode($p->getDescription());
-        if (strlen($description) > 90) {
+        if (strlen($description) > 220) {
             // Restrict the description length
-            $description = substr($description,0,90) . '...';
+            $description = substr($description,0,220) . '...';
         }
-        $status = $p->getStatus()->getName();
         $category = $p->getCategory()->getName();
 		$nda = $p->getNdaIp()->getName();
 		$archived = $p->getIsArchived();
 		$CategoryName = $p->getCategory()->getName();
-		$name = Security::HtmlEntitiesEncode($p->getProposer()->getFirstName()) 
-		. ' ' 
-		. Security::HtmlEntitiesEncode($p->getProposer()->getLastName());
+		$partnername = Security::HtmlEntitiesEncode($p->getProposer()->getFirstName()) . " " . Security::HtmlEntitiesEncode($p->getProposer()->getLastName());
 
+		$email = $p->getProposer()->getEmail();
+		
 		$proposerPhone = $p->getProposer()->getPhone();
 
-		$info = '';
-		$info .= "<p>Proposer: $name</p>";
-		$info .= "<p>Phone Number: $proposerPhone</p>";
+		$info = "Proposer: <a href='mailto:$email'>$partnername</a><BR>";
+		$info .= "Phone: $proposerPhone";
 
 		$extra = '';
 		// Set Extra Information for Admin Browse (If Archived, show that, if just a created project show nothing)
 		if ($archived) {
 			$extra = "Archived";
-			$status = "";
-		}
-		else if ($status == "Created") {
-			$extra = "";
-		}
-		else if ($CategoryName == 'None'){
-			$extra = "Category Placement";
 		}
 
+		$status = $p->getStatus()->getName();
+		$details = $status;
         // The details string contains the small text for the project
-        $details = $p->getType()->getName() . ' ' . $p->getDateStart()->format('Y') . '<br/>';
-        if (!$browsing) {
-            $details .= "Status: $status";
-        }
-		
+        	
 		if($nda == 'No Agreement Required'){
-			$details .= "<h6>NDA: $nda</h6>";
+			$details .= "<BR>NDA: $nda";
 		}
 		//NDA is "NDA Required" or "NDA/IP Required"
 		else{
-			$details .= "<h6>$nda</h6>";
+			$details .= "<BR>$nda";
 		}
 		
+
+		
+		//Make a Category drop down based on type
+		$category_select = "<select id='categoryselect$id' onchange='categoryChange(\"$id\");'>";
+		foreach ($categories AS $category){
+			$category_select .= "<option value='".$category->getId()."' ".($category->getId() == $p->getCategory()->getId() ? 'selected':'').">".$category->getName()."</option>";
+		}
+		$category_select .= "</select>";
+
+		//Make a Type drop down based on type
+		$type_select = "<select id='typeselect$id' onchange='typeChange(\"$id\");'>";
+		foreach ($types AS $type){
+			$type_select .= "<option value='".$type->getId()."' ".($type->getId() == $p->getType()->getId() ? 'selected':'').">".$type->getName()."</option>";
+		}
+		$type_select .= "</select>";
+	
+		//Make a Type drop down based on type
 		
 
 
 		
+		$details .= '<br/>Type: '. $type_select;
+		$details .= '<br/>Category: '. $category_select;
 
 		$image = false;
 		$images = $p->getImages();
@@ -212,13 +221,27 @@ function renderAdminProjectCardGroup($projects, $keywordsDao, $browsing = false)
 		}
 
         $dateUpdated = $p->getDateUpdated()->format('Y-m-d');
-		$lastUpdated = "<br/>Last Updated: $dateUpdated";
+		$lastUpdated = "Last Updated: $dateUpdated";
 		
 		$published = !$p->getIsHidden();
 		
 		renderAdminProjectCard($id, $title, $description, $details, $image, $status, $category, $lastUpdated, 
 			$numCardsCreated, $browsing, $published, $archived, $info, $extra);
 
+        $numCardsCreated++;
+    }
+}
+
+function renderAdminProjectCardGroup2($projects, $keywordsDao, $types, $categories, $statuses, $browsing = false) {
+	global $numCardsCreated;
+	global $image_dir;
+	
+	if(!$projects || count($projects) == 0) {
+		return;
+	}
+
+    foreach ($projects as $p) {	
+		renderAdminProjectCard2($p, $numCardsCreated, $categories, $types, $browsing);
         $numCardsCreated++;
     }
 }
@@ -238,14 +261,17 @@ function renderAdminProjectCardGroup($projects, $keywordsDao, $browsing = false)
  * @param boolean $browsing whether to hide or show the edit and delete buttons. A value of true hides.
  * @return void
  */
-function renderProjectCard($id, $title, $description, $details, $imageLink, $status, $category, $lastUpdated, $num, $browsing, $published, $extra) {
+function renderProjectCard($id, $title, $description, $details, $imageLink, $status, $category, $lastUpdated, $num, $browsing, $published, $extra, $nda) {
     $statusColor = ($status == 'Awaiting Approval' || $status == 'Rejected') ? 'red' : 'inherit';
     $viewButton = $published ? createLinkButton("pages/viewSingleProject.php?id=$id", 'View') : '';
 	$editButton = !$browsing ? createLinkButton("pages/editProject.php?id=$id", 'Edit') : '';
 	$deleteButton = !$browsing ? createProjectDeleteButton($id, $num) : '';
+	$classes = '';
+	if ($nda != 'No Agreement Required')
+		$classes .= 'reqNDA ';
 
     echo "
-	<div class='masonry-brick' id='projectCard$num'>
+	<div class='masonry-brick $classes' id='projectCard$num'>
 		<a href='pages/viewSingleProject.php?id=$id' target='_blank' style='color: black'>
 			<img class='card-img-top' id='projectImg$id' src='$imageLink' alt='Card Image Capstone' />
 		</a>
@@ -285,45 +311,58 @@ function renderAdminProjectCard($id, $title, $description, $details, $imageLink,
 	$statusColorExtra = ($extra == 'Category Placement' || $status == 'Rejected') ? 'red' : (($extra == 'Archived') ? '#ffcc00' : 'inherit');
     $viewButton = $published ? createLinkButton("pages/viewSingleProject.php?id=$id", 'View') : '';
 	$editButton = (!$browsing && !$archived) ? createLinkButton("pages/editProject.php?id=$id", 'Edit') : '';
-	$deleteButton = (!$browsing && !$archived) ? createProjectDeleteButton($id, $num) : '';
-	$unarchiveButton = (!$browsing && $archived) ? createProjectUnarchiveButton($id, $num) : '';
+	$deleteButton = (!$browsing) ? createProjectDeleteButton($id, $num) : '';
+	$unarchiveButton = '';
+	if (!$browsing && $archived) 
+		$unarchiveButton = createProjectUnarchiveButton($id, $num);
+	if (!$browsing && !$archived) 
+		$unarchiveButton = createProjectArchiveButton($id, $num);
+	
+	
+	
 	if ($status == 'Created') {
 		$status = 'Not Yet Submitted';
 	}
 
 	//<small class='text-muted'>$extra</small><br> (Above $viewButton)
     echo "
-	<div class='masonry-brick' id='projectCard$num'>
+	<tr id='projectCard$id' style='border-bottom: 1px solid black;'>
+	<td>
 	";
 	if (!$archived){
 		echo "
 		<a href='pages/viewSingleProject.php?id=$id' target='_blank' style='color: black'>
-			<img class='card-img-top' id='projectImg$id' src='$imageLink' alt='Card Image Capstone' />
+			<img class='card-img-admin' id='projectImg$id' src='$imageLink' alt='Card Image Capstone' />
 		</a>
 		";
 	}
 	else {
 		echo "
-		<img class='card-img-top' id='projectImg$id' src='$imageLink' alt='Card Image Capstone' />
+		<img class='card-img-admin' id='projectImg$id' src='$imageLink' alt='Card Image Capstone' />
 		";
 	}
 	echo "
-		<div class='card-body' id='projectCardBody$num'>
+		</td>
+		<td class='col-sm-3' id='projectCardBody$num'>
 			<h6>$title</h6>
+			<small class='text-muted'>$description</small>
+		</td>
+		<td class='col-sm-3'>
 			<small class='text-muted'>$details</small>
-			<small class='text-muted'>$info</small>
-			<div style='position: absolute; float: left; margin-right: 10px; bottom: 10px;'>
-				<h6><p style='color: $statusColor'>$status</p></h6>
-				<h6><p style='color: $statusColorExtra'>$extra</p></h6>
-				$viewButton
-				$editButton
-				$deleteButton
-				$unarchiveButton
-				<small id='small$id' class='text-muted lastUpdatedSmall'>$lastUpdated</small>
-			</div>
-		</div>
-		<br/>
-	</div>
+			</td>
+		<td class='col-sm-2'>
+			<span style='color: $statusColor'>$status</span><BR>
+			<small class='text-muted'>$info</small><BR>
+			<span style='color: $statusColorExtra'>$extra</span>
+			</td>
+		<td class='col-sm-2'>
+			<small id='small$id' class='text-muted lastUpdatedSmall'>$lastUpdated</small><BR>
+			$viewButton
+			$editButton
+			$deleteButton
+			$unarchiveButton
+		</td>
+	</tr>
 
 	<script type='text/javascript'>
 		$(document).ready(function() {
@@ -337,6 +376,169 @@ function renderAdminProjectCard($id, $title, $description, $details, $imageLink,
 	</script>
 	";
 }
+
+
+function renderAdminProjectCard2($project, $num, $categories, $types, $browsing) {
+	global $image_dir;
+	
+	// Capture and format all of the variables we need before rendering the HTML
+	$id = $project->getId();
+	$title = Security::HtmlEntitiesEncode($project->getTitle());
+	$description = Security::HtmlEntitiesEncode($project->getDescription());
+	$category = $project->getCategory()->getName();
+	$nda = $project->getNdaIp()->getName();
+	$archived = $project->getIsArchived();
+	$CategoryName = $project->getCategory()->getName();
+	$partnername = Security::HtmlEntitiesEncode($project->getProposer()->getFirstName()) . " " . Security::HtmlEntitiesEncode($project->getProposer()->getLastName());
+	$email = $project->getProposer()->getEmail();
+	$proposerPhone = $project->getProposer()->getPhone();
+	$published = !$project->getIsHidden();
+	$dateUpdated = $project->getDateUpdated()->format('Y-m-d');
+	$status = $project->getStatus()->getName();
+	
+	if (strlen($title) > 60) { // Restrict the title length
+		$title = substr($title, 0, 60) . '...';
+	}
+
+	if (strlen($description) > 220) { // Restrict the description length
+		$description = substr($description,0,220) . '...';
+	}
+
+	
+
+	$extra = '';
+	// Set Extra Information for Admin Browse (If Archived, show that, if just a created project show nothing)
+	if ($archived) {
+		$extra = "Archived";
+	}
+
+		//Make a Category drop down based on type
+	$category_select = "<select id='categoryselect$id' onchange='categoryChange(\"$id\");'>";
+	foreach ($categories AS $category){
+		$category_select .= "<option value='".$category->getId()."' ".($category->getId() == $project->getCategory()->getId() ? 'selected':'').">".$category->getName()."</option>";
+	}
+	$category_select .= "</select>";
+
+	//Make a Type drop down based on type
+	$type_select = "<select id='typeselect$id' onchange='typeChange(\"$id\");'>";
+	foreach ($types AS $type){
+		$type_select .= "<option value='".$type->getId()."' ".($type->getId() == $project->getType()->getId() ? 'selected':'').">".$type->getName()."</option>";
+	}
+	$type_select .= "</select>";
+	
+	$details = '';
+	if (($project->getIsSponsored()))
+			$details .= "<BR>Sponsored";
+	$details .= '<br/>Type: '. $type_select;
+	$details .= '<br/>Category: '. $category_select;
+
+
+	$image = false;
+	$images = $project->getImages();
+	if($images) {
+		foreach($images as $i) {
+			if($i->getIsDefault()){
+				$image = $i->getId();
+				break;
+			}
+		}
+	}
+	
+	if (!$image) {
+		$image = $image_dir . 'assets/img/capstone_test.jpg';
+	} else {
+		$image = $image_dir . "images/$image";
+	}
+	
+	if(!@getimagesize($image)){
+		$image = $image_dir . 'assets/img/capstone_test.jpg';
+	}
+
+	
+	$lastUpdated = "Last Updated: $dateUpdated";
+	
+	
+	
+	
+	$statusColor = ($status == 'Pending Approval' || $status == 'Rejected') ? 'red' : (($status == 'Created' || $status == 'Incomplete') ? '#ffcc00' : 'inherit');
+	$statusColorExtra = ($extra == 'Category Placement' || $status == 'Rejected') ? 'red' : (($extra == 'Archived') ? '#ffcc00' : 'inherit');
+    
+	$viewButton = $published ? createLinkButton("pages/viewSingleProject.php?id=$id", 'View') : '';
+	$editButton = (!$browsing && !$archived) ? createLinkButton("pages/editProject.php?id=$id", 'Edit') : '';
+	$deleteButton = (!$browsing) ? createProjectDeleteButton($id, $num) : '';
+	$publishButton = '';
+	if (!$browsing && $published) 
+		$publishButton = createProjectUnpublishButton($id, $num);
+	if (!$browsing && !$published) 
+		$publishButton = createProjectPublishButton($id, $num);
+	
+	$unarchiveButton = '';
+	if (!$browsing && $archived) 
+		$unarchiveButton = createProjectUnarchiveButton($id, $num);
+	if (!$browsing && !$archived) 
+		$unarchiveButton = createProjectArchiveButton($id, $num);
+	
+	$classes = '';
+	if ($status != 'Pending Approval')
+		$classes .= 'adminneeded ';
+	
+	if ($status == 'Created' || $status == 'Rejected')
+		$classes .= 'createdonly ';
+	
+	
+	echo "
+	<tr id='projectCard$id' style='border-bottom: 1px solid black;' class='$classes'>
+	<td>
+	";
+	if (!$archived){
+		echo "
+		<a href='pages/viewSingleProject.php?id=$id' target='_blank' style='color: black'>
+			<img class='card-img-admin' id='projectImg$id' src='$image' alt='Card Image Capstone' />
+		</a>
+		";
+	}
+	else {
+		echo "
+		<img class='card-img-admin' id='projectImg$id' src='$image' alt='Card Image Capstone' />
+		";
+	}
+	echo "
+		</td>
+		<td class='col-sm-3' id='projectCardBody$id'>
+			<h6>$title</h6>
+			<small class='text-muted'>$description</small>
+		</td>
+		<td class='col-sm-3'>
+			<small class='text-muted'>NDA: $nda $details</small>
+			</td>
+		<td class='col-sm-2'>
+			<span style='color: $statusColor'>$status</span><BR>
+			<small class='text-muted'>Proposer: <a href='mailto:$email'>$partnername</a><BR>Phone: $proposerPhone</small><BR>
+			<span style='color: $statusColorExtra'>$extra</span>
+			</td>
+		<td class='col-sm-2'>
+			<small id='small$id' class='text-muted lastUpdatedSmall'>$lastUpdated</small><BR>
+			$viewButton
+			$editButton
+			$deleteButton
+			$unarchiveButton
+			$publishButton
+		</td>
+	</tr>
+
+	<script type='text/javascript'>
+		$(document).ready(function() {
+			$('#projectCard$id').hover(function() {
+				$(this).css('background-color', '#f8f9fa');
+				$('#projectImg$id').css('transition', 'all .2s ease-in-out');
+			}, function() {
+				$(this).css('background-color', 'white');
+			});
+		});
+	</script>
+	";
+}
+
 
 /**
  * Renders the HTML for a project card that displays related project information.
@@ -391,11 +593,11 @@ function createProjectDeleteButton($projectId, $cardNumber) {
 			if(!res) return false;
 			let projectId = '$projectId';
 			let data = {
-				action: 'archiveProject',
+				action: 'deleteProject',
 				id: projectId,
 			};
 			api.post('/projects.php', data).then(res => {
-				$('#projectCard$cardNumber').remove();
+				$('#projectCard$projectId').hide();
 				snackbar(res.message, 'success');
 			}).catch(err => {
 				snackbar(err.message, 'error');
@@ -406,7 +608,7 @@ function createProjectDeleteButton($projectId, $cardNumber) {
 }
 
 /**
- * Creates the HTML and associated JavaScript required for the project 'Delete' button functionality.
+ * Creates the HTML and associated JavaScript required for the project 'Unarchive' button functionality.
  *
  * @param string $title the title of the project
  * @param string $projectId
@@ -429,7 +631,7 @@ function createProjectUnarchiveButton($projectId, $cardNumber) {
 				id: projectId,
 			};
 			api.post('/projects.php', data).then(res => {
-
+				$('#projectCard$projectId').hide();
 				snackbar(res.message, 'success');
 			}).catch(err => {
 				snackbar(err.message, 'error');
@@ -438,4 +640,103 @@ function createProjectUnarchiveButton($projectId, $cardNumber) {
 	</script>
 	";
 }
+
+/**
+ * Creates the HTML and associated JavaScript required for the project 'Archive' button functionality.
+ *
+ * @param string $title the title of the project
+ * @param string $projectId
+ * @param integer $cardNumber
+ * @return void
+ */
+function createProjectArchiveButton($projectId, $cardNumber) {
+	return "
+	<button class='btn btn-outline-warning' id='archiveProjectBtn$projectId' type='button'>
+		Archive
+	</button>
+	
+	<script type='text/javascript'>
+		$('#archiveProjectBtn$projectId').on('click', function() {
+			let res = confirm('You are about to Archive a project.');
+			if(!res) return false;
+			let projectId = '$projectId';
+			let data = {
+				action: 'archiveProject',
+				id: projectId,
+			};
+			api.post('/projects.php', data).then(res => {
+				snackbar(res.message, 'success');
+				$('#projectCard$projectId').hide();
+			}).catch(err => {
+				snackbar(err.message, 'error');
+			});
+		});
+	</script>
+	";
+}
+
+/**
+ * Creates the HTML and associated JavaScript required for the project 'Archive' button functionality.
+ *
+ * @param string $title the title of the project
+ * @param string $projectId
+ * @param integer $cardNumber
+ * @return void
+ */
+function createProjectUnpublishButton($projectId, $cardNumber) {
+	return "
+	<button class='btn btn-outline-warning' id='unpublishProjectBtn$projectId' type='button'>
+		Hide
+	</button>
+	
+	<script type='text/javascript'>
+		$('#unpublishProjectBtn$projectId').on('click', function() {
+			let projectId = '$projectId';
+			let data = {
+				action: 'unpublishProject',
+				id: projectId,
+			};
+			api.post('/projects.php', data).then(res => {
+				snackbar(res.message, 'success');
+				$('#projectCard$projectId').css({ opacity : '0.5', filter:  'alpha(opacity=50)'  });
+			}).catch(err => {
+				snackbar(err.message, 'error');
+			});
+		});
+	</script>
+	";
+}
+
+/**
+ * Creates the HTML and associated JavaScript required for the project 'Archive' button functionality.
+ *
+ * @param string $title the title of the project
+ * @param string $projectId
+ * @param integer $cardNumber
+ * @return void
+ */
+function createProjectPublishButton($projectId, $cardNumber) {
+	return "
+	<button class='btn btn-outline-warning' id='publishProjectBtn$projectId' type='button'>
+		Publish
+	</button>
+	
+	<script type='text/javascript'>
+		$('#publishProjectBtn$projectId').on('click', function() {
+			let projectId = '$projectId';
+			let data = {
+				action: 'publishProject',
+				id: projectId,
+			};
+			api.post('/projects.php', data).then(res => {
+				snackbar(res.message, 'success');
+				$('#projectCard$projectId').css({ opacity : '0.5', filter:  'alpha(opacity=50)'  });
+			}).catch(err => {
+				snackbar(err.message, 'error');
+			});
+		});
+	</script>
+	";
+}
+
 

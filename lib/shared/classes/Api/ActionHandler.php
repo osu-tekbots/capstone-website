@@ -41,8 +41,11 @@ class ActionHandler {
      * @return void
      */
     public function requireParam($name, $message = null) {
-        if (!\array_key_exists($name, $this->requestBody)) {
-            $message = $message == null ? "Missing required request body parameter: $name" : $message;
+//        $response = json_decode($this->requestBody,true);
+//		if (!\array_key_exists($name, $response)) {
+		if (!\array_key_exists($name, $this->requestBody)) {
+			$message = $this->requestBody;
+            $message = ($message == null ? "Missing required request body parameter: $name" : $message);
             $this->respond(new Response(Response::BAD_REQUEST, $message));
         }
     }

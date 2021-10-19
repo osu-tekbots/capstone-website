@@ -4,6 +4,7 @@ include_once '../bootstrap.php';
 use DataAccess\UsersDao;
 use Model\User;
 use Model\UserAuthProvider;
+use Model\UserType;
 
 if (!isset($_SESSION)) {
     session_start();
@@ -19,12 +20,12 @@ include_once PUBLIC_FILES . '/lib/shared/auth/oauth.php';
 function authenticateWithGitHub() {
     global $dbConn, $logger, $configManager;
 
-    $authProviders = $configManager->getAuthProviderConfig();
+    $authProviders = $configManager->get("auth_github");
 
     $authProvidedId = authenticateWithOAuth2(
         'github',
-        $authProviders['github']['client_id'],
-        $authProviders['github']['secret'],
+        $authProviders['client_id'],
+        $authProviders['secret'],
         array(
             'user:email'
         ),

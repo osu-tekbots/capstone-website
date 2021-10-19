@@ -10,13 +10,20 @@
 include_once PUBLIC_FILES . '/modules/button.php';
 
 if (!session_id()) {
+  $ok = @session_start();
+  if(!$ok){
+    session_regenerate_id(true); // replace the Session ID
     session_start();
+  }
 }
+#if (!session_id()) {
+#    session_start();
+#}
 
 $baseUrl = $configManager->getBaseUrl();
-$image_dir = 'http://eecs.oregonstate.edu/capstone/submission/';
+$image_dir = 'https://eecs.oregonstate.edu/capstone/submission/';
 
-$title = isset($title) ? $title : 'Senior Design Capstone | OSU';
+$title = isset($title) ? $title : 'EECS Project Submission Form | OSU';
 
 // JavaScript to include in the page. If you provide a JS reference as an associative array, the keys are the
 // atributes of the <script> tag. If it is a string, the string is assumed to be the src.
@@ -155,7 +162,7 @@ function displayInfoTooltip($tooltip){
         <a class="header-main-link" href="">
             <div class="logo">
                 <img class="logo" src="assets/img/osu-logo-orange.png" />
-                <h1><span id="projectPrefix">Senior </span>Capstone </h1>
+                <h1><span id="projectPrefix">EECS Project </span>Submission Form</h1>
             </div>
         </a>
         <nav class="navigation">

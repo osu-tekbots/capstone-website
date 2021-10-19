@@ -4,6 +4,7 @@ include_once '../bootstrap.php';
 use DataAccess\UsersDao;
 use Model\User;
 use Model\UserAuthProvider;
+use Model\UserType;
 
 if (!isset($_SESSION)) {
     session_start();
@@ -18,8 +19,9 @@ include_once PUBLIC_FILES . '/lib/shared/auth/oauth.php';
  */
 function authenticateWithMicrosoft() {
     global $dbConn, $logger, $configManager;
-
-    $authProviders = $configManager->get("auth_microsoft");
+    
+	$logger->info("Attempting Microsoft Login");
+	$authProviders = $configManager->get("auth_microsoft");
 
     $authProvidedId = authenticateWithOAuth2(
         'Microsoft',
@@ -27,14 +29,22 @@ function authenticateWithMicrosoft() {
         $authProviders['secret'],
         array(
             'wl.basic',
-            'wl.emails'
+            'wl.emails',
+			'wl.signin',
+			'User.Read'
         ),
-        'https://apis.live.net/v5.0/me'
+        'https://login.live.com/oauth20_authorize.srf'
     );
+	
+	$logger->info("Finished authenticateWithOAuth2(): " . $authProvidedId);
 
     if (!$authProvidedId) {
         return false;
-    }
+    } else {
+//	$_SESSION['error'] =  "$authProvidedId is True";	
+	}
+
+	
 
     $dao = new UsersDao($dbConn, $logger);
 

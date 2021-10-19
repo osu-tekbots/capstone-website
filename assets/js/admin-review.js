@@ -30,9 +30,32 @@ function onProjectCategorySelect() {
 }
 $('#projectCategorySelect').change(onProjectCategorySelect);
 
+
 /**
- * Handler for when the project admincomments is updated by the admin. The result of the select will automatically
- * update the category of the project in the database.
+ * Handler for when the proposer is updated.
+ */
+function onProposerSelect() {
+	myProposerSelect = $('#proposerSelect').val();
+    projectID = getProjectId();
+
+    let body = {
+        action: 'updateProposer',
+        projectId: projectID,
+        proposerId: myProposerSelect
+    };
+
+    api.post('/projects.php', body)
+        .then(res => {
+            snackbar(res.message, 'success');
+        })
+        .catch(err => {
+            snackbar(err.message, 'error');
+        });
+}
+$('#proposerSelect').change(onProposerSelect);
+
+/**
+ * Handler for when the project admincomments is updated by the admin. 
  */
 function onProjectAdminCommentUpdate() {
     projectAdminComments = $('#projectAdminComments').val();
@@ -43,7 +66,7 @@ function onProjectAdminCommentUpdate() {
         projectId: projectID,
         adminComments: projectAdminComments
     };
-
+	
     api.post('/projects.php', body)
         .then(res => {
             snackbar(res.message, 'success');
