@@ -6,12 +6,16 @@ Senior Design Capstone is an application that enables students to browse Senior 
 individuals from industry and other sponsors. See [the changelog](./CHANGELOG.md) for detailed information about
 updates to the website.
 
-**Initial Development**: Winter Term 2019 - Spring Term 2019
 
-**Contributors**
-- Symon Ramos (ramossy@oregonstate.edu)
-- Thien Nam (namt@oregonstate.edu)
-- Braden Hitchcock (hitchcob@oregonstate.edu)
+**Contributors:**
+- 2019
+  - Symon Ramos (ramossy@oregonstate.edu)
+  - Thien Nam (namt@oregonstate.edu)
+  - Braden Hitchcock (hitchcob@oregonstate.edu)
+- 2022
+  - Virginia Williams (linkv@oregonstate.edu)
+  - Sam Maxon (maxons@oregonstate.edu)
+  - Daniel Bowder (bowderd@oregonstate.edu)
 
 ## Development
 The following resources provide information about how to develop the website locally and the workflow for pushing
