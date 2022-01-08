@@ -1,0 +1,21 @@
+/**********************************************************************************************
+*	File Name: capstoneMobile.css
+*	Author: Symon Ramos and Jack Thiem
+*	Date: 3/5/19
+*	Description: Contains custom css stylings for this application. This is 
+*	used for all devices up to a max-width of 768px, including both phones and 
+*   tablets. 
+*	
+**********************************************************************************************/
+
+.homePageText{
+	font-size: 40px;
+}
+
+.navbarBrowser{
+	display: none;
+}
+
+.navbarMobile{
+	display: inline;
+}
