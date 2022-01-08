@@ -225,3 +225,4 @@ Create a hidden div and echo out the SESSION variable there. Then reference that
 
 ![image](https://user-images.githubusercontent.com/20714895/59057421-2e2ce980-884f-11e9-83ad-6035f7787e94.png)
 
+
