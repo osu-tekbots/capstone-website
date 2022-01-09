@@ -21,7 +21,7 @@ updates to the website.
 
 
 ## Start Developing
-To setup a development environment follow the [Setup](./docs/setup-dev.md) instructions.
+To setup a development environment follow the [Setup](./docs/dev-setup.md) instructions.
 
 
 ## Configuration
