@@ -135,7 +135,7 @@ dev_setup_containers() {
 
     docker exec -it "${APACHE_PHP_CONTAINER_NAME}" /bin/bash -c "cd /var/www/html/scripts; php create-user.php '${ONID_USERNAME}' '${ONID_FIRST}' '${ONID_LAST}' ${ONID_ACCOUNT_TYPE}"
 
-    log_print "The script has created an ONID user with the following 4 ONID accounts:";
+    log_print "The script has created the following 4 ONID accounts:";
     log_print "  admin, student, proposer, ${ONID_USERNAME}"
     simple_print "";
     log_print "Visit http://localhost:${APACHE_PHP_LOCAL_PORT}/masq to masquerade as one of them!";
