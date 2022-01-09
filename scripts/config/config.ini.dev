@@ -1,0 +1,22 @@
+; All files referenced through the configuration are relative to this private path
+private_files = /var/www; directory containing private files (outside the web root)
+
+[server]
+display_errors = yes; yes|no
+display_errors_severity = all; all|warning|error
+auth_providers_config_file = auth.ini; auth.ini
+
+; [email]
+; subject_tag = ; optional tag to prepend all email subjects with
+; from_address = ; main from address used when sending email from the server
+; admin_addresses[] = ; array of email addresses of admins that need important site notifications
+
+[client]
+base_url = http://localhost:${APACHE_PHP_LOCAL_PORT}/; base URL used by the frontend (e.g. http://eecs.oregonstate.edu/capstone/)
+
+[logger]
+log_file = out.log; out.log, or another name pointing to the log file
+level = info; trace|info|warn|error
+
+[database]
+config_file = database.ini; database.ini, or another name pointing to the database configuration file (see above for contents)

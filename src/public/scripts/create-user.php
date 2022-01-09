@@ -42,9 +42,15 @@ $configManager = new Util\ConfigManager('..');
 $dbConn = DataAccess\DatabaseConnection::FromConfig($configManager->getDatabaseConfig());
 $dao = new DataAccess\UsersDao($dbConn);
 
-$onid = prompt('Enter ONID for user');
-$fname = prompt('Enter first name for user', 'John');
-$lname = prompt('Enter last name for user', 'Smith');
+if ($argc >= 4) {
+    $onid = $argv[1];
+    $fname = $argv[2];
+    $lname = $argv[3];
+} else {
+    $onid = prompt('Enter ONID for user');
+    $fname = prompt('Enter first name for user', 'John');
+    $lname = prompt('Enter last name for user', 'Smith');
+}
 
 $types = $dao->getUserTypes();
 $values = ' ';
@@ -52,7 +58,11 @@ foreach ($types as $type) {
     $values .= $type->getId() . ' - ' . $type->getName() . ' ';
 }
 
-$typeId = prompt("Enter type ($values)", 1);
+if ($argc >= 5) {
+    $typeId = $argv[4];
+} else {
+    $typeId = prompt("Enter type ($values)", 1);
+}
 $type;
 foreach ($types as $t) {
     if ($t->getId() == $typeId) {
