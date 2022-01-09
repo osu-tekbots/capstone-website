@@ -6,7 +6,7 @@ There is a configuration file where some of the development parameters can be co
 
 The [dev-vars.sh](../scripts/dev-vars.sh) script contains a number of variables that will be populated by executing the setup instructions. 
 
-The variables you may be mo
+The variables you may want to modify, but can be left alone as is for a standard development environment.
 
 ## Linux
 ### 1. Install Git and Docker
