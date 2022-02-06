@@ -28,7 +28,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 include_once PUBLIC_FILES . '/modules/cards.php';
 
 ?>
-<br><br>
+<br><br><br>
 <div class="container-fluid">
 	<h1>My Projects</h1>
 	<div class="row">
