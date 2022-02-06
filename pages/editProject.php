@@ -163,6 +163,65 @@ var availableTags = [
 ];
 </script>
 
+<!-- include link for rich text editing and create editor objects for each field -->
+<script src="https://cdn.ckeditor.com/ckeditor5/31.1.0/classic/ckeditor.js"></script>
+<script>
+	let descriptionEditor;
+    ClassicEditor
+        .create( document.querySelector( '#projectDescriptionText' ) )
+		.then( newEditor => {
+			descriptionEditor = newEditor;
+    	} )
+        .catch( error => {
+            console.error( error );
+        } );
+	let motivationEditor;
+    ClassicEditor
+        .create( document.querySelector( '#motivationText' ) )
+		.then( newEditor => {
+			motivationEditor = newEditor;
+    	} )
+        .catch( error => {
+            console.error( error );
+        } );
+	let objectivesEditor;
+    ClassicEditor
+        .create( document.querySelector( '#objectivesText' ) )
+		.then( newEditor => {
+			objectivesEditor = newEditor;
+    	} )
+        .catch( error => {
+            console.error( error );
+        } );
+	let minQualEditor;
+    ClassicEditor
+        .create( document.querySelector( '#minQualificationsText' ) )
+		.then( newEditor => {
+			minQualEditor = newEditor;
+    	} )
+        .catch( error => {
+            console.error( error );
+        } );
+	let prefQualEditor;
+    ClassicEditor
+        .create( document.querySelector( '#preferredQualificationsText' ) )
+		.then( newEditor => {
+			prefQualEditor = newEditor;
+    	} )
+        .catch( error => {
+            console.error( error );
+        } );
+	let commentsEditor;
+    ClassicEditor
+        .create( document.querySelector( '#commentsText' ) )
+		.then( newEditor => {
+			commentsEditor = newEditor;
+    	} )
+        .catch( error => {
+            console.error( error );
+        } );
+</script>
+
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 
 <br/>

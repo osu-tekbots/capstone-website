@@ -686,7 +686,7 @@ function createProjectArchiveButton($projectId, $cardNumber) {
 function createProjectUnpublishButton($projectId, $cardNumber) {
 	return "
 	<button class='btn btn-outline-warning' id='unpublishProjectBtn$projectId' type='button'>
-		Hide
+		Unpublish // <- was hide
 	</button>
 	
 	<script type='text/javascript'>
