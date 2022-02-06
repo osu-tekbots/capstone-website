@@ -32,6 +32,13 @@ function getProjectId() {
 function getProjectFormDataAsJson() {
     let form = document.getElementById('formProject');
     let data = new FormData(form);
+    // editors would have to be passed in as parameters
+    data.append("description", descriptionEditor.getData());
+    data.append("motivation", motivationEditor.getData());
+    data.append("objectives", objectivesEditor.getData());
+    data.append("minQualifications", minQualEditor.getData());
+    data.append("preferredQualifications", prefQualEditor.getData());
+    data.append("comments", commentsEditor.getData());
 
     let json = {
         title: $('#projectTitleInput').val()
