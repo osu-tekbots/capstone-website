@@ -69,22 +69,6 @@ $types = $dao->getCapstoneProjectTypes();
                     </select>
                 </div>
             </div>
-            <div class="col-sm-2">
-                <div class="form-group">
-                    <label for="projectCategoryFilterSelect">Filter by Project Type</label>
-                    <select class="form-control" id="projectCategoryFilterSelect" onchange="filterSelectChanged(this)">
-                        <?php 
-                                $options = '<option></option>';
-                                foreach ($types as $t) {
-                                    $name = $t->getName();
-                                    if ($name != 'None'){
-                                        $options .= "<option>$name</option>";
-                                    }
-                                }
-                                echo($options);
-                        ?>
-                    </select>
-                </div>
 
                 <?php /*echo '<div class="form-group">
                     <label for="yearFilterSelect">Filter by Year</label>
@@ -99,49 +83,50 @@ $types = $dao->getCapstoneProjectTypes();
                     </select>
                 </div>';*/
             ?>
-            </div>
+            
 
-            <div class="col-sm-6">
-                Sort By...
-                <div class="custom-control custom-radio">
-                    <input
-                        type="radio"
-                        id="sortTitleAscRadio"
-                        value="sortTitleAsc"
-                        name="sortRadio"
-                        class="custom-control-input"
-                    />
-                    <label class="custom-control-label" for="sortTitleAscRadio">Title (A..Z)</label>
-                </div>
-                <div class="custom-control custom-radio">
-                    <input
-                        type="radio"
-                        id="sortTitleDescRadio"
-                        value="sortTitleDesc"
-                        name="sortRadio"
-                        class="custom-control-input"
-                    />
-                    <label class="custom-control-label" for="sortTitleDescRadio">Title (Z..A)</label>
-                </div>
-                <div class="custom-control custom-radio">
-                    <input
-                        type="radio"
-                        id="sortDateDescRadio"
-                        value="sortDateDesc"
-                        name="sortRadio"
-                        class="custom-control-input"
-                    />
-                    <label class="custom-control-label" for="sortDateDescRadio">Date (Recent)</label>
-                </div>
-                <div class="custom-control custom-radio">
-                    <input
-                        type="radio"
-                        id="sortDateAscRadio"
-                        value="sortDateAsc"
-                        name="sortRadio"
-                        class="custom-control-input"
-                    />
-                    <label class="custom-control-label" for="sortDateAscRadio">Date (Oldest)</label>
+                <div class="col-sm-6">
+                    Sort By...
+                    <div class="custom-control custom-radio">
+                        <input
+                            type="radio"
+                            id="sortTitleAscRadio"
+                            value="sortTitleAsc"
+                            name="sortRadio"
+                            class="custom-control-input"
+                        />
+                        <label class="custom-control-label" for="sortTitleAscRadio">Title (A..Z)</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input
+                            type="radio"
+                            id="sortTitleDescRadio"
+                            value="sortTitleDesc"
+                            name="sortRadio"
+                            class="custom-control-input"
+                        />
+                        <label class="custom-control-label" for="sortTitleDescRadio">Title (Z..A)</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input
+                            type="radio"
+                            id="sortDateDescRadio"
+                            value="sortDateDesc"
+                            name="sortRadio"
+                            class="custom-control-input"
+                        />
+                        <label class="custom-control-label" for="sortDateDescRadio">Date (Recent)</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input
+                            type="radio"
+                            id="sortDateAscRadio"
+                            value="sortDateAsc"
+                            name="sortRadio"
+                            class="custom-control-input"
+                        />
+                        <label class="custom-control-label" for="sortDateAscRadio">Date (Oldest)</label>
+                    </div>
                 </div>
             </div>
         </ul>

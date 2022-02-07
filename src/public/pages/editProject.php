@@ -61,7 +61,7 @@ if ($project) {
 
 // If the user is not the creator of the project or an admin, redirect them to the home page (unauthorized)
 //Workaround here
-$authorizedToProceed = $project->getProposer()->getId() == $_SESSION['userID'] || $isAdmin;
+// $authorizedToProceed = $project->getProposer()->getId() == $_SESSION['userID'] || $isAdmin;
 
 // Get all the various enumerations from the database
 $categories = $dao->getCapstoneProjectCategories();
