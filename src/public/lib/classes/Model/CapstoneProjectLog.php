@@ -9,7 +9,7 @@ class CapstoneProjectLog {
     /** @var string */
     private $projectid;
 
-    /** @var \DateTime */
+    /** @var DateTime */
     private $dateCreated;
 
     /** @var string */

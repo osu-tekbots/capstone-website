@@ -567,25 +567,29 @@ class CapstoneProjectsDao {
     public function insertCapstoneProjectLog($log) {
         try {
             $sql = '
-            INSERT INTO capstone_project_log
-                lg_cp_id,
-                lg_date_created,
-                lg_message
+            INSERT INTO capstone_project_log 
+                (
+                    lg_cp_id,
+                    lg_date_created,
+                    lg_message
+                )
             VALUES
-                :project_id,
-                :date_created,
-                :message
+                (
+                    :lg_cp_id,
+                    :lg_date_created,
+                    :lg_message
+                )
             ';
             $params = array(
-                ':project_id' => $log->getProjectId(),
-                ':date_updated' => $log->getDateCreated(),
-                ':log' => $log->getMessage()
+                ':lg_cp_id' => $log->getProjectId(),
+                ':lg_date_created' => QueryUtils::FormatDate($log->getDateCreated()),
+                ':lg_message' => $log->getMessage()
             );
             $this->conn->execute($sql, $params);
             return true;
         } catch (\Exception $e) {
-            $id = $project->getId();
-            $this->logger->error("Failed to create a log entry for the project with id '{$log->getProjectId()}': " . $e->getMessage());
+            $projectId = $log->getProjectId();
+            $this->logger->error("Failed to create a log entry for the project with id '$projectId': " . $e->getMessage());
             return false;
         }
     }
