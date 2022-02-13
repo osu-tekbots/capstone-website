@@ -457,9 +457,9 @@ class CapstoneProjectsDao {
         try {
             $sql = '
             SELECT *
-            FROM capstone_project_logs
+            FROM capstone_project_log
             WHERE lg_cp_id = :project_id
-            SORT BY lg_date_created DESC
+            ORDER BY lg_date_created DESC
             ';
             $params = array(':project_id' => $projectId);
             $results = $this->conn->query($sql, $params);
@@ -467,10 +467,10 @@ class CapstoneProjectsDao {
                 return false;
             }
 
-            $projectLogs[] = array();
+            $projectLogs = array();
             foreach ($results as $row) {
-                $projectLog = self::ExtractCapstoneProjectLogFromRow($row, true);
-                $projectLogs->array_push($projectLog);
+                $projectLog = self::ExtractCapstoneProjectLogFromRow($row);
+                array_push($projectLogs, $projectLog);
             }
 
             return $projectLogs;
@@ -1145,7 +1145,7 @@ class CapstoneProjectsDao {
      * @param mixed[] $row the row in the database from which information is to be extracted
      * @return \Model\CapstoneProjectLog
      */
-    public static function ExtractCapstoneProjectLogFromRow($row, $userInRow = false) {
+    public static function ExtractCapstoneProjectLogFromRow($row) {
         $projectLog = new CapstoneProjectLog($row['lg_cp_id'], $row['lg_date_created'], $row['lg_message']);
         return $projectLog;
     }

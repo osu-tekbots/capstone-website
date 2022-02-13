@@ -7,7 +7,7 @@
  * @param \Model\CapstoneProjectCategory[] $categories an array of the available project categories
  * @return void
  */
-function renderAdminReviewPanel($project, $categories, $users, $singleView) {
+function renderAdminReviewPanel($project, $logs, $categories, $users, $singleView) {
 
     $pId = $project->getId();
     $pStatusName = $project->getStatus()->getName();
@@ -107,8 +107,33 @@ function renderAdminReviewPanel($project, $categories, $users, $singleView) {
                 <br/>";
 	if ($singleView == true)
 		echo "<a href='pages/editProject.php?id=$pId'><button class='btn btn-lg btn-info admin-btn' type='button' data-toggle='tooltip' data-placement='bottom' title='$tooltipEdit' id='adminDeleteProjectBtn'>Edit Project</button></a>";
-				
-        echo"</center>
+
+    if ($logs != false) {
+        echo "
+        <div class='px-4 py-4'>
+            <div class='row'>
+                <div class='col-4 border'>Date</div>
+                <div class='col-8 border'>Log Message</div>
+            </div>
+        ";
+
+        foreach ($logs as $log) {
+            $date = $log->getDateCreated();
+            $message = $log->getMessage();
+            echo "
+            <div class='row'>
+                <div class='col-4 border'>$date</div>
+                <div class='col-8 border text-left'>$message</div>
+            </div>
+            ";
+        }
+        echo "
+        </div>
+        ";
+    }
+
+    echo"
+        </center>
             <div id='approvedText' class='adminText' 
                 style='color: green;'>Project Approved!</div>
             <div id='rejectedText' class='adminText' 
