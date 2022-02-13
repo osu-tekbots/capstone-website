@@ -106,7 +106,7 @@ class ProjectsActionHandler extends ActionHandler {
         ));
     }
 
-        /**
+    /**
      * Updates the projects admin comments in the database.
      *
      * @return void

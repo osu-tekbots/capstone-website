@@ -9,6 +9,7 @@ use Model\CapstoneProjectNDAIP;
 use Model\CapstoneProjectStatus;
 use Model\CapstoneProjectType;
 use Model\CapstoneProject;
+use Model\CapstoneProjectLog;
 use Model\CapstoneProjectImage;
 
 use DataAccess\KeywordsDao;
@@ -248,7 +249,7 @@ class CapstoneProjectsDao {
         }
     }
 
-        /**
+    /**
      * Fetches several capstone projects from a specified range.
      *
      * @param integer $offset the offset into the results to fetch
@@ -324,7 +325,7 @@ class CapstoneProjectsDao {
         }
     }
 
-        /**
+    /**
      * Fetches all the Created capstone projects for admins to review.
      *
      * @return \Model\CapstoneProject[]|boolean an array of the projects to review on success, false otherwise
@@ -447,6 +448,39 @@ class CapstoneProjectsDao {
     }
 
     /**
+     * Fetches the capstone project logs with a given project ID
+     *
+     * @param string $project_id
+     * @return array(\Model\CapstoneProjectLog)|boolean the project on success, false otherwise
+     */
+    public function getCapstoneProjectLogs($projectId) {
+        try {
+            $sql = '
+            SELECT *
+            FROM capstone_project_logs
+            WHERE lg_cp_id = :project_id
+            SORT BY lg_date_created DESC
+            ';
+            $params = array(':project_id' => $projectId);
+            $results = $this->conn->query($sql, $params);
+            if (\count($results) == 0) {
+                return false;
+            }
+
+            $projectLogs[] = array();
+            foreach ($results as $row) {
+                $projectLog = self::ExtractCapstoneProjectLogFromRow($row, true);
+                $projectLogs->array_push($projectLog);
+            }
+
+            return $projectLogs;
+        } catch (\Exception $e) {
+            $this->logger->error("Failed to fetch project logs for the project with id '$projectId': " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Adds a new capstone project entry into the database.
      *
      * @param \Model\CapstoneProject $project the project to add
@@ -520,6 +554,38 @@ class CapstoneProjectsDao {
             return true;
         } catch (\Exception $e) {
             $this->logger->error('Failed to create new project: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Adds a new capstone project log entry into the database.
+     *
+     * @param \Model\CapstoneProjectLog $log the log to insert
+     * @return boolean true if successful, false otherwise
+     */
+    public function insertCapstoneProjectLog($log) {
+        try {
+            $sql = '
+            INSERT INTO capstone_project_log
+                lg_cp_id,
+                lg_date_created,
+                lg_message
+            VALUES
+                :project_id,
+                :date_created,
+                :message
+            ';
+            $params = array(
+                ':project_id' => $log->getProjectId(),
+                ':date_updated' => $log->getDateCreated(),
+                ':log' => $log->getMessage()
+            );
+            $this->conn->execute($sql, $params);
+            return true;
+        } catch (\Exception $e) {
+            $id = $project->getId();
+            $this->logger->error("Failed to create a log entry for the project with id '{$log->getProjectId()}': " . $e->getMessage());
             return false;
         }
     }
@@ -624,7 +690,7 @@ class CapstoneProjectsDao {
         }
     }
 
-        /**
+    /**
      * Removes all user application from project
      *
      *
@@ -712,7 +778,7 @@ class CapstoneProjectsDao {
 
 
 
-     /**
+    /**
      * Removes all images from project
      *
      *
@@ -907,7 +973,7 @@ class CapstoneProjectsDao {
         }
     }
 	
-	 /**
+	/**
      * Fetches a list of statuses for capstone projects
      *
      * @return \Model\CapstoneProjectType[]|boolean an array of statuses on success, false otherwise
@@ -1066,6 +1132,18 @@ class CapstoneProjectsDao {
             $project->setProposer(UsersDao::ExtractUserFromRow($row));
         }
         return $project;
+    }
+
+
+    /**
+     * Creates a new CapstoneProjectLog object using information from the database row
+     *
+     * @param mixed[] $row the row in the database from which information is to be extracted
+     * @return \Model\CapstoneProjectLog
+     */
+    public static function ExtractCapstoneProjectLogFromRow($row, $userInRow = false) {
+        $projectLog = new CapstoneProjectLog($row['lg_cp_id'], $row['lg_date_created'], $row['lg_message']);
+        return $projectLog;
     }
 
     /**
