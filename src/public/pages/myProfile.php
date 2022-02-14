@@ -189,7 +189,15 @@ $('#saveProfileBtn').on('click', onSaveProfileClick);
 <script>
 	let editor;
     ClassicEditor
-        .create( document.querySelector( '#emailText' ) )
+        .create( document.querySelector( '#emailText' ), {
+			toolbar: [ 'heading', '|',
+				'bold', 'italic', '|',
+				'bulletedList', 'numberedList', 'blockQuote', '|',  
+				'link', 'unlink', '|', 
+				'outdent', 'indent', '|',
+				'inserttable', '|', 
+				'undo', 'redo' ]
+		} )
 		.then( newEditor => {
         editor = newEditor;
     	} )
