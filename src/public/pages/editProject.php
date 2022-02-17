@@ -601,6 +601,7 @@ var availableTags = [
 	</div>
 </div>
 
+
 <!-- include link for rich text editing and create editor objects for each field -->
 <script src="https://cdn.ckeditor.com/ckeditor5/31.1.0/classic/ckeditor.js"></script>
 <script>
@@ -699,7 +700,6 @@ var availableTags = [
             console.error( error );
         } );
 </script>
-
 
 <?php 
 

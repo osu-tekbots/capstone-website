@@ -36,7 +36,7 @@ This will ensure that your user account has been successfully added to the docke
 ### 2. Clone the repo
 Clone this repo to your computer
 ``` bash
-$ git clone https://github.com/osu-tekbots/capstone-website.git
+$ git clone https://github.com/DotBowder/capstone-website.git
 ```
 
 ### 3. Run the setup script
