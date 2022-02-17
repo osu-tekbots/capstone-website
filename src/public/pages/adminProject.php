@@ -331,10 +331,11 @@ include_once PUBLIC_FILES . '/modules/header.php';
 			<caption>Current Inventory</caption>
 			<thead>
 				<tr>
+					<th>Status</th>
 					<th></th>
 					<th>Description</th>
-					<th>Status</th>
-					<th>Partner<BR>Info</th>
+					<th>Project Info</th>
+					<th>Partner Info</th>
 					<th>Actions</th>
 				</tr>
 			</thead>

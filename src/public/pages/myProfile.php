@@ -165,14 +165,13 @@ $uTypeName = $user->getType()->getName();
 function onSaveProfileClick() {
 
 	let data = new FormData(document.getElementById('formUserProfile'));
-	data.append("email", editor.getData());
 
 	let body = {
 		action: 'saveProfile'
 	};
 	for(const [key, value] of data.entries()) {
 		body[key] = value;
-	}	
+	}
 
 	api.post('/users.php', body).then(res => {
 		snackbar(res.message, 'success');
@@ -184,26 +183,5 @@ function onSaveProfileClick() {
 $('#saveProfileBtn').on('click', onSaveProfileClick);
 </script>
 
-<!-- link for rich text editing -->
-<script src="https://cdn.ckeditor.com/ckeditor5/31.1.0/classic/ckeditor.js"></script>
-<script>
-	let editor;
-    ClassicEditor
-        .create( document.querySelector( '#emailText' ), {
-			toolbar: [ 'heading', '|',
-				'bold', 'italic', '|',
-				'bulletedList', 'numberedList', 'blockQuote', '|',  
-				'link', 'unlink', '|', 
-				'outdent', 'indent', '|',
-				'inserttable', '|', 
-				'undo', 'redo' ]
-		} )
-		.then( newEditor => {
-        editor = newEditor;
-    	} )
-        .catch( error => {
-            console.error( error );
-        } );
-</script>
 
 <?php include_once PUBLIC_FILES . '/modules/footer.php'; ?>

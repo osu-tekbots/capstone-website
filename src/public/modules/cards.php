@@ -270,6 +270,9 @@ function renderProjectCard($id, $title, $description, $details, $imageLink, $sta
 	if ($nda != 'No Agreement Required')
 		$classes .= 'reqNDA ';
 
+	// decode rich html saved from rich text
+	$descriptionDecoded = htmlspecialchars_decode($description);
+	
     echo "
 	<div class='masonry-brick $classes' id='projectCard$num'>
 		<a href='pages/viewSingleProject.php?id=$id' target='_blank' style='color: black'>
@@ -277,7 +280,7 @@ function renderProjectCard($id, $title, $description, $details, $imageLink, $sta
 		</a>
 		<div class='card-body' id='projectCardBody$num'>
 			<h6>$title</h6>
-			$description
+			$descriptionDecoded
 			<br>
 			<small class='text-muted'>$details</small>
 			<div style='position: absolute; float: left; margin-right: 10px; bottom: 10px;'>";
@@ -324,6 +327,9 @@ function renderAdminProjectCard($id, $title, $description, $details, $imageLink,
 		$status = 'Not Yet Submitted';
 	}
 
+	// decode rich html saved from rich text
+	$descriptionDecoded = htmlspecialchars_decode($description);
+
 	//<small class='text-muted'>$extra</small><br> (Above $viewButton)
     echo "
 	<tr id='projectCard$id' style='border-bottom: 1px solid black;'>
@@ -345,7 +351,7 @@ function renderAdminProjectCard($id, $title, $description, $details, $imageLink,
 		</td>
 		<td class='col-sm-3' id='projectCardBody$num'>
 			<h6>$title</h6>
-			<small class='text-muted'>$description</small>
+			<small class='text-muted'>$descriptionDecoded</small>
 		</td>
 		<td class='col-sm-3'>
 			<small class='text-muted'>$details</small>
@@ -460,8 +466,39 @@ function renderAdminProjectCard2($project, $num, $categories, $types, $browsing)
 	
 	
 	
-	$statusColor = ($status == 'Pending Approval' || $status == 'Rejected') ? 'red' : (($status == 'Created' || $status == 'Incomplete') ? '#ffcc00' : 'inherit');
-	$statusColorExtra = ($extra == 'Category Placement' || $status == 'Rejected') ? 'red' : (($extra == 'Archived') ? '#ffcc00' : 'inherit');
+	// $statusColor = ($status == 'Pending Approval' || $status == 'Rejected') ? '#fc4a3a' : (($status == 'Created' || $status == 'Incomplete') ? '#ffcc00' : 'inherit');
+	$statusColor = '';
+	$bannerColor = '';
+	if ($archived) {
+		$statusColor = '#434343';
+		$bannerColor = '#bdbdbd';
+	}
+	elseif ($status == 'Created') {
+		$statusColor = '#1c4587';
+		$bannerColor = '#9fc5e8';
+	}
+	elseif ($status == 'Accepting Applicants') {
+		$statusColor = '#274e13';
+		$bannerColor = '#b6d7a8';
+	}
+	elseif ($status == 'Pending Approval') {
+		$statusColor = '#783f04';
+		$bannerColor = '#f9cb9c';
+	}
+	elseif ($status == 'Incomplete') {
+		$statusColor = '#7f6000';
+		$bannerColor = '#ffe599';
+	}
+	elseif ($status == 'Rejected') {
+		$statusColor = '#660000';
+		$bannerColor = '#ff8a6d';
+	}
+	else {
+		$statusColor = '#434343';
+		$bannerColor = '#bdbdbd';
+	}
+	
+	$statusColorExtra = ($extra == 'Category Placement' || $status == 'Rejected') ? '#fc4a3a' : (($extra == 'Archived') ? '#ffcc00' : 'inherit');
     
 	$viewButton = $published ? createLinkButton("pages/viewSingleProject.php?id=$id", 'View') : '';
 	$editButton = (!$browsing && !$archived) ? createLinkButton("pages/editProject.php?id=$id", 'Edit') : '';
@@ -485,10 +522,16 @@ function renderAdminProjectCard2($project, $num, $categories, $types, $browsing)
 	if ($status == 'Created' || $status == 'Rejected')
 		$classes .= 'createdonly ';
 	
+	// decode rich html saved from rich text
+	$descriptionDecoded = htmlspecialchars_decode($description);
 	
 	echo "
 	<tr id='projectCard$id' style='border-bottom: 1px solid black;' class='$classes'>
+	<td class='col-sm-1' id='projectBanner' style='background-color: $bannerColor;'>
+		<span style='color: $statusColor'>$status</span><BR>
+	</td>
 	<td>
+
 	";
 	if (!$archived){
 		echo "
@@ -504,17 +547,17 @@ function renderAdminProjectCard2($project, $num, $categories, $types, $browsing)
 	}
 	echo "
 		</td>
-		<td class='col-sm-3' id='projectCardBody$id'>
+		<td class='col-sm-3' id='projectCardBody$id' style='border-left: 10px solid $bannerColor;'>
 			<h6>$title</h6>
-			<small class='text-muted'>$description</small>
+			<small class='text-muted'>$descriptionDecoded</small>
 		</td>
 		<td class='col-sm-3'>
 			<small class='text-muted'>NDA: $nda $details</small>
 			</td>
 		<td class='col-sm-2'>
-			<span style='color: $statusColor'>$status</span><BR>
+			
 			<small class='text-muted'>Proposer: <a href='mailto:$email'>$partnername</a><BR>Phone: $proposerPhone</small><BR>
-			<span style='color: $statusColorExtra'>$extra</span>
+			
 			</td>
 		<td class='col-sm-2'>
 			<small id='small$id' class='text-muted lastUpdatedSmall'>$lastUpdated</small><BR>
@@ -554,6 +597,9 @@ function renderRelatedProjectCard($id, $title, $description, $details, $imageLin
 	global $numCardsCreated;
 	$viewButton = createLinkButton("pages/viewSingleProject.php?id=$id", 'View');
 
+	// decode rich html saved from rich text
+	$descriptionDecoded = htmlspecialchars_decode($description);
+
 	echo "
 	<div class='card capstoneCard my-3' id='projectCard$numCardsCreated'>
 		<a href='pages/viewSingleProject.php?id=$id' target='_blank' style='color: black'>
@@ -561,7 +607,7 @@ function renderRelatedProjectCard($id, $title, $description, $details, $imageLin
 		</a>
 		<div class='card-body' id='projectCardBody$numCardsCreated'>
 			<h6>$title</h6>
-			$description
+			<small class='text-muted'>$descriptionDecoded</small>
 			<br>
 			<small class='text-muted'>$details</small>
 			<div style='float: right; margin-right: 10px;'>
@@ -686,7 +732,7 @@ function createProjectArchiveButton($projectId, $cardNumber) {
 function createProjectUnpublishButton($projectId, $cardNumber) {
 	return "
 	<button class='btn btn-outline-warning' id='unpublishProjectBtn$projectId' type='button'>
-		Unpublish // <- was hide
+		Unpublish 
 	</button>
 	
 	<script type='text/javascript'>

@@ -24,8 +24,9 @@ function renderAdminReviewPanel($project, $categories, $users, $singleView) {
 	$tooltipUnArchive = "This will Unarchive the project making it viewable by students and adding it to the current list of projects.";
 	$tooltipApprove = "SENDS EMAIL: This will inform the proposer vai email thier project is published and available for student sto view.";
 	$tooltipUnapprove = "SENDS EMAIL: This will unapprove a project and inform the propser. This is useful if the proposer wants to make changes to the project description.";
-	$tooltipUnhide = "This will reveal this project to a general search by students. Allows students to find and bid on project.";
-	$tooltipHide = "This hides a project from students. Useful for project that are already filled with selected students or has an NDA concern.";
+	$tooltipPublish = "This will reveal this project to a general search by students. Allows students to find and bid on project.";
+	$tooltipunPublish = "This hides a project from students. Useful for project that are already filled with selected students or has an NDA concern.";
+    $tooltipEdit = "This allows you to edit this project.";
 
     $usersHTML = "<select id='proposerSelect' class='form-control'>";
 	foreach ($users as $u)
@@ -98,9 +99,9 @@ function renderAdminReviewPanel($project, $categories, $users, $singleView) {
 		echo "<button class='btn btn-lg btn-warning admin-btn' type='button' data-toggle='tooltip' data-placement='bottom' title='$tooltipUnarchive' id='adminUnarchiveProjectBtn'>Unarchive Project</button>";
 
 	if ($pIsHidden == false)
-		echo "<button class='btn btn-lg btn-outline-danger admin-btn' type='button' data-toggle='tooltip' data-placement='bottom' title='$tooltipHide' id='adminMakeProjectPrivateBtn'>Hide Project</button>";
+		echo "<button class='btn btn-lg btn-outline-danger admin-btn' type='button' data-toggle='tooltip' data-placement='bottom' title='$tooltipunPublish' id='adminMakeProjectPrivateBtn'>Unpublish Project</button>";
 	else
-		echo "<button class='btn btn-lg btn-outline-info admin-btn' type='button' data-toggle='tooltip' data-placement='bottom' title='$tooltipUnhide' id='adminMakeProjectNotPrivateBtn'>Show Project</button>";	
+		echo "<button class='btn btn-lg btn-outline-info admin-btn' type='button' data-toggle='tooltip' data-placement='bottom' title='$tooltipPublish' id='adminMakeProjectNotPrivateBtn'>Publish Project</button>";	
                
                 
     echo "<button class='btn btn-lg btn-outline-danger admin-btn' type='button' data-toggle='tooltip' data-placement='bottom' title='$tooltipPurge' id='adminDeleteProjectBtn'>PURGE</button>
