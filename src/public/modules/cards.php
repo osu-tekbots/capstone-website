@@ -478,8 +478,15 @@ function renderAdminProjectCard2($project, $num, $categories, $types, $browsing)
 		$bannerColor = '#9fc5e8';
 	}
 	elseif ($status == 'Accepting Applicants') {
-		$statusColor = '#274e13';
-		$bannerColor = '#b6d7a8';
+		if ($published) {
+			$statusColor = '#274e13';
+			$bannerColor = '#b6d7a8';
+		}
+		else {
+			$statusColor = '#7f6000';
+			$bannerColor = '#ffe599';
+			$status = 'Approved but Unpublished';
+		}
 	}
 	elseif ($status == 'Pending Approval') {
 		$statusColor = '#783f04';
