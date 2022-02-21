@@ -426,16 +426,16 @@ function renderAdminProjectCard2($project, $num, $categories, $types, $browsing)
 	$category_select .= "</select>";
 
 	//Make a Type drop down based on type
-	$type_select = "<select id='typeselect$id' onchange='typeChange(\"$id\");'>";
-	foreach ($types AS $type){
-		$type_select .= "<option value='".$type->getId()."' ".($type->getId() == $project->getType()->getId() ? 'selected':'').">".$type->getName()."</option>";
-	}
-	$type_select .= "</select>";
+	// $type_select = "<select id='typeselect$id' onchange='typeChange(\"$id\");'>";
+	// foreach ($types AS $type){
+	// 	$type_select .= "<option value='".$type->getId()."' ".($type->getId() == $project->getType()->getId() ? 'selected':'').">".$type->getName()."</option>";
+	// }
+	// $type_select .= "</select>";
 	
 	$details = '';
 	if (($project->getIsSponsored()))
 			$details .= "<BR>Sponsored";
-	$details .= '<br/>Type: '. $type_select;
+	// $details .= '<br/>Type: '. $type_select;
 	$details .= '<br/>Category: '. $category_select;
 
 
@@ -563,7 +563,7 @@ function renderAdminProjectCard2($project, $num, $categories, $types, $browsing)
 			</td>
 		<td class='col-sm-2'>
 			
-			<small class='text-muted'>Proposer: <a href='mailto:$email'>$partnername</a><BR>Phone: $proposerPhone</small><BR>
+			<small class='text-muted'>Proposer: <a href='mailto:$email'>$partnername</a><BR>Phone: $proposerPhone<BR>Email: $email</small><BR>
 			
 			</td>
 		<td class='col-sm-2'>

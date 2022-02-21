@@ -314,12 +314,15 @@ var availableTags = [
 			//
 			// Following is the edit functionality available to proposers and admins
 			//
+			// Project type is temporarily not needed becasue the only project type used as of
+			// now is Capstone.  The "Project Type", "Compensation", "Start by", and "Complete by" fields
+			// have been set to display:none so they are hidden until they are needed in future releases.
 			?>
 			<br>
 			<form id="formProject">
 				<input type="hidden" id="projectId" name="id" value="<?php echo $pId; ?>" />
 				<div class="row">
-					<div class="col-sm-4">
+					<div class="col-sm-4" style="display:none">
 						<div class="form-group">
 							<label for="projectTypeSelect">Project Type <?php displayInfoTooltip($tooltipProjectTypeSelect); ?></label>
 							<select class="form-control input" id="projectTypeSelect" name="typeId" data-toggle="tooltip" 
@@ -352,7 +355,7 @@ var availableTags = [
 							</select>
 						</div>
 					</div>
-					<div class="col-sm-4" id="compensationDiv">
+					<div class="col-sm-4" id="compensationDiv" style="display:none">
 						<div class="form-group">
 							<label for="compensationSelect">Compensation <?php displayInfoTooltip($tooltipCompensationSelect); ?></label>
 							<select class="form-control input" id="compensationSelect" name="compensationId">
@@ -448,7 +451,7 @@ var availableTags = [
 						</div>
 					</div>
 				</div>
-				<div class="row" id="dateDiv">
+				<div class="row" id="dateDiv" style="display:none">
 					<div class="col-sm-5">
 						<div class="form-group">
 							Start By <?php displayInfoTooltip($tooltipStartByText); ?>

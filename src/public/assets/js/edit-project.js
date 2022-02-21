@@ -88,25 +88,25 @@ $('body').on('click', '.keywordBadge', function(e) {
 /**
  * Updates the layout of the page if the project type is selected. This is
  * because certain text boxes appear for certain types and not others
- */
-function updateEditProjectLayout() {
-    // If it is a capstone project (enum of 1)
-    if ($('#projectTypeSelect').val() == 1) {
-        $('#dateDiv').hide();
-        $('#ndaDiv').show();
-        $('#numberGroupsDesiredDiv').show();
-        $('#compensationDiv').hide();
-        $('#numberGroupsDiv').show();
-    } else {
-        $('#dateDiv').show();
-        $('#ndaDiv').hide();
-        $('#numberGroupsDesiredDiv').hide();
-        $('#compensationDiv').show();
-        $('#numberGroupsDiv').hide();
-    }
-}
-$('#projectTypeSelect').change(updateEditProjectLayout);
-updateEditProjectLayout();
+//  */
+// function updateEditProjectLayout() {
+//     // If it is a capstone project (enum of 1)
+//     if ($('#projectTypeSelect').val() == 1) {
+//         $('#dateDiv').hide();
+//         $('#ndaDiv').show();
+//         $('#numberGroupsDesiredDiv').show();
+//         $('#compensationDiv').hide();
+//         $('#numberGroupsDiv').show();
+//     } else {
+//         $('#dateDiv').show();
+//         $('#ndaDiv').hide();
+//         $('#numberGroupsDesiredDiv').hide();
+//         $('#compensationDiv').show();
+//         $('#numberGroupsDiv').hide();
+//     }
+// }
+// $('#projectTypeSelect').change(updateEditProjectLayout);
+// updateEditProjectLayout();
 
 /**
  * Uploads a newly selected image to the server. This function will be invoked when a change is detected in the
