@@ -59,7 +59,8 @@ function renderAdminReviewPanel($project, $categories, $users, $singleView) {
         $id = $c->getId();
         $name = $c->getName();
         $selected = $id == $pCategoryId ? 'selected' : '';
-        $options .= "<option $selected value='$id'>$name</option>";
+        // $options .= "<option $selected value='$id'>$name</option>";
+        $options .= "<input type='checkbox' value='$id' checked='$selected'>$name<br>";
     }
 
     echo "
@@ -68,21 +69,22 @@ function renderAdminReviewPanel($project, $categories, $users, $singleView) {
         <div class='col-sm border rounded border-dark' id='adminProjectStatusDiv'>
             <center><h4><p style='color: black;'>-- Administrator Options --</p></h4></center>
             <div class='row'>
-			<div class='col-6'>
-			$actionsHtmlContent
-            $visibility
-            <h6><p style='color:red'>$isArchived</p></h6>
-            $commentsHtml
-            <h6><p style='color:black'>Current Project Status: $pStatusName</p></h6>
-            <h6><p style='color:black'>Major Category: $pCategoryName</p></h6>
-            <select class='form-control' id='projectCategorySelect' data-toggle='tooltip'
-                data-placement='top' title=''>
-                $options
-            </select>
-            </div>
-			<div class='col-6'>
-			<h6><p style='color:black'>Project Proposer: $usersHTML</p></h6>
-			</div>
+			    <div class='col-6'>
+                    $actionsHtmlContent
+                    $visibility
+                    <h6><p style='color:red'>$isArchived</p></h6>
+                    $commentsHtml
+                    <h6><p style='color:black'>Current Project Status: $pStatusName</p></h6>
+                    <h6><p style='color:black'>Major Categories: </p></h6>
+                    <fieldset id='projectCategoryCheckBox'>  
+                        $options
+                        <br>  
+                    </fieldset>
+
+                </div>
+                <div class='col-6'>
+                    <h6><p style='color:black'>Project Proposer: $usersHTML</p></h6>
+                </div>
 			</div>
             <h6>Admin Comments (Only visible by admins)</h6>
             <textarea class='form-control input' id='projectAdminComments'>$aComments</textarea>
