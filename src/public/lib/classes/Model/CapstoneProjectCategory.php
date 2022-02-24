@@ -8,10 +8,12 @@ class CapstoneProjectCategory {
     const NONE = 1;
     const ELECTRICAL_ENG = 2;
     const COMP_SCI = 3;
-    const ECE_AND_CS = 4;
-    const ECE44X_Fall_2019_20 = 5;
-    const CS46X_Fall_2019_20 = 6;
-    const ECE44X_AND_CS46X_FALL_2019_20 = 7;
+    const CS467 = 4;
+    const CS46X = 5;
+    const ECE44X = 6;
+    const CS467_ONCAMPUS = 7;
+    const CS46X_ONCAMPUS = 8;
+    const ECE44X_ONCAMPUS = 9;
 
     /** @var integer */
     private $id;

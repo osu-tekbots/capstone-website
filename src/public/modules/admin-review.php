@@ -59,8 +59,8 @@ function renderAdminReviewPanel($project, $categories, $users, $singleView) {
         $id = $c->getId();
         $name = $c->getName();
         $selected = $id == $pCategoryId ? 'selected' : '';
-        // $options .= "<option $selected value='$id'>$name</option>";
-        $options .= "<input type='checkbox' value='$id' checked='$selected'>$name<br>";
+        $options .= "<option $selected value='$id'>$name</option>";
+        // $options .= "<input type='checkbox' value='$id' checked='$selected'>$name<br>";
     }
 
     echo "
@@ -76,11 +76,10 @@ function renderAdminReviewPanel($project, $categories, $users, $singleView) {
                     $commentsHtml
                     <h6><p style='color:black'>Current Project Status: $pStatusName</p></h6>
                     <h6><p style='color:black'>Major Categories: </p></h6>
-                    <fieldset id='projectCategoryCheckBox'>  
+                    <select class='form-control' id='projectCategorySelect' data-toggle='tooltip'
+                        data-placement='top' title=''>
                         $options
-                        <br>  
-                    </fieldset>
-
+                    </select>
                 </div>
                 <div class='col-6'>
                     <h6><p style='color:black'>Project Proposer: $usersHTML</p></h6>
