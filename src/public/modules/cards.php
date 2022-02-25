@@ -522,12 +522,26 @@ function renderAdminProjectCard2($project, $num, $categories, $types, $browsing)
 	if (!$browsing && !$archived) 
 		$unarchiveButton = createProjectArchiveButton($id, $num);
 	
+	// classes for sorting
 	$classes = '';
-	if ($status != 'Pending Approval')
-		$classes .= 'adminneeded ';
-	
-	if ($status == 'Created' || $status == 'Rejected')
-		$classes .= 'createdonly ';
+	// if ($status != 'Pending Approval') {
+	// 	$classes .= 'adminneeded ';
+	// }
+	if ($status == 'Accepting Applicants') {
+		$classes .= 'acceptingApplicants';
+	}
+	elseif ($status == 'Approved but Unpublished') {
+		$classes .= 'approvedUnpublished';
+	}
+	elseif ($status == 'Pending Approval') {
+		$classes .= 'pendingApproval';
+	}
+	elseif ($status == 'Rejected') {
+		$classes .= 'rejected';
+	}
+	elseif ($status == 'Created') {
+		$classes .= 'created';
+	}
 	
 	// decode rich html saved from rich text
 	$descriptionDecoded = htmlspecialchars_decode($description);

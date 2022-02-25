@@ -513,13 +513,15 @@ var availableTags = [
 				//
 				// Show NDA/IP only if previosly selected in popup modal.  
 				//
-				if ($pNdaIpId == '1') {
-					echo "<div class='col-sm-6' style='display:none;'>";
-				}
-				else {
-					echo "<div class='col-sm-6'>";
-				}
+				// if ($pNdaIpId == '1') {
+				// 	echo "<div class='col-sm-6' style='display:none;'>";
+				// }
+				// else {
+				// 	echo "<div class='col-sm-6'>";
+				// }
+				//remove <div class='col-sm-6'> below
 				?>
+				<div class='col-sm-6'>
 					<div class="form-group" id="ndaDiv">
 						<div id="ndaDisclaimerDiv" class="ndaDisclaimer border rounded border-secondary">
 							<font style="font-weight: bold;">If your project requires an NDA and/or IP agreement, it must be indicated at the time the students 
