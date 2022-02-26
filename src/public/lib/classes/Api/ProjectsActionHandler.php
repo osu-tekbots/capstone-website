@@ -2,6 +2,7 @@
 namespace Api;
 
 use Model\CapstoneProject;
+use Model\CapstoneProjectLog;
 use Model\CapstoneProjectStatus;
 use Model\Keyword;
 use Model\User;
@@ -67,6 +68,11 @@ class ProjectsActionHandler extends ActionHandler {
         if (!$ok) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to create new project'));
         }
+        $this->projectsDao->insertCapstoneProjectLog(new CapstoneProjectLog(
+            $project->getId(),
+            new \DateTime,
+            "Project Created"
+        ));
 
         $this->respond(new Response(
             Response::CREATED, 
@@ -99,6 +105,11 @@ class ProjectsActionHandler extends ActionHandler {
         if (!$ok) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to update project'));
         }
+        $this->projectsDao->insertCapstoneProjectLog(new CapstoneProjectLog(
+            $project->getId(),
+            new \DateTime,
+            "Category Updated"
+        ));
 
         $this->respond(new Response(
             Response::OK,
@@ -106,7 +117,7 @@ class ProjectsActionHandler extends ActionHandler {
         ));
     }
 
-        /**
+    /**
      * Updates the projects admin comments in the database.
      *
      * @return void
@@ -127,6 +138,11 @@ class ProjectsActionHandler extends ActionHandler {
         if (!$ok) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to update project'));
         }
+        $this->projectsDao->insertCapstoneProjectLog(new CapstoneProjectLog(
+            $project->getId(),
+            new \DateTime,
+            "Admin Comments Updated"
+        ));
 
         $this->respond(new Response(
             Response::OK,
@@ -217,6 +233,11 @@ class ProjectsActionHandler extends ActionHandler {
         if (!$ok) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to save project'));
         }
+        $this->projectsDao->insertCapstoneProjectLog(new CapstoneProjectLog(
+            $project->getId(),
+            new \DateTime,
+            "Project Saved"
+        ));
 
         $this->respond(new Response(
             Response::OK,
@@ -281,6 +302,11 @@ class ProjectsActionHandler extends ActionHandler {
         if (!$ok) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to save project before submission'));
         }
+        $this->projectsDao->insertCapstoneProjectLog(new CapstoneProjectLog(
+            $project->getId(),
+            new \DateTime,
+            "Project Saved before Submission for Approval"
+        ));
 
         $project->getStatus()->setId(CapstoneProjectStatus::PENDING_APPROVAL);
 
@@ -288,6 +314,11 @@ class ProjectsActionHandler extends ActionHandler {
         if (!$ok) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to submit project for approval'));
         }
+        $this->projectsDao->insertCapstoneProjectLog(new CapstoneProjectLog(
+            $project->getId(),
+            new \DateTime,
+            "Submitted for Approval"
+        ));
 
         $link = $this->getAbsoluteLinkTo('pages/viewSingleProject.php?id=' . $id) ;
         $this->mailer->sendProjectSubmissionConfirmationEmail($project, $link);
@@ -321,6 +352,11 @@ class ProjectsActionHandler extends ActionHandler {
         if (!$ok) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to update capstone image'));
         }
+        $this->projectsDao->insertCapstoneProjectLog(new CapstoneProjectLog(
+            $project->getId(),
+            new \DateTime,
+            "Image Updated"
+        ));
 
         $this->respond(new Response(
             Response::OK,
@@ -346,6 +382,11 @@ class ProjectsActionHandler extends ActionHandler {
         if (!$ok) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to approve project'));
         }
+        $this->projectsDao->insertCapstoneProjectLog(new CapstoneProjectLog(
+            $project->getId(),
+            new \DateTime,
+            "Project Approved"
+        ));
 
         $link = $this->getAbsoluteLinkTo('pages/viewSingleProject.php?id=' . $id);
         $this->mailer->sendProjectApprovedEmail($project, $link);
@@ -374,6 +415,11 @@ class ProjectsActionHandler extends ActionHandler {
         if (!$ok) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to reject project'));
         }
+        $this->projectsDao->insertCapstoneProjectLog(new CapstoneProjectLog(
+            $project->getId(),
+            new \DateTime,
+            "Project Rejected"
+        ));
 
         $this->mailer->sendProjectRejectedEmail($project, $reason);
 
@@ -400,6 +446,11 @@ class ProjectsActionHandler extends ActionHandler {
         if (!$ok) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to publish project'));
         }
+        $this->projectsDao->insertCapstoneProjectLog(new CapstoneProjectLog(
+            $project->getId(),
+            new \DateTime,
+            "Project Published"
+        ));
 
         $this->respond(new Response(
             Response::OK,
@@ -424,6 +475,11 @@ class ProjectsActionHandler extends ActionHandler {
         if (!$ok) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to hide project'));
         }
+        $this->projectsDao->insertCapstoneProjectLog(new CapstoneProjectLog(
+            $project->getId(),
+            new \DateTime,
+            "Hidden"
+        ));
 
         $this->respond(new Response(
             Response::OK,
@@ -444,6 +500,11 @@ class ProjectsActionHandler extends ActionHandler {
         if (!$ok) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to archive project'));
         }
+        $this->projectsDao->insertCapstoneProjectLog(new CapstoneProjectLog(
+            $project->getId(),
+            new \DateTime,
+            "Project Archived"
+        ));
 
         $this->respond(new Response(
             Response::OK,
@@ -463,6 +524,11 @@ class ProjectsActionHandler extends ActionHandler {
         if (!$ok) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to unarchive project'));
         }
+        $this->projectsDao->insertCapstoneProjectLog(new CapstoneProjectLog(
+            $project->getId(),
+            new \DateTime,
+            "Project Unarchived"
+        ));
 
         $this->respond(new Response(
             Response::OK,
@@ -501,6 +567,11 @@ class ProjectsActionHandler extends ActionHandler {
         if (!$ok) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to delete project'));
         }
+        $this->projectsDao->insertCapstoneProjectLog(new CapstoneProjectLog(
+            $project->getId(),
+            new \DateTime,
+            "Project Deleted"
+        ));
 
         $this->respond(new Response(
             Response::OK,
@@ -524,6 +595,11 @@ class ProjectsActionHandler extends ActionHandler {
         if (!$ok) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to delete image entry in DB'));
         }
+        $this->projectsDao->insertCapstoneProjectLog(new CapstoneProjectLog(
+            $project->getId(),
+            new \DateTime,
+            "Image Deleted"
+        ));
 
         $this->respond(new Response(
             Response::OK,
@@ -556,6 +632,11 @@ class ProjectsActionHandler extends ActionHandler {
         if (!$ok) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to update project'));
         }
+        $this->projectsDao->insertCapstoneProjectLog(new CapstoneProjectLog(
+            $project->getId(),
+            new \DateTime,
+            "Type Updated"
+        ));
 
         $this->respond(new Response(
             Response::OK,
@@ -589,6 +670,12 @@ class ProjectsActionHandler extends ActionHandler {
         if (!$ok) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to update project'));
         }
+        $this->projectsDao->insertCapstoneProjectLog(new CapstoneProjectLog(
+            $project->getId(),
+            new \DateTime,
+            "Proposer Updated"
+        ));
+
 
         $this->respond(new Response(
             Response::OK,

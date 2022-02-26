@@ -194,10 +194,11 @@ if(!@getimagesize($image)){
                     //Generate admin interface for admins.
                     if ($isAdmin) {
 						echo'<br><br>';
-                        $categories = $dao->getCapstoneProjectCategories();
+						$categories = $dao->getCapstoneProjectCategories();
 						$users = $usersDao->getAllUsers();
-						
-                        renderAdminReviewPanel($project, $categories, $users, true);
+						$logs = $dao->getCapstoneProjectLogs($project->getId());
+
+						renderAdminReviewPanel($project, $logs, $categories, $users, true);
                     }
 					?>
 	      </div>

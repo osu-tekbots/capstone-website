@@ -126,6 +126,7 @@ dev_setup_containers() {
     log_print "Populating SQL Database...";
     docker exec -it "${MYSQL_CONTAINER_NAME}" /bin/bash -c "cd /scripts; mysql --user="${DB_USERNAME}" --password="${DB_PASSWORD}" --database="${DB_NAME}" -e 'source setup-user.sql';"
     docker exec -it "${MYSQL_CONTAINER_NAME}" /bin/bash -c "cd /scripts; mysql --user="${DB_USERNAME}" --password="${DB_PASSWORD}" --database="${DB_NAME}" -e 'source setup-capstone-project.sql';"
+    docker exec -it "${MYSQL_CONTAINER_NAME}" /bin/bash -c "cd /scripts; mysql --user="${DB_USERNAME}" --password="${DB_PASSWORD}" --database="${DB_NAME}" -e 'source setup-capstone-project-log.sql';"
     docker exec -it "${MYSQL_CONTAINER_NAME}" /bin/bash -c "cd /scripts; mysql --user="${DB_USERNAME}" --password="${DB_PASSWORD}" --database="${DB_NAME}" -e 'source setup-capstone-application.sql';"
     docker exec -it "${MYSQL_CONTAINER_NAME}" /bin/bash -c "cd /scripts; mysql --user="${DB_USERNAME}" --password="${DB_PASSWORD}" --database="${DB_NAME}" -e 'source seed-capstone-enums.sql';"
     docker exec -it "${MYSQL_CONTAINER_NAME}" /bin/bash -c "cd /scripts; mysql --user="${DB_USERNAME}" --password="${DB_PASSWORD}" --database="${DB_NAME}" -e 'source seed-capstone-keywords.sql';"
