@@ -50,21 +50,41 @@ $website = Security::HtmlEntitiesEncode($project->getWebsiteLink());
 $video = Security::HtmlEntitiesEncode($project->getVideoLink());
 $start_by = $project->getDateStart()->format('F j, Y');
 $complete_by = $project->getDateEnd()->format('F j, Y');
+
 $pref_qualifications = Security::HtmlEntitiesEncode($project->getPreferredQualifications());
 if ($pref_qualifications == '')
 	$pref_qualifications = "None Listed";
+// decode rich html saved from rich text
+$pref_qualifications = htmlspecialchars_decode($pref_qualifications);
+
 $min_qualifications = Security::HtmlEntitiesEncode($project->getMinQualifications());
 if ($min_qualifications == '')
 	$min_qualifications = "None Listed";
+// decode rich html saved from rich text
+$min_qualifications = htmlspecialchars_decode($min_qualifications);
+
 $motivation = Security::HtmlEntitiesEncode($project->getMotivation());
+// decode rich html saved from rich text
+$motivation = htmlspecialchars_decode($motivation);
+
 $description = Security::HtmlEntitiesEncode($project->getDescription());
+// decode rich html saved from rich text
+$description = htmlspecialchars_decode($description);
+
 $objectives = Security::HtmlEntitiesEncode($project->getObjectives());
+// decode rich html saved from rich text
+$objectives = htmlspecialchars_decode($objectives);
+
 $nda = $project->getNdaIp()->getName();
 $compensation = $project->getCompensation()->getName();
 $images = $project->getImages();
 $is_hidden = $project->getIsHidden();
 $category = $project->getCategory()->getName();
+
 $comments = Security::HtmlEntitiesEncode($project->getProposerComments());
+// decode rich html saved from rich text
+$comments = htmlspecialchars_decode($comments);
+
 $name = Security::HtmlEntitiesEncode($project->getProposer()->getFirstName()) 
 	. ' ' 
 	. Security::HtmlEntitiesEncode($project->getProposer()->getLastName());

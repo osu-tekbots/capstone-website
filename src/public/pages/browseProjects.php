@@ -25,7 +25,7 @@ $types = $dao->getCapstoneProjectTypes();
 <div class="container-fluid">
     <h1>Browse Projects</h1>
     <nav class="navigation">
-        <ul>
+        <ul style="margin-bottom: 10px">
             <div class="col-sm-2">
                 <input class="form-control" id="filterInput" type="text" placeholder="Search..." />
                 <br />
@@ -115,7 +115,7 @@ $types = $dao->getCapstoneProjectTypes();
                             name="sortRadio"
                             class="custom-control-input"
                         />
-                        <label class="custom-control-label" for="sortDateDescRadio">Date (Recent)</label>
+                        <label class="custom-control-label" for="sortDateDescRadio">Newest</label>
                     </div>
                     <div class="custom-control custom-radio">
                         <input
@@ -125,7 +125,7 @@ $types = $dao->getCapstoneProjectTypes();
                             name="sortRadio"
                             class="custom-control-input"
                         />
-                        <label class="custom-control-label" for="sortDateAscRadio">Date (Oldest)</label>
+                        <label class="custom-control-label" for="sortDateAscRadio">Oldest</label>
                     </div>
                 </div>
             </div>

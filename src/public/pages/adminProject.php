@@ -295,11 +295,11 @@ include_once PUBLIC_FILES . '/modules/header.php';
 		<div class="row">
 		<div class="col-sm-12">
             <div class="row">
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <h2>Search and Filter</h2>
-<!--					<input class="form-control" id="filterInput" type="text" placeholder="Search..." />
+					<input class="form-control" id="filterInput" type="text" placeholder="Search..." />
                     <br />
--->
+
 
 <!-- CHECKBOX HIDE IF PROJECTS REQUIRE NDA NOT FUNCTIONING
                     <div class="form-check">
@@ -310,18 +310,41 @@ include_once PUBLIC_FILES . '/modules/header.php';
                 </div>
 
 
-                <div class="col-sm-4">				
-						<div class="form-check">
-							<input type="checkbox" class="form-check-input" id="ApprovalRequiredCheckBox" onchange="toggleAdminNeeded();">
-							<label for="ApprovalRequiredCheckBox">Hide projects do NOT need Admin Action</label>
+                <div class="col-sm-5" style="border: 2px solid grey; border-radius: 10px; margin-bottom: 10px; padding: 10px;">				
+					<div class="row">
+						<div class="col-sm-6">
+							<div class="form-check">
+								<input type="checkbox" class="form-check-input" id="ApprovalRequiredCheckBox" onchange="toggleAdminNeeded();">
+								<label for="ApprovalRequiredCheckBox">Hide projects do NOT need Admin Action</label>
+							</div>
+
+							<div class="form-check">
+								<input type="checkbox" class="form-check-input" id="notSubmittedCheckBox" onchange="toggleShowCreated();" checked>
+								<label for="notSubmittedCheckBox" style="background-color: #9fc5e8">Show Created projects (Not-Submitted)</label>
+							</div>
+
+							<div class="form-check">
+								<input type="checkbox" class="form-check-input" id="AcceptingApplicantsCheckBox" onchange="toggleAcceptingApplicants();" checked>
+								<label for="AcceptingApplicantsCheckBox" style="background-color: #b6d7a8">Show projects Accepting Applicants</label>
+							</div>
+						</div>	
+						<div class="col-sm-6">
+							<div class="form-check">
+								<input type="checkbox" class="form-check-input" id="PendingApprovalCheckBox" onchange="togglePendingApproval();" checked>
+								<label for="PendingApprovalCheckBox" style="background-color: #f9cb9c">Show projects Pending Approval</label>
+							</div>
+
+							<div class="form-check">
+								<input type="checkbox" class="form-check-input" id="RejectedCheckBox" onchange="toggleRejected();" checked>
+								<label for="RejectedCheckBox" style="background-color: #ff8a6d">Show Rejected projects</label>
+							</div>
+
+							<div class="form-check">
+								<input type="checkbox" class="form-check-input" id="ApprovedUnpublishedCheckBox" onchange="toggleApprovedUnpublished();" checked>
+								<label for="ApprovedUnpublishedCheckBox" style="background-color: #ffe599">Show Approved but Unpublished projects</label>
+							</div>
 						</div>
-
-
-						<div class="form-check">
-							<input type="checkbox" class="form-check-input" id="notSubmittedCheckBox" onchange="toggleShowCreated();" checked>
-							<label for="notSubmittedCheckBox">Show Not-Submitted projects</label>
-						</div>
-
+					</div>
 				</div>
             </div>
         </div>
@@ -331,10 +354,11 @@ include_once PUBLIC_FILES . '/modules/header.php';
 			<caption>Current Inventory</caption>
 			<thead>
 				<tr>
+					<th>Status</th>
 					<th></th>
 					<th>Description</th>
-					<th>Status</th>
-					<th>Partner<BR>Info</th>
+					<th>Project Info</th>
+					<th>Partner Info</th>
 					<th>Actions</th>
 				</tr>
 			</thead>
@@ -351,38 +375,121 @@ include_once PUBLIC_FILES . '/modules/header.php';
 <script>
 function toggleAdminNeeded(){
 	
-	var archivedItems = document.getElementsByClassName('adminneeded');
+	var activeProjectsAccepting = document.getElementsByClassName('acceptingApplicants');
+	var activeProjectsCreated = document.getElementsByClassName('created');
+	var activeProjectsRejected = document.getElementsByClassName('rejected');
 	var checkBox = document.getElementById("ApprovalRequiredCheckBox");
 	
 	if (checkBox.checked == true){
-		for (var i = 0; i < archivedItems.length; i ++) {
-			archivedItems[i].style.display = 'none';
+		for (var i = 0; i < activeProjectsAccepting.length; i ++) {
+			activeProjectsAccepting[i].style.display = 'none';
+		}
+		for (var i = 0; i < activeProjectsCreated.length; i ++) {
+			activeProjectsCreated[i].style.display = 'none';
+		}
+		for (var i = 0; i < activeProjectsRejected.length; i ++) {
+			activeProjectsRejected[i].style.display = 'none';
 		}
 	} else {
-		for (var i = 0; i < archivedItems.length; i ++) {
-			archivedItems[i].style.display = '';
+		for (var i = 0; i < activeProjectsAccepting.length; i ++) {
+			activeProjectsAccepting[i].style.display = '';
+		}
+		for (var i = 0; i < activeProjectsCreated.length; i ++) {
+			activeProjectsCreated[i].style.display = '';
+		}
+		for (var i = 0; i < activeProjectsRejected.length; i ++) {
+			activeProjectsRejected[i].style.display = '';
 		}
 	} 
 		
 }
 
+// Toggle projects that are just created and not submitted
 function toggleShowCreated(){
 	
-	var archivedItems = document.getElementsByClassName('createdonly');
+	var activeProjects = document.getElementsByClassName('created');
 	var checkBox = document.getElementById("notSubmittedCheckBox");
 	
 	if (checkBox.checked == true){
-		for (var i = 0; i < archivedItems.length; i ++) {
-			archivedItems[i].style.display = '';
+		for (var i = 0; i < activeProjects.length; i ++) {
+			activeProjects[i].style.display = '';
 		}
 	} else {
-		for (var i = 0; i < archivedItems.length; i ++) {
-			archivedItems[i].style.display = 'none';
+		for (var i = 0; i < activeProjects.length; i ++) {
+			activeProjects[i].style.display = 'none';
 		}
 	} 
 		
 }
 
+// Toggle projects that are accepting applicants
+function toggleAcceptingApplicants(){
+
+	var activeProjects = document.getElementsByClassName('acceptingApplicants');
+	var checkBox = document.getElementById("AcceptingApplicantsCheckBox");
+	
+	if (checkBox.checked == true){
+		for (var i = 0; i < activeProjects.length; i ++) {
+			activeProjects[i].style.display = '';
+		}
+	} else {
+		for (var i = 0; i < activeProjects.length; i ++) {
+			activeProjects[i].style.display = 'none';
+		}
+	} 
+}
+
+// Toggle projects that are pending approval
+function togglePendingApproval(){
+
+	var activeProjects = document.getElementsByClassName('pendingApproval');
+	var checkBox = document.getElementById("PendingApprovalCheckBox");
+
+	if (checkBox.checked == true){
+		for (var i = 0; i < activeProjects.length; i ++) {
+			activeProjects[i].style.display = '';
+		}
+	} else {
+		for (var i = 0; i < activeProjects.length; i ++) {
+			activeProjects[i].style.display = 'none';
+		}
+	} 
+}
+
+// Toggle projects that are rejected
+function toggleRejected(){
+
+	var activeProjects = document.getElementsByClassName('rejected');
+	var checkBox = document.getElementById("RejectedCheckBox");
+
+	if (checkBox.checked == true){
+		for (var i = 0; i < activeProjects.length; i ++) {
+			activeProjects[i].style.display = '';
+		}
+	} else {
+		for (var i = 0; i < activeProjects.length; i ++) {
+			activeProjects[i].style.display = 'none';
+		}
+	} 
+}
+
+
+// Toggle projects that are approved but unpublished
+function toggleApprovedUnpublished(){
+
+	var activeProjects = document.getElementsByClassName('approvedUnpublished');
+	var checkBox = document.getElementById("ApprovedUnpublishedCheckBox");
+
+	if (checkBox.checked == true){
+		for (var i = 0; i < activeProjects.length; i ++) {
+			activeProjects[i].style.display = '';
+		}
+	} else {
+		for (var i = 0; i < activeProjects.length; i ++) {
+			activeProjects[i].style.display = 'none';
+		}
+	} 
+}
 $('#ProjectsTable').DataTable({
 		'scrollX':true, 
 		'paging':false, 

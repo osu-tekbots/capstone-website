@@ -162,7 +162,7 @@ function displayInfoTooltip($tooltip){
         <a class="header-main-link" href="">
             <div class="logo">
                 <img class="logo" src="assets/img/osu-logo-orange.png" />
-                <h1><span id="projectPrefix">EECS Project </span>Submission Form</h1>
+                <h1><span id="projectPrefix">EECS Project </span>Portal</h1>
             </div>
         </a>
         <nav class="navigation">
