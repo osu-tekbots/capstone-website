@@ -1,3 +1,4 @@
+SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS capstone_assigned_to;
 DROP TABLE IF EXISTS capstone_project_group;
 DROP TABLE IF EXISTS capstone_tag_for;
@@ -11,3 +12,4 @@ DROP TABLE IF EXISTS capstone_project_focus;
 DROP TABLE IF EXISTS capstone_project_cop;
 DROP TABLE IF EXISTS capstone_project_nda_ip;
 DROP TABLE IF EXISTS capstone_project_status;
+SET FOREIGN_KEY_CHECKS = 1;
