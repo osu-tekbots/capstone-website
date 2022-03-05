@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS capstone_project_edit_permissions (
 
     FOREIGN KEY (pf_cp_id) REFERENCES capstone_project (cp_id),
     FOREIGN KEY (pf_u_id) REFERENCES user (u_id)
-)
+);
 
 CREATE TABLE IF NOT EXISTS capstone_project_image (
     cpi_id CHAR(16) NOT NULL,
