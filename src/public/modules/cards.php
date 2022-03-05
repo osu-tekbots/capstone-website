@@ -568,7 +568,7 @@ function renderAdminProjectCard2($project, $num, $categories, $types, $browsing)
 	}
 	echo "
 		</td>
-		<td class='col-sm-3' id='projectCardBody$id' style='border-left: 10px solid $bannerColor;'>
+		<td class='col-sm-3' id='projectCardBody$id' >
 			<h6>$title</h6>
 			<small class='text-muted'>$descriptionDecoded</small>
 		</td>

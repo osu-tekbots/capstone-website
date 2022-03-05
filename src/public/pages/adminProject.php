@@ -132,68 +132,17 @@ include_once PUBLIC_FILES . '/modules/header.php';
 
 		//As each letter is typed in filterInput, filtering of cards will occur.
 		//For drop down lists, like filtering by key word, filterInput is programmically
-		//filled and keydown behavior is explicitly called.
-		$("#filterInput").keydown(function(){
+		//filled and keyup behavior is explicitly called.
+
+		$("#filterInput").on("keyup",function(){
 			var value = $(this).val().toLowerCase();
-			var projects = document.getElementById($('[id^=editDialog]'));
 			
-			$('[id^=projectCard]').each(function() {
-				if($(this).text().toLowerCase().indexOf(value) > -1){
-					$(this).show();
-				}
-				else 
-					$(this).hide();
+			$('#projectCardsTable tr').filter(function() {
+				$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
 				
 			});
 		});
 		
-/*		$("#filterInput").keydown(function(){
-			var value = $(this).val().toLowerCase();
-
-			for(var i = 0; i < <?php echo $CardCount; ?>; i++){
-				if($("#projectCard" + i).text().toLowerCase().indexOf(value) > -1){
-					$("#projectCard" + i).show();
-				}
-				else{
-					$("#projectCard" + i).hide();
-				}
-			}
-		});
-*/
-		 $("#ApprovalRequiredCheckBox").change(function(){
-			if($(this).is(":checked")){
-				for(var i = 0; i < <?php echo $CardCount; ?>; i++){
-					if(($("#projectCard" + i).text().toLowerCase().indexOf("category placement") <= -1) && ($("#projectCard" + i).text().toLowerCase().indexOf("pending approval") <= -1)) {
-						$("#projectCard" + i).hide();
-					}
-				}
-
-			}
-			 else{
-				for(var i = 0; i < <?php echo $CardCount; ?>; i++){
-					$("#projectCard" + i).show();
-				}
-			 }
-		});
-
-		$("#notSubmittedCheckBox").change(function(){
-			if($(this).is(":checked")){
-				for(var i = 0; i < <?php echo $CardCount; ?>; i++){
-					if($("#projectCard" + i).text().toLowerCase().indexOf("not yet submitted") > -1)  {
-						$("#projectCard" + i).hide();
-					}
-				}
-			 }
-			 else{
-				for(var i = 0; i < <?php echo $CardCount; ?>; i++){
-					$("#projectCard" + i).show();
-				}
-			 }
-		});
-
-			
-		// Automatically check the Hide Projects that do NOT need Admin Approval Checkbox and trigger ajax
-	//	$('#ApprovalRequiredCheckBox').prop('checked', true).change();
     });
 
     function filterSelectChanged(filterObject){
@@ -298,7 +247,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
                 <div class="col-sm-3">
                     <h2>Search and Filter</h2>
 					<input class="form-control" id="filterInput" type="text" placeholder="Search..." />
-                    <br />
+					<br />
 
 
 <!-- CHECKBOX HIDE IF PROJECTS REQUIRE NDA NOT FUNCTIONING
@@ -309,43 +258,45 @@ include_once PUBLIC_FILES . '/modules/header.php';
 -->
                 </div>
 
-
-                <div class="col-sm-5" style="border: 2px solid grey; border-radius: 10px; margin-bottom: 10px; padding: 10px;">				
-					<div class="row">
-						<div class="col-sm-6">
-							<div class="form-check">
-								<input type="checkbox" class="form-check-input" id="ApprovalRequiredCheckBox" onchange="toggleAdminNeeded();">
-								<label for="ApprovalRequiredCheckBox">Hide projects do NOT need Admin Action</label>
+				<?php
+				if (!isset($_REQUEST['archive'])){//Only filter options for active projects
+					echo "
+					<div class='col-sm-5' style='border: 2px solid grey; border-radius: 10px; margin-bottom: 10px; padding: 10px;'>				
+					<div class='row'>
+						<div class='col-sm-6'>
+							<div class='form-check'>
+								<input type='checkbox' class='form-check-input' id='ApprovalRequiredCheckBox' onchange='toggleAdminNeeded();'>
+								<label for='ApprovalRequiredCheckBox'>Hide projects do NOT need Admin Action</label>
 							</div>
-
-							<div class="form-check">
-								<input type="checkbox" class="form-check-input" id="notSubmittedCheckBox" onchange="toggleShowCreated();" checked>
-								<label for="notSubmittedCheckBox" style="background-color: #9fc5e8">Show Created projects (Not-Submitted)</label>
+							<div class='form-check'>
+								<input type='checkbox' class='form-check-input' id='PendingApprovalCheckBox' onchange='togglePendingApproval();' checked>
+								<label for='PendingApprovalCheckBox' style='background-color: #f9cb9c'>Show projects Pending Approval</label>
 							</div>
-
-							<div class="form-check">
-								<input type="checkbox" class="form-check-input" id="AcceptingApplicantsCheckBox" onchange="toggleAcceptingApplicants();" checked>
-								<label for="AcceptingApplicantsCheckBox" style="background-color: #b6d7a8">Show projects Accepting Applicants</label>
+							<div class='form-check'>
+								<input type='checkbox' class='form-check-input' id='ApprovedUnpublishedCheckBox' onchange='toggleApprovedUnpublished();' checked>
+								<label for='ApprovedUnpublishedCheckBox' style='background-color: #ffe599'>Show Approved but Unpublished projects</label>
 							</div>
 						</div>	
-						<div class="col-sm-6">
-							<div class="form-check">
-								<input type="checkbox" class="form-check-input" id="PendingApprovalCheckBox" onchange="togglePendingApproval();" checked>
-								<label for="PendingApprovalCheckBox" style="background-color: #f9cb9c">Show projects Pending Approval</label>
+						<div class='col-sm-6'>
+							<div class='form-check'>
+								<input type='checkbox' class='form-check-input' id='notSubmittedCheckBox' onchange='toggleShowCreated();' checked>
+								<label for='notSubmittedCheckBox' style='background-color: #9fc5e8'>Show Created projects (Not-Submitted)</label>
 							</div>
-
-							<div class="form-check">
-								<input type="checkbox" class="form-check-input" id="RejectedCheckBox" onchange="toggleRejected();" checked>
-								<label for="RejectedCheckBox" style="background-color: #ff8a6d">Show Rejected projects</label>
+							<div class='form-check'>
+								<input type='checkbox' class='form-check-input' id='AcceptingApplicantsCheckBox' onchange='toggleAcceptingApplicants();' checked>
+								<label for='AcceptingApplicantsCheckBox' style='background-color: #b6d7a8'>Show projects Accepting Applicants</label>
 							</div>
-
-							<div class="form-check">
-								<input type="checkbox" class="form-check-input" id="ApprovedUnpublishedCheckBox" onchange="toggleApprovedUnpublished();" checked>
-								<label for="ApprovedUnpublishedCheckBox" style="background-color: #ffe599">Show Approved but Unpublished projects</label>
+							<div class='form-check'>
+								<input type='checkbox' class='form-check-input' id='RejectedCheckBox' onchange='toggleRejected();' checked>
+								<label for='RejectedCheckBox' style='background-color: #ff8a6d'>Show Rejected projects</label>
 							</div>
 						</div>
 					</div>
-				</div>
+				</div>";
+				}
+				?>
+
+                
             </div>
         </div>
 	</div>
@@ -362,7 +313,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 					<th>Actions</th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody id="projectCardsTable">
 				<?php renderAdminProjectCardGroup2($projects, $keywordsDao, $types, $categories, $statuses, false);?>
 			</tbody>
 		</table>

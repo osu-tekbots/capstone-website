@@ -438,81 +438,11 @@ var availableTags = [
 							</div>
 						</div>
 					</div>
-					<div class="col-sm-7">
-						<br>
-					</div>
+					
 				</div>
-				<div class="row">
-					<div class="col-sm-6">
-						<div class="form-group" id="ndaDiv">
-							<div id="ndaDisclaimerDiv" class="ndaDisclaimer border rounded border-secondary">
-								<font style="font-weight: bold;">If your project requires an NDA and/or IP agreement, it must be indicated at the time the students 
-									select the projects.</font>
-									<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ndaModal">
-  										Non Disclosure Agreement Choice
-									</buton>
-									<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  										<div class="modal-dialog modal-dialog-centered" role="document">
-    										<div class="modal-content">
-      											<div class="modal-header">
-        											<h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
-        											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          												<span aria-hidden="true">&times;</span>
-        											</button>
-      											</div>
-      											<div class="modal-body">
-													<p>
-													<BR>
-													If your company intends to provide proprietary materials or confidential information requiring an NDA, OSU 
-													can arrange for a written agreement to reviewed and signed amongst the students, your company, and OSU.
-													<br><br>
-													Such an agreement will authorize the students to use and discuss the provided materials or information 
-													with each other and their instructor in confidence.
-													<br><br>
-													<b>The university will not participate in any agreement that requires students to transfer intellectual 
-													property rights ownership to your company or puts overly burdensome confidentiality obligations on 
-													the students.</b>
-													<br><br>Though OSU certainly appreciates your company’s sponsorship, we strongly discourage any agreements 
-													that could deter students from sharing the results of their academic work at OSU with fellow students, 
-													parents or future employers.
-													<br><br>
-													This does not prevent a separate arrangement between you each student individually.
-													</p>
-      											</div>
-      											<div class="modal-footer">
-													<h6><label id="ndaSelectLabel" for="ndaSelect">
-														NDA/IP <?php displayInfoTooltip($tooltipNdaSelect); ?> <font size="2" style="color:red;">*required</font>
-													</label></h6>
-												<select class="form-control input" id="ndaSelect" name="ndaIpId">
-													<?php
-														foreach ($ndaips as $n) {
-								    					$id = $n->getId();
-								   						$name = $n->getName();
-								    					$selected = $id == $pNdaIpId ? 'selected' : '';
-								    					echo "<option $selected value='$id'>$name</option>";
-													}
-													?>
-												</select>
-      											</div>
-    										</div>
- 									 	</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					<div class="col-sm-6">
+					
+				<div class="col-sm-12">
 					<div class="row">
-						<div class="col-sm-12">
-						<label id="sponsoredSelectLabel" for="sponsoredSelect">
-									Sponsored Project? <?php displayInfoTooltip($tooltipSponsored); ?>
-								</label>
-								<select class="form-control input" id="sponsoredSelect" name="isSponsored">
-									<?php
-									echo "<option value='1' ".($pIsSponsored == 1 ? 'selected' : '' ).">Yes</option>";
-									echo "<option value='0' ".($pIsSponsored == 0 ? 'selected' : '' ).">No</option>";
-									?>
-								</select>
-						</div>
 						<div class="col-sm-6">
 							<div class="form-group">
 								<label for="minQualificationsText">
@@ -535,7 +465,6 @@ var availableTags = [
 									?></textarea>
 							</div>
 						</div>
-					</div>
 					</div>
 				</div>
 				<div class="row">
@@ -576,62 +505,64 @@ var availableTags = [
 					</div>
 				</div>
 
-
-				<?php
-				//
-				// Show NDA/IP only if previosly selected in popup modal.  
-				//
-				// if ($pNdaIpId == '1') {
-				// 	echo "<div class='col-sm-6' style='display:none;'>";
-				// }
-				// else {
-				// 	echo "<div class='col-sm-6'>";
-				// }
-				//remove <div class='col-sm-6'> below
-				?>
 				<div class='col-sm-6'>
-					<div class="form-group" id="ndaDiv">
+					
 						<div id="ndaDisclaimerDiv" class="ndaDisclaimer border rounded border-secondary">
 							<font style="font-weight: bold;">If your project requires an NDA and/or IP agreement, it must be indicated at the time the students 
 								select the projects.</font>
-							<p>
-							<BR>
-							If your company intends to provide proprietary materials or confidential information requiring an NDA, OSU 
-							can arrange for a written agreement to reviewed and signed amongst the students, your company, and OSU.
-							<br><br>
-							Such an agreement will authorize the students to use and discuss the provided materials or information 
-							with each other and their instructor in confidence.
-							<br><br>
-							<b>The university will not participate in any agreement that requires students to transfer intellectual 
-								property rights ownership to your company or puts overly burdensome confidentiality obligations on 
-								the students.</b>
-							<br><br>Though OSU certainly appreciates your company’s sponsorship, we strongly discourage any agreements 
-							that could deter students from sharing the results of their academic work at OSU with fellow students, 
-							parents or future employers.
-							<br><br>
-							This does not prevent a separate arrangement between you each student individually.
-							</p>
+							<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ndaModal">
+								Non Disclosure Agreement Choice
+							</button>
+							<div class="modal fade" id="ndaModal" tabindex="-1" role="dialog" aria-labelledby="ndaModalLabel" aria-hidden="true">
+								<div class="modal-dialog modal-dialog-centered" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="ndaModalTitle">Modal title</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<p>
+											<BR>
+											If your company intends to provide proprietary materials or confidential information requiring an NDA, OSU 
+											can arrange for a written agreement to reviewed and signed amongst the students, your company, and OSU.
+											<br><br>
+											Such an agreement will authorize the students to use and discuss the provided materials or information 
+											with each other and their instructor in confidence.
+											<br><br>
+											<b>The university will not participate in any agreement that requires students to transfer intellectual 
+											property rights ownership to your company or puts overly burdensome confidentiality obligations on 
+											the students.</b>
+											<br><br>Though OSU certainly appreciates your company’s sponsorship, we strongly discourage any agreements 
+											that could deter students from sharing the results of their academic work at OSU with fellow students, 
+											parents or future employers.
+											<br><br>
+											This does not prevent a separate arrangement between you each student individually.
+											</p>
+										</div>
+										<div class="modal-footer">
+											<h6><label id="ndaSelectLabel" for="ndaSelect">
+												NDA/IP <?php displayInfoTooltip($tooltipNdaSelect); ?> <font size="2" style="color:red;">*required</font>
+											</label></h6>
+											<select class="form-control input" id="ndaSelect" name="ndaIpId">
+											<?php
+												foreach ($ndaips as $n) {
+												$id = $n->getId();
+												$name = $n->getName();
+												$selected = $id == $pNdaIpId ? 'selected' : '';
+												echo "<option $selected value='$id'>$name</option>";
+											}
+											?>
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
 							
-							
-							<h6><label id="ndaSelectLabel" for="ndaSelect">
-								NDA/IP <?php displayInfoTooltip($tooltipNdaSelect); ?> <font size="2" style="color:red;">*required</font>
-							</label></h6>
-							<select class="form-control input" id="ndaSelect" name="ndaIpId">
-								<?php
-								foreach ($ndaips as $n) {
-									$id = $n->getId();
-									$name = $n->getName();
-									$selected = $id == $pNdaIpId ? 'selected' : '';
-									echo "<option $selected value='$id'>$name</option>";
-								}
-								?>
-							</select>
 						</div>
-					</div>
+					
 				</div>
-				<hr>
-				<br>
-
 			</form>
 
 			<!-- Action Buttons under form -->
