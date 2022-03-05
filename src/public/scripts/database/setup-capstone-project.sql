@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS capstone_project_status (
     PRIMARY KEY (cps_id)
 );
 
+
 CREATE TABLE IF NOT EXISTS capstone_project (
     cp_id CHAR(16) NOT NULL,
     cp_u_id CHAR(16) NOT NULL,
@@ -93,6 +94,14 @@ CREATE TABLE IF NOT EXISTS capstone_project (
     FOREIGN KEY (cp_cpni_id) REFERENCES capstone_project_nda_ip (cpni_id),
     FOREIGN KEY (cp_cps_id) REFERENCES capstone_project_status (cps_id)
 );
+
+CREATE TABLE IF NOT EXISTS capstone_project_edit_permissions (
+    pf_cp_id CHAR(16) NOT NULL,
+    pf_u_id CHAR(16) NOT NULL,
+
+    FOREIGN KEY (pf_cp_id) REFERENCES capstone_project (cp_id),
+    FOREIGN KEY (pf_u_id) REFERENCES user (u_id)
+)
 
 CREATE TABLE IF NOT EXISTS capstone_project_image (
     cpi_id CHAR(16) NOT NULL,
