@@ -7,7 +7,7 @@
  * @param \Model\CapstoneProjectCategory[] $categories an array of the available project categories
  * @return void
  */
-function renderAdminReviewPanel($project, $logs, $categories, $users, $singleView) {
+function renderAdminReviewPanel($project, $logs, $editors, $categories, $users, $singleView) {
 
     $pId = $project->getId();
     $pStatusName = $project->getStatus()->getName();
@@ -27,12 +27,77 @@ function renderAdminReviewPanel($project, $logs, $categories, $users, $singleVie
 	$tooltipPublish = "This will reveal this project to a general search by students. Allows students to find and bid on project.";
 	$tooltipunPublish = "This hides a project from students. Useful for project that are already filled with selected students or has an NDA concern.";
     $tooltipEdit = "This allows you to edit this project.";
+    $tooltipDeleteEditor = "This button deletes a user from the list of users with permissions to edit a project.";
 
-    $usersHTML = "<select id='proposerSelect' class='form-control'>";
-	foreach ($users as $u)
-		$usersHTML .= "<option value='".$u->getId()."' ".($pProposerId == $u->getId() ? 'selected' : '' ).">" . $u->getLastname() . ", " . $u->getFirstname() . ": " .$u->getEmail(). "</option>";
-	$usersHTML .= "</select>";
+    $proposerHTML = "<select id='proposerSelect' class='form-control'>";
+	foreach ($users as $u) {
+		$proposerHTML .= "" .
+        "<option value='" . $u->getId() . "' " . ($pProposerId == $u->getId() ? 'selected' : '' ) . ">" .
+            $u->getLastname() . ", " . $u->getFirstname() . ": " . $u->getEmail() . 
+        "</option>";
+    }
+	$proposerHTML .= "</select>";
+
+
+    $newEditorHTML = "<div class=''><select id='editorSelect' class='form-control'>";
+		$newEditorHTML .= "<option value='N/A' 'selected'> N/A </option>";
+        foreach ($users as $u) {
+        $isEditor = false;
+        if ($editors) {
+            foreach ($editors as $editor) {
+                if ($editor->getId() == $u->getId()) {
+                    $isEditor = true;
+                    break;
+                }
+            }
+        }
+        if ($isEditor || $pProposerId == $u->getId()) {
+            continue;
+        }
+		$newEditorHTML .= "<option value='".$u->getId()."' >" . $u->getLastname() . ", " . $u->getFirstname() . ": " .$u->getEmail(). "</option>";
+    }
+    $newEditorHTML .= "</select></div>";
+
+
+    $editorsTableHTML = "<div class='col-auto'>";
+    if ($editors) {
+        foreach ($editors as $u) {
+            $editorsTableHTML .= "" .
+            "<div class='row p-1'>" . 
+                "<div class='col-8 border my-auto pl-2 pr-1 py-1'>" . 
+                    "<div class='text-left'>" .
+                        $u->getLastName() . ", " . $u->getFirstName() . ", " . $u->getEmail() . 
+                    "</div>" .
+                "</div>" .
+                "<div class='col-4'>" .
+                    "<button ".
+                        "class='btn btn-danger admin-btn btn-block my-0'" . 
+                        "type='button'" . 
+                        "data-toggle='tooltip'" . 
+                        "data-placement='bottom'" .
+                        "title='$tooltipDeleteEditor'" . 
+                        "onclick=\"onEditorDelete('" . $u->getId() . "')\"" .
+                    "> " .
+                            "Delete" . 
+                    "</button>" .
+                "</div>" .
+            "</div>";
+        }
+    } else {
+        $editorsTableHTML .= "" .
+            "<div class='row'>" . 
+                "<div class='col-12 border my-auto pl-2 pr-1 py-1'>" . 
+                    "<div class='text-left'>" .
+                        "N/A" .
+                    "</div>" .
+                "</div>" .
+            "</div>";
+    }
+    $editorsTableHTML .= "
+    </div>
+    ";
 	
+
 	$actions = array();
     if ($pStatusName == 'Pending Approval') {
         $actions[] = 'Project Review';
@@ -69,21 +134,43 @@ function renderAdminReviewPanel($project, $logs, $categories, $users, $singleVie
         <div class='col-sm border rounded border-dark' id='adminProjectStatusDiv'>
             <center><h4><p style='color: black;'>-- Administrator Options --</p></h4></center>
             <div class='row'>
-			    <div class='col-6'>
+			    <div class='col-12 py-1'>
                     $actionsHtmlContent
                     $visibility
                     <h6><p style='color:red'>$isArchived</p></h6>
                     $commentsHtml
-                    <h6><p style='color:black'>Current Project Status: $pStatusName</p></h6>
-                    <h6><p style='color:black'>Major Categories: </p></h6>
-                    <select class='form-control' id='projectCategorySelect' data-toggle='tooltip'
-                        data-placement='top' title=''>
-                        $options
-                    </select>
                 </div>
-                <div class='col-6'>
-                    <h6><p style='color:black'>Project Proposer: $usersHTML</p></h6>
+
+                <div class='row col-12'>
+                    <div class='col-4'><h6><p style='color:black'>Current Project Status:</p></h6></div>
+                    <div class='col-8'><h6>$pStatusName</h6></div>
                 </div>
+
+                <div class='row col-12 py-1'>
+                    <div class='col-4'><h6><p style='color:black'>Major Categories: </p></h6></div>
+                    <div class='col-8'>
+                        <select class='form-control' id='projectCategorySelect' data-toggle='tooltip'
+                            data-placement='top' title=''>
+                            $options
+                        </select>
+                    </div>
+                </div>
+
+                <div class='row col-12 py-1'>
+                    <div class='col-4'><h6><p style='color:black'>Project Proposer:</p></h6></div>
+                    <div class='col-8'>$proposerHTML</div>
+                </div>
+
+                <div class='row col-12 py-1'>  
+                    <div class='col-4'><h6>Add Project Editor:</h6></div>
+                    <div class='col-8'>$newEditorHTML</div>
+                </div>
+
+                <div class='row col-12 py-1'>  
+                    <div class='col-4'><h6>Existing Project Editors:</h6></div>
+                    <div class='col-8'>$editorsTableHTML</div>
+                </div>
+
 			</div>
             <h6>Admin Comments (Only visible by admins)</h6>
             <textarea class='form-control input' id='projectAdminComments'>$aComments</textarea>

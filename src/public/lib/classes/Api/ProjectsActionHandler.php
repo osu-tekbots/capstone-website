@@ -45,6 +45,23 @@ class ProjectsActionHandler extends ActionHandler {
         $this->config = $config;
     }
 
+    public function verifyAdminSession() {
+        if ($_SESSION['accessLevel'] != 'Admin') {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Permission Denied'));
+        }
+        return;
+    }
+
+    public function verifyIsProjectOwner($projectId) {
+        $project = $this->projectsDao->getCapstoneProject($projectId);
+        if ($project->getPropser()->getId() != $_SESSION['userID']) {
+            if ($_SESSION['accessLevel'] != 'Admin') {
+                $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Permission Denied'));
+            }
+        }
+        return;
+    }
+
     /**
      * Creates a new capstone project entry in the database.
      *
@@ -535,6 +552,42 @@ class ProjectsActionHandler extends ActionHandler {
             'Successfully Unarchived project.'
         ));
     }
+
+    public function handleAddEditor() {
+        $this->verifyAdminSession();
+
+        $projectId = $this->getFromBody('projectId');
+        $editorId = $this->getFromBody('editorId');
+
+        $ok = $this->projectsDao->addCapstoneProjectEditor($projectId, $editorId);
+
+        if (!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to add editor'));
+        }
+
+        $this->respond(new Response(
+            Response::OK,
+            'Successfully Added editor.'
+        ));
+    }
+
+    public function handleDeleteEditor() {        
+        $this->verifyAdminSession();
+
+        $projectId = $this->getFromBody('projectId');
+        $editorId = $this->getFromBody('editorId');
+        
+        $ok = $this->projectsDao->deleteCapstoneProjectEditor($projectId, $editorId);
+
+        if (!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to delete editor'));
+        }
+
+        $this->respond(new Response(
+            Response::OK,
+            'Successfully Deleted editor.'
+        ));
+    }
 	
     public function handleDeleteProject() {
         $id = $this->getFromBody('id');
@@ -745,6 +798,12 @@ class ProjectsActionHandler extends ActionHandler {
 			case 'updateType':
                 $this->handleUpdateProjectType();
 				break;			
+            case 'deleteEditor':
+                $this->handleDeleteEditor();
+                break;		
+            case 'addEditor':
+                $this->handleAddEditor();
+                break;
 				
             default:
                 $this->respond(new Response(Response::BAD_REQUEST, 'Invalid action on project resource'));

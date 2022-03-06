@@ -407,6 +407,101 @@ class CapstoneProjectsDao {
     }
 
     /**
+     * Fetches the list of editors for a project with the provided ID
+     *
+     * @param string $id
+     * @return array(\Model\User)|boolean the users on success, false otherwise
+     */
+    public function getCapstoneProjectEditors($projectId) {
+        try {
+            $sql = '
+            SELECT *
+            FROM user, capstone_project_edit_permissions
+            WHERE pf_cp_id = :projectId and pf_u_id = u_id';
+            $params = array(':projectId' => $projectId);
+            $results = $this->conn->query($sql, $params);
+            if (\count($results) == 0) {
+                return false;
+            }
+            $editors = array();
+            foreach ($results as $row) {
+                $user = UsersDao::ExtractUserFromRow($row);
+                array_push($editors, $user);
+            }
+            return $editors;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to get capstone project editors:' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function addCapstoneProjectEditor($projectId, $editorId) {
+        try {
+            $sql = '
+            INSERT INTO capstone_project_edit_permissions
+                ( pf_cp_id , pf_u_id )
+            VALUES
+                ( :projectId, :editorId )
+            ';
+            $params = array(
+                ':projectId' => $projectId,
+                ':editorId' => $editorId
+            );
+            $this->conn->execute($sql, $params);
+
+            $sql = '
+            SELECT *
+            FROM user, capstone_project_edit_permissions
+            WHERE pf_cp_id = :projectId and pf_u_id = :editorId';
+            $params = array(
+                ':projectId' => $projectId,
+                ':editorId' => $editorId
+            );
+            $results = $this->conn->query($sql, $params);
+            if (\count($results) == 0) {
+                return false;
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to get capstone project editors:' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function deleteCapstoneProjectEditor($projectId, $editorId) {
+        try {
+            $sql = '
+            DELETE
+            FROM capstone_project_edit_permissions
+            WHERE pf_cp_id = :projectId AND pf_u_id = :editorId';
+            $params = array(
+                ':projectId' => $projectId,
+                ':editorId' => $editorId
+            );
+            $this->conn->execute($sql, $params);
+
+            $sql = '
+            SELECT *
+            FROM user, capstone_project_edit_permissions
+            WHERE pf_cp_id = :projectId AND pf_u_id = :editorId';
+            $params = array(
+                ':projectId' => $projectId,
+                ':editorId' => $editorId
+            );
+            $results = $this->conn->query($sql, $params);
+            if (\count($results) == 0) {
+                return true;
+            }
+
+            return false;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to get capstone project editors:' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Fetches the capstone project with the provided ID
      *
      * @param string $id
@@ -419,7 +514,7 @@ class CapstoneProjectsDao {
             SELECT * 
             FROM capstone_project, capstone_project_compensation, capstone_project_category,
                 capstone_project_type, capstone_project_focus, capstone_project_cop, capstone_project_nda_ip,
-                capstone_project_status, user 
+                capstone_project_status, user
             WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
                 AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND cp_u_id = u_id 
                 AND cp_id = :id

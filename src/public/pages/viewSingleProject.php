@@ -197,8 +197,8 @@ if(!@getimagesize($image)){
 						$categories = $dao->getCapstoneProjectCategories();
 						$users = $usersDao->getAllUsers();
 						$logs = $dao->getCapstoneProjectLogs($project->getId());
-
-						renderAdminReviewPanel($project, $logs, $categories, $users, true);
+						$editors = $dao->getCapstoneProjectEditors($project->getId());
+						renderAdminReviewPanel($project, $logs, $editors, $categories, $users, true);
                     }
 					?>
 	      </div>

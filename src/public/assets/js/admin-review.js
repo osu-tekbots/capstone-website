@@ -22,7 +22,8 @@ function onProjectCategorySelect() {
 
     api.post('/projects.php', body)
         .then(res => {
-            snackbar(res.message, 'success');
+            location.reload();
+            // snackbar(res.message, 'success');
         })
         .catch(err => {
             snackbar(err.message, 'error');
@@ -54,6 +55,48 @@ $('#projectCategorySelect').change(onProjectCategorySelect);
 // }
 // $('#projectCategoryCheckBox').change(onprojectCategoryCheckBox);
 
+function onEditorDelete(editorId) {
+    console.log("Deleting: ", editorId);
+    projectId = getProjectId();
+
+    let body = {
+        action: 'deleteEditor',
+        projectId: projectId,
+        editorId: editorId
+    };
+
+    api.post('/projects.php', body)
+        .then(res => {
+            location.reload();
+            // snackbar(res.message, 'success');
+        })
+        .catch(err => {
+            snackbar(err.message, 'error');
+        });
+}
+
+function onEditorSelect() {
+    editorId = $('#editorSelect').val();
+    projectId = getProjectId();
+
+
+    let body = {
+        action: 'addEditor',
+        projectId: projectId,
+        editorId: editorId
+    };
+
+    api.post('/projects.php', body)
+        .then(res => {
+            location.reload();
+            // snackbar(res.message, 'success');
+        })
+        .catch(err => {
+            snackbar(err.message, 'error');
+        });
+
+}
+$('#editorSelect').change(onEditorSelect);
 
 /**
  * Handler for when the proposer is updated.
@@ -70,7 +113,8 @@ function onProposerSelect() {
 
     api.post('/projects.php', body)
         .then(res => {
-            snackbar(res.message, 'success');
+            location.reload();
+            // snackbar(res.message, 'success');
         })
         .catch(err => {
             snackbar(err.message, 'error');
@@ -93,7 +137,8 @@ function onProjectAdminCommentUpdate() {
 	
     api.post('/projects.php', body)
         .then(res => {
-            snackbar(res.message, 'success');
+            location.reload();
+            // snackbar(res.message, 'success');
         })
         .catch(err => {
             snackbar(err.message, 'error');
@@ -114,7 +159,8 @@ function onProjectApprove() {
 
     api.post('/projects.php', body)
         .then(res => {
-            snackbar(res.message, 'success');
+            location.reload();
+            // snackbar(res.message, 'success');
         })
         .catch(err => {
             snackbar(err.message, 'error');
@@ -137,7 +183,8 @@ function onProjectReject() {
 
     api.post('/projects.php', body)
         .then(res => {
-            snackbar(res.message, 'success');
+            location.reload();
+            // snackbar(res.message, 'success');
         })
         .catch(err => {
             snackbar(err.message, 'error');
@@ -156,8 +203,9 @@ function onMakeProjectPublic() {
 
     api.post('/projects.php', body)
         .then(res => {
-            snackbar(res.message, 'success');
-            $('#adminViewProjectBtn').show();
+            location.reload();
+            // snackbar(res.message, 'success');
+            // $('#adminViewProjectBtn').show();
         })
         .catch(err => {
             snackbar(err.message, 'error');
@@ -176,8 +224,9 @@ function onMakeProjectPrivate() {
 
     api.post('/projects.php', body)
         .then(res => {
-            snackbar(res.message, 'success');
-            $('#adminViewProjectBtn').hide();
+            location.reload();
+            // snackbar(res.message, 'success');
+            // $('#adminViewProjectBtn').hide();
         })
         .catch(err => {
             snackbar(err.message, 'error');
@@ -196,7 +245,8 @@ function onArchiveProject() {
 
     api.post('/projects.php', body)
         .then(res => {
-            snackbar(res.message, 'success');
+            location.reload();
+            // snackbar(res.message, 'success');
         })
         .catch(err => {
             snackbar(err.message, 'error');
@@ -215,7 +265,8 @@ $('#adminDeleteProjectBtn').on('click', function() {
 
     api.post('/projects.php', body)
         .then(res => {
-            snackbar(res.message, 'success');
+            location.reload();
+            // snackbar(res.message, 'success');
         })
         .catch(err => {
             snackbar(err.message, 'error');
