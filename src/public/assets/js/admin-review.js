@@ -10,25 +10,37 @@ function getProjectId() {
  * Handler for when the project category is selected by the admin. The result of the select will automatically
  * update the category of the project in the database.
  */
-function onProjectCategorySelect() {
-    projectCategorySelect = $('#projectCategorySelect').val();
-    projectID = getProjectId();
+function onCategoryChange(id, c_id) {
+    // projectCategorySelect = $('#projectCategorySelect').val();
+    // projectID = getProjectId();
 
+    // let body = {
+    //     action: 'updateCategory',
+    //     projectId: projectID,
+    //     categoryId: projectCategorySelect
+    // };
+
+    // api.post('/projects.php', body)
+    //     .then(res => {
+    //         snackbar(res.message, 'success');
+    //     })
+    //     .catch(err => {
+    //         snackbar(err.message, 'error');
+    //     });
+            
     let body = {
         action: 'updateCategory',
-        projectId: projectID,
-        categoryId: projectCategorySelect
-    };
+        categoryId: c_id,
+        projectId: id
+    }
 
-    api.post('/projects.php', body)
-        .then(res => {
-            snackbar(res.message, 'success');
-        })
-        .catch(err => {
-            snackbar(err.message, 'error');
-        });
+    api.post('/projects.php', body).then(res => {
+        snackbar(res.message, 'success');
+    }).catch(err => {
+        snackbar(err.message, 'error');
+    });
 }
-$('#projectCategorySelect').change(onProjectCategorySelect);
+
 
 /**
  * Handler for when a project category box is checked by the admin. The result of the select will automatically

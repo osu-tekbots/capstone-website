@@ -7,6 +7,7 @@ error_reporting(E_ALL); */
 
 use DataAccess\CapstoneProjectsDao;
 use DataAccess\KeywordsDao;
+use DataAccess\CategoriesDao;
 
 session_start();
 
@@ -21,10 +22,10 @@ allowIf($isAdmin);
 
 $projectsDao = new CapstoneProjectsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
+$categoriesDao = new CategoriesDao($dbConn, $logger);
 
 $projects = $projectsDao->getCapstoneProjectsForAdmin();
 $types = $projectsDao->getCapstoneProjectTypes();
-$categories = $projectsDao->getCapstoneProjectCategories();
 $statuses = $projectsDao->getCapstoneProjectStatuses();
 
 if (isset($_REQUEST['archive'])){ //Only show archived projects to admin
@@ -108,25 +109,26 @@ include_once PUBLIC_FILES . '/modules/header.php';
     * Function Name: categoryChange(id)
     * Description: Updates the category of a project using onchange() for a displayed project.
     *********************************************************************************/
-    function categoryChange(id) {
-		// Grab the ID of the selected element
-		var childID = $('#categoryselect'+id).children(":selected").attr("value");
-		
-//		alert(childID);
-		
-		let body = {
-			action: 'updateCategory',
-			categoryId: childID,
-			projectId: id
-		}
+    // function categoryChange(id, c_id) {
+	// 	// Grab the ID of the selected element
+	// 	// var c_id = $('#categorycheckbox'+id).children(":selected").attr("value");
+	// 	var checkbox = $('#categorycheckbox'+c_id);
+	// 	$logger->error("checkbox value:", $checkbox.checked);
+				
+	// 	let body = {
+	// 		action: 'updateCategory',
+	// 		categoryId: c_id,
+	// 		projectId: id,
+	// 		checked: checkbox.checked
+	// 	}
 
-		api.post('/projects.php', body).then(res => {
-			snackbar(res.message, 'success');
-		}).catch(err => {
-			snackbar(err.message, 'error');
-		});
+	// 	api.post('/projects.php', body).then(res => {
+	// 		snackbar(res.message, 'success');
+	// 	}).catch(err => {
+	// 		snackbar(err.message, 'error');
+	// 	});
 		
-	}
+	// }
 
     $(document).ready(function(){
 
@@ -314,7 +316,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 				</tr>
 			</thead>
 			<tbody id="projectCardsTable">
-				<?php renderAdminProjectCardGroup2($projects, $keywordsDao, $types, $categories, $statuses, false);?>
+				<?php renderAdminProjectCardGroup2($projects, $keywordsDao, $categoriesDao, $types, $statuses, false);?>
 			</tbody>
 		</table>
 

@@ -3,6 +3,7 @@ include_once '../bootstrap.php';
 
 use DataAccess\CapstoneProjectsDao;
 use DataAccess\KeywordsDao;
+use DataAccess\CategoriesDao;
 
 $title = 'Browse Projects';
 include_once PUBLIC_FILES . '/modules/header.php';
@@ -10,14 +11,15 @@ include_once PUBLIC_FILES . '/modules/cards.php';
 
 $dao = new CapstoneProjectsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
+$categoriesDao = new CategoriesDao($dbConn, $logger);
 
-if (isset($_REQUEST['category']))
-	$projects = $dao->getBrowsableCapstoneProjectsByCategory($_REQUEST['category']);
-else
-	$projects = $dao->getBrowsableCapstoneProjects();
+// if (isset($_REQUEST['category']))
+// 	$projects = $dao->getBrowsableCapstoneProjectsByCategory($_REQUEST['category']);
+// else
+$projects = $dao->getBrowsableCapstoneProjects();
 
 
-$categories = $dao->getCapstoneProjectCategories();
+$categories = $categoriesDao->getAllCategories();
 $types = $dao->getCapstoneProjectTypes();
 
 ?> 
@@ -39,7 +41,7 @@ $types = $dao->getCapstoneProjectTypes();
             </div>
             <div class="col-sm-2">
                 <div class="form-group">
-                    <label for="projectTypeFilterSelect">Filter by Keyword</label>
+                    <label for="keywordFilterSelect">Filter by Keyword</label>
                     <select class="form-control" id="keywordFilterSelect" onchange="filterSelectChanged(this)">
                         <option></option>
                         <?php
@@ -56,16 +58,13 @@ $types = $dao->getCapstoneProjectTypes();
                 <div class="form-group">
                     <label for="projectTypeFilterSelect">Filter by Course</label>
                     <select class="form-control" id="projectTypeFilterSelect" onchange="filterSelectChanged(this)">
-                            <?php 
-                                $options = '<option></option>';
-                                foreach ($categories as $c) {
-                                    $name = $c->getName();
-                                    if ($name != 'None'){
-                                        $options .= "<option ".($c->getId() == $_REQUEST['category'] ? 'selected':'').">$name</option>";
-                                    }
-                                }
-                                echo($options);
-                            ?>
+                        <option></option>
+                        <?php 
+                        $categories = $categoriesDao->getAllCategories();
+                        foreach ($categories as $c) {
+                            echo '<option>' . $c->getName() . '</option>';
+                        }
+                        ?>
                     </select>
                 </div>
             </div>
@@ -135,7 +134,7 @@ $types = $dao->getCapstoneProjectTypes();
             <div class="masonry" id="projectCardGroup">
                 <?php
 					// Render the cards to browser here
-					renderProjectCardGroup($projects, $keywordsDao, true);
+					renderProjectCardGroup($projects, $keywordsDao, $categoriesDao, true);
 					?>
             </div>
 

@@ -17,6 +17,8 @@ include_once PUBLIC_FILES . '/modules/button.php';
 function renderNewApplicationModal($project) {
     $pTitle = Security::HtmlEntitiesEncode($project->getTitle());
     $pDescription = Security::HtmlEntitiesEncode($project->getDescription());
+	// decode rich html saved from rich text
+	$pDescription = htmlspecialchars_decode($pDescription);
 	$pNdaIp = $project->getNdaIp()->getName();
 		
     echo "

@@ -4,6 +4,7 @@ include_once '../bootstrap.php';
 use DataAccess\CapstoneProjectsDao;
 use DataAccess\UsersDao;
 use DataAccess\KeywordsDao;
+use DataAccess\CategoriesDao;
 use Model\CapstoneProjectStatus;
 use Util\Security;
 
@@ -25,6 +26,7 @@ allowIf($authorizedToProceed, 'pages/login.php');
 
 $dao = new CapstoneProjectsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
+$categoriesDao = new CategoriesDao($dbConn, $logger);
 $usersDao = new UsersDao($dbConn, $logger);
 
 // Get the project and store properly formatted values into local variables
@@ -40,8 +42,6 @@ if ($project) {
     $pPreferredQual = Security::HtmlEntitiesEncode($project->getPreferredQualifications());
     $pCompensationId = $project->getCompensation()->getId();
     $pAdditionalEmails = Security::HtmlEntitiesEncode($project->getAdditionalEmails());
-    $pCategoryId = $project->getCategory()->getId();
-    $pCategoryName = $project->getCategory()->getName();
     $pTypeId = $project->getType()->getId();
     $pFocusId = $project->getFocus()->getId();
     $pCopId = $project->getCop()->getId();
@@ -64,7 +64,6 @@ if ($project) {
 $authorizedToProceed = $project->getProposer()->getId() == $_SESSION['userID'] || $isAdmin;
 
 // Get all the various enumerations from the database
-$categories = $dao->getCapstoneProjectCategories();
 $users = $usersDao->getAllUsers();
 $types = $dao->getCapstoneProjectTypes();
 $focuses = $dao->getCapstoneProjectFocuses();
@@ -183,7 +182,7 @@ var availableTags = [
 			//
 			if ($isAdmin && ($submitted || $approved)) {
 				$logs = $dao->getCapstoneProjectLogs($project->getId());
-				renderAdminReviewPanel($project, $logs, $categories, $users, false);
+				renderAdminReviewPanel($project, $logs, $categoriesDao, $users, false);
 			} else if ($isAdmin) {
 				echo "<h4>Project has not been submitted.</h4>";
 			}

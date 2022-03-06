@@ -5,6 +5,7 @@ use Model\CapstoneProject;
 use Model\CapstoneProjectLog;
 use Model\CapstoneProjectStatus;
 use Model\Keyword;
+use Model\Category;
 use Model\User;
 use Model\UsersDao;
 
@@ -22,6 +23,8 @@ class ProjectsActionHandler extends ActionHandler {
     private $usersDao;
     /** @var \DataAccess\KeywordsDao */
     private $keywordsDao;	
+    /** @var \DataAccess\CategoriesDao */
+    private $categoriesDao;
     /** @var \Email\ProjectMailer */
     private $mailer;
     /** @var \Util\ConfigManager */
@@ -36,11 +39,12 @@ class ProjectsActionHandler extends ActionHandler {
      * @param \Util\ConfigManager $config the configuration manager providing access to site config
      * @param \Util\Logger $logger the logger to use for logging information about actions
      */
-    public function __construct($projectsDao, $usersDao, $keywordsDao, $mailer, $config, $logger) {
+    public function __construct($projectsDao, $usersDao, $keywordsDao, $categoriesDao, $mailer, $config, $logger) {
         parent::__construct($logger);
         $this->projectsDao = $projectsDao;
         $this->usersDao = $usersDao;
 		$this->keywordsDao = $keywordsDao;
+        $this->categoriesDao = $categoriesDao;
         $this->mailer = $mailer;
         $this->config = $config;
     }
@@ -93,17 +97,27 @@ class ProjectsActionHandler extends ActionHandler {
 
         $body = $this->requestBody;
 
-        //Load project
-		$project = $this->projectsDao->getCapstoneProject($body['projectId']);
-        // TODO: handle case when project is not found
+        if ($this->categoriesDao->categoryExistsForEntity($body['categoryId'], $body['projectId'])) {
+            $ok = $this->categoriesDao->removeCategoryInJoinTable($body['categoryId'], $body['projectId']);
+        }
+        else {
+            $ok = $this->categoriesDao->addCategoryInJoinTable($body['categoryId'], $body['projectId']);
+        }
+        
+        // //Load project
+		// $project = $this->projectsDao->getCapstoneProject($body['projectId']);
+        // $categories = $this->categoriesDao->
+        
+        // // TODO: handle case when project is not found
 
-        //Update Project
-		$project->getCategory()->setId($body['categoryId']);
+        // //Update Project
+		// $project->getCategory()->setId($body['categoryId']);
 		
-        //Save Project
-		$ok = $this->projectsDao->updateCapstoneProject($project);
+        // //Save Project
+		// $ok = $this->projectsDao->updateCapstoneProject($project);
+        $project = $this->projectsDao->getCapstoneProject($body['projectId']);
         if (!$ok) {
-            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to update project'));
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to update project category'));
         }
         $this->projectsDao->insertCapstoneProjectLog(new CapstoneProjectLog(
             $project->getId(),

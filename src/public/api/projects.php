@@ -9,6 +9,7 @@ use DataAccess\UsersDao;
 use Api\Response;
 use DataAccess\CapstoneProjectsDao;
 use DataAccess\KeywordsDao;
+use DataAccess\CategoriesDao;
 use Api\ProjectsActionHandler;
 use Email\ProjectMailer;
 
@@ -22,8 +23,9 @@ session_start();
 $projectsDao = new CapstoneProjectsDao($dbConn, $logger);
 $usersDao = new UsersDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
+$categoriesDao = new CategoriesDao($dbConn, $logger);
 $mailer = new ProjectMailer($configManager->get('email.from_address'), $configManager->get('email.subject_tag'));
-$handler = new ProjectsActionHandler($projectsDao, $usersDao, $keywordsDao, $mailer, $configManager, $logger);
+$handler = new ProjectsActionHandler($projectsDao, $usersDao, $keywordsDao, $categoriesDao, $mailer, $configManager, $logger);
 
 // Authorize the request
 if (isset($_SESSION['userID']) && !empty($_SESSION['userID'])) {

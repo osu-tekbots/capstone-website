@@ -5,6 +5,7 @@ use DataAccess\CapstoneProjectsDao;
 use DataAccess\CapstoneApplicationsDao;
 use DataAccess\UsersDao;
 use DataAccess\KeywordsDao;
+use DataAccess\CategoriesDao;
 use Util\Security;
 
 include PUBLIC_FILES . '/lib/shared/authorize.php';
@@ -36,6 +37,7 @@ $dao = new CapstoneProjectsDao($dbConn, $logger);
 $usersDao = new UsersDao($dbConn, $logger);
 $applicationsDao = new CapstoneApplicationsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
+$categoriesDao = new CategoriesDao($dbConn, $logger);
 $project = $dao->getCapstoneProject($pid);
 $proposer = $project->getProposerId();
 
@@ -79,7 +81,6 @@ $nda = $project->getNdaIp()->getName();
 $compensation = $project->getCompensation()->getName();
 $images = $project->getImages();
 $is_hidden = $project->getIsHidden();
-$category = $project->getCategory()->getName();
 
 $comments = Security::HtmlEntitiesEncode($project->getProposerComments());
 // decode rich html saved from rich text
@@ -90,6 +91,7 @@ $name = Security::HtmlEntitiesEncode($project->getProposer()->getFirstName())
 	. Security::HtmlEntitiesEncode($project->getProposer()->getLastName());
 $numberGroups = $project->getNumberGroups();
 $preexistingKeywords = $keywordsDao->getKeywordsForEntity($pid);
+$preexistingCategories = $categoriesDao->getCategoriesForEntity($pid);
 global $image_dir;
 $image = false;
 $images = $project->getImages();
@@ -194,11 +196,10 @@ if(!@getimagesize($image)){
                     //Generate admin interface for admins.
                     if ($isAdmin) {
 						echo'<br><br>';
-						$categories = $dao->getCapstoneProjectCategories();
 						$users = $usersDao->getAllUsers();
 						$logs = $dao->getCapstoneProjectLogs($project->getId());
 
-						renderAdminReviewPanel($project, $logs, $categories, $users, true);
+						renderAdminReviewPanel($project, $logs, $categoriesDao, $users, true);
                     }
 					?>
 	      </div>
@@ -225,10 +226,6 @@ if(!@getimagesize($image)){
 				<strong>Project Status:</strong>
 				<p>$status</p>
 	        </address>
-			<address>
-				<strong>Course Type:</strong>
-				<p>$category</p>
-			</address>
 			";
 			}
 			?>
@@ -266,6 +263,22 @@ if(!@getimagesize($image)){
 	          <br>$compensation
 	          <br>
 			</address>";
+			}
+
+			if (count($preexistingCategories) > 1){		
+				echo"
+				<address>
+					<strong>Course Types:</strong>
+					<br>		
+					";
+							foreach ($preexistingCategories as $c) {
+								if (trim(Security::HtmlEntitiesEncode($c->getName())) != '') {
+									echo '' . Security::HtmlEntitiesEncode($c->getName()) . '<br>';
+								}
+							}
+				echo"	
+					<br>
+				</address>";
 			}
 			
 			if (count($preexistingKeywords) > 1){		
