@@ -647,8 +647,7 @@ var availableTags = [
 			toolbar: [ 'heading', '|',
 				'bold', 'italic', '|',
 				'bulletedList', 'numberedList', 'blockQuote', '|',  
-				'link', 'unlink', '|', 
-				'outdent', 'indent', '|',
+				'link', 'unlink', '|',
 				'inserttable', '|', 
 				'undo', 'redo' ]
 		} )
@@ -664,11 +663,9 @@ var availableTags = [
 			toolbar: [ 'heading', '|',
 				'bold', 'italic', '|',
 				'bulletedList', 'numberedList', 'blockQuote', '|',  
-				'link', 'unlink', '|', 
-				'outdent', 'indent', '|',
+				'link', 'unlink', '|',
 				'inserttable', '|', 
-				'undo', 'redo', '|',
-				'mediaEmbed' ]
+				'undo', 'redo', '|']
 		} )
 		.then( newEditor => {
 			motivationEditor = newEditor;
@@ -682,8 +679,7 @@ var availableTags = [
 			toolbar: [ 'heading', '|',
 				'bold', 'italic', '|',
 				'bulletedList', 'numberedList', 'blockQuote', '|',  
-				'link', 'unlink', '|', 
-				'outdent', 'indent', '|',
+				'link', 'unlink', '|',
 				'inserttable', '|', 
 				'undo', 'redo' ]
 		} )
@@ -699,8 +695,7 @@ var availableTags = [
 			toolbar: [ 'heading', '|',
 				'bold', 'italic', '|',
 				'bulletedList', 'numberedList', 'blockQuote', '|',  
-				'link', 'unlink', '|', 
-				'outdent', 'indent', '|',
+				'link', 'unlink', '|',
 				'inserttable', '|', 
 				'undo', 'redo' ]
 		} )
@@ -716,8 +711,7 @@ var availableTags = [
 			toolbar: [ 'heading', '|',
 				'bold', 'italic', '|',
 				'bulletedList', 'numberedList', 'blockQuote', '|',  
-				'link', 'unlink', '|', 
-				'outdent', 'indent', '|',
+				'link', 'unlink', '|',
 				'inserttable', '|', 
 				'undo', 'redo' ]		
 		} )
@@ -729,7 +723,14 @@ var availableTags = [
         } );
 	let commentsEditor;
     ClassicEditor
-        .create( document.querySelector( '#commentsText' ) )
+        .create( document.querySelector( '#commentsText' ), {
+			toolbar: [ 'heading', '|',
+				'bold', 'italic', '|',
+				'bulletedList', 'numberedList', 'blockQuote', '|',  
+				'link', 'unlink', '|',
+				'inserttable', '|', 
+				'undo', 'redo' ]		
+		} )
 		.then( newEditor => {
 			commentsEditor = newEditor;
     	} )

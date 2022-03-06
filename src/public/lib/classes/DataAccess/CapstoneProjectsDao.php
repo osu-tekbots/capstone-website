@@ -337,17 +337,18 @@ class CapstoneProjectsDao {
                 SELECT COUNT(*) 
                 FROM capstone_project 
                 WHERE cp_cps_id = :pending AND cp_archived = :archived
-            ) AS projectsPending
+            ) AS projectsPending,
+            (
+                SELECT COUNT(*) 
+                FROM capstone_project
+                WHERE cp_id NOT IN (SELECT ccf_entity_id FROM capstone_category_for)
+            ) AS projectsNeedingCategoryPlacement
             ';
-            // ,
-            //     (
-            //     SELECT COUNT(*) 
-            //     FROM capstone_category_for
-            //     WHERE ccf_cc_id = :category 
-            // ) AS projectsNeedingCategoryPlacement
+            
+
             $params = array(
                 ':pending' => CapstoneProjectStatus::PENDING_APPROVAL,
-                // ':category' => Category::NONE,
+                // ':category' => '0',
                 ':archived' => false
             );
             $results = $this->conn->query($sql, $params);

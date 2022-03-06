@@ -96,7 +96,7 @@ $tooltipAllProjects = "";
 				<?php
 				$stats = $projectsDao->getCapstoneProjectStats();
 				$pendingProjects = $stats['projectsPending'];
-				// $pendingCategories = $stats['projectsNeedingCategoryPlacement'];
+				$pendingCategories = $stats['projectsNeedingCategoryPlacement'];
 
 				// TODO: ask about email here
 				// if ($pendingProjects == 5 || $pendingCategories == 5){

@@ -65,16 +65,6 @@ function renderProjectCardGroup($projects, $keywordsDao, $categoriesDao, $browsi
             $details .= "Status: $status";
         }
 
-
-/*	Disabling NDA display on card for look		
-		if($nda == 'No Agreement Required'){
-			$details .= "<h6>NDA: $nda</h6>";
-		}
-		//NDA is "NDA Required" or "NDA/IP Required"
-		else{
-			$details .= "<h6>$nda</h6>";
-		}
-*/
 		$extra = '';
 		$preexistingKeywords = $keywordsDao->getKeywordsForEntity($id);
 		if($preexistingKeywords){
@@ -123,130 +113,8 @@ function renderProjectCardGroup($projects, $keywordsDao, $categoriesDao, $browsi
     }
 }
 
-/**
- * Renders the HTML for the card group that displays projects.
- * 
- * The projects passed to this render function will ALL be rendered. All projects that should not be rendered (e.g.
- * projects that are not published or should be hidden) should be filtered out before calling this function.
- *
- * @param \Model\CapstoneProject[] $projects the projects to display
- * @param boolean $browsing indicates whether the rendered cards are for browsing or viewing/editing user projects
- * @param boolean $showActions determines whether to show the actionable (Edit, Delete) buttons
- * @return void
- */
 
-// function renderAdminProjectCardGroup($projects, $keywordsDao, $categoriesDao, $types, $statuses, $browsing = false) {
-// 	global $numCardsCreated;
-// 	global $image_dir;
-	
-// 	if(!$projects || count($projects) == 0) {
-// 		return;
-// 	}
-
-//     foreach ($projects as $p) {
-//         // Capture and format all of the variables we need before rendering the HTML
-//         $id = $p->getId();
-//         $title = Security::HtmlEntitiesEncode($p->getTitle());
-//         if (strlen($title) > 60) {
-//             // Restrict the title length
-//             $title = substr($title, 0, 60) . '...';
-//         }
-//         $description = Security::HtmlEntitiesEncode($p->getDescription());
-//         if (strlen($description) > 220) {
-//             // Restrict the description length
-//             $description = substr($description,0,220) . '...';
-//         }
-        
-// 		$nda = $p->getNdaIp()->getName();
-// 		$archived = $p->getIsArchived();
-// 		$partnername = Security::HtmlEntitiesEncode($p->getProposer()->getFirstName()) . " " . Security::HtmlEntitiesEncode($p->getProposer()->getLastName());
-
-// 		$email = $p->getProposer()->getEmail();
-		
-// 		$proposerPhone = $p->getProposer()->getPhone();
-
-// 		$info = "Proposer: <a href='mailto:$email'>$partnername</a><BR>";
-// 		$info .= "Phone: $proposerPhone";
-
-// 		$extra = '';
-// 		// Set Extra Information for Admin Browse (If Archived, show that, if just a created project show nothing)
-// 		if ($archived) {
-// 			$extra = "Archived";
-// 		}
-
-// 		$status = $p->getStatus()->getName();
-// 		$details = $status;
-//         // The details string contains the small text for the project
-        	
-// 		if($nda == 'No Agreement Required'){
-// 			$details .= "<BR>NDA: $nda";
-// 		}
-// 		//NDA is "NDA Required" or "NDA/IP Required"
-// 		else{
-// 			$details .= "<BR>$nda";
-// 		}
-		
-// 		//Make a Category checkbox form based on type
-// 		$category_check = "<div class='col-sm-2'>";
-// 		$categories = $categoriesDao->getCategoriesForEntity($id);
-// 		foreach ($categories as $c){
-// 			if (trim(Security::HtmlEntitiesEncode($c->getName())) != '') {
-// 				$category_check .= "<div class='form-check>
-// 					<div type='checkbox'  class='form-check-input' value='' id='categorycheckbox$id' onchange='categoryChange(\"$id\");'>
-// 					<label for='categorycheckbox$id'>" . Security::HtmlEntitiesEncode($c->getName()) . "</label>
-// 					</div>";
-
-// 			}
-// 		}
-// 		$category_check .= "</div>";
-
-// 		//Make a Type drop down based on type
-// 		$type_select = "<select id='typeselect$id' onchange='typeChange(\"$id\");'>";
-// 		foreach ($types AS $type){
-// 			$type_select .= "<option value='".$type->getId()."' ".($type->getId() == $p->getType()->getId() ? 'selected':'').">".$type->getName()."</option>";
-// 		}
-// 		$type_select .= "</select>";
-	
-// 		//Make a Type drop down based on type
-
-		
-// 		$details .= '<br/>Type: '. $type_select;
-// 		$details .= '<br/>Category: '. $category_check;
-
-// 		$image = false;
-// 		$images = $p->getImages();
-// 		if($images) {
-// 			foreach($images as $i) {
-// 				if($i->getIsDefault()){
-// 					$image = $i->getId();
-// 					break;
-// 				}
-// 			}
-// 		}
-		
-// 		if (!$image) {
-//             $image = $image_dir . 'assets/img/capstone_test.jpg';
-//         } else {
-//             $image = $image_dir . "images/$image";
-// 		}
-		
-// 		if(!@getimagesize($image)){
-// 			$image = $image_dir . 'assets/img/capstone_test.jpg';
-// 		}
-
-//         $dateUpdated = $p->getDateUpdated()->format('Y-m-d');
-// 		$lastUpdated = "Last Updated: $dateUpdated";
-		
-// 		$published = !$p->getIsHidden();
-		
-// 		renderAdminProjectCard($id, $title, $description, $details, $image, $status, $lastUpdated, 
-// 			$numCardsCreated, $browsing, $published, $archived, $info, $extra);
-
-//         $numCardsCreated++;
-//     }
-// }
-
-function renderAdminProjectCardGroup2($projects, $keywordsDao, $categoriesDao, $types, $statuses, $browsing = false) {
+function renderAdminProjectCardGroup($projects, $keywordsDao, $categoriesDao, $types, $statuses, $browsing = false) {
 	global $numCardsCreated;
 	global $image_dir;
 	
@@ -255,7 +123,7 @@ function renderAdminProjectCardGroup2($projects, $keywordsDao, $categoriesDao, $
 	}
 
     foreach ($projects as $p) {	
-		renderAdminProjectCard2($p, $categoriesDao, $numCardsCreated, $types, $browsing);
+		renderAdminProjectCard($p, $categoriesDao, $numCardsCreated, $types, $browsing);
         $numCardsCreated++;
     }
 }
@@ -322,82 +190,7 @@ echo "			<small class='text-muted'>$extra</small><br>
 }
 
 
-// function renderAdminProjectCard($id, $title, $description, $details, $imageLink, $status, $lastUpdated, $num, $browsing, $published, $archived, $info, $extra) {
-// 	$statusColor = ($status == 'Pending Approval' || $status == 'Rejected') ? 'red' : (($status == 'Created' || $status == 'Incomplete') ? '#ffcc00' : 'inherit');
-// 	$statusColorExtra = ($extra == 'Category Placement' || $status == 'Rejected') ? 'red' : (($extra == 'Archived') ? '#ffcc00' : 'inherit');
-//     $viewButton = $published ? createLinkButton("pages/viewSingleProject.php?id=$id", 'View') : '';
-// 	$editButton = (!$browsing && !$archived) ? createLinkButton("pages/editProject.php?id=$id", 'Edit') : '';
-// 	$deleteButton = (!$browsing) ? createProjectDeleteButton($id, $num) : '';
-// 	$unarchiveButton = '';
-// 	if (!$browsing && $archived) 
-// 		$unarchiveButton = createProjectUnarchiveButton($id, $num);
-// 	if (!$browsing && !$archived) 
-// 		$unarchiveButton = createProjectArchiveButton($id, $num);
-	
-	
-	
-// 	if ($status == 'Created') {
-// 		$status = 'Not Yet Submitted';
-// 	}
-
-// 	// decode rich html saved from rich text
-// 	$descriptionDecoded = htmlspecialchars_decode($description);
-
-// 	//<small class='text-muted'>$extra</small><br> (Above $viewButton)
-//     echo "
-// 	<tr id='projectCard$id' style='border-bottom: 1px solid black;'>
-// 	<td>
-// 	";
-// 	if (!$archived){
-// 		echo "
-// 		<a href='pages/viewSingleProject.php?id=$id' target='_blank' style='color: black'>
-// 			<img class='card-img-admin' id='projectImg$id' src='$imageLink' alt='Card Image Capstone' />
-// 		</a>
-// 		";
-// 	}
-// 	else {
-// 		echo "
-// 		<img class='card-img-admin' id='projectImg$id' src='$imageLink' alt='Card Image Capstone' />
-// 		";
-// 	}
-// 	echo "
-// 		</td>
-// 		<td class='col-sm-3' id='projectCardBody$num'>
-// 			<h6>$title</h6>
-// 			<small class='text-muted'>$descriptionDecoded</small>
-// 		</td>
-// 		<td class='col-sm-3'>
-// 			<small class='text-muted'>$details</small>
-// 			</td>
-// 		<td class='col-sm-2'>
-// 			<span style='color: $statusColor'>$status</span><BR>
-// 			<small class='text-muted'>$info</small><BR>
-// 			<span style='color: $statusColorExtra'>$extra</span>
-// 			</td>
-// 		<td class='col-sm-2'>
-// 			<small id='small$id' class='text-muted lastUpdatedSmall'>$lastUpdated</small><BR>
-// 			$viewButton
-// 			$editButton
-// 			$deleteButton
-// 			$unarchiveButton
-// 		</td>
-// 	</tr>
-
-// 	<script type='text/javascript'>
-// 		$(document).ready(function() {
-// 			$('#projectCard$id').hover(function() {
-// 				$(this).css('background-color', '#f8f9fa');
-// 				$('#projectImg$id').css('transition', 'all .2s ease-in-out');
-// 			}, function() {
-// 				$(this).css('background-color', 'white');
-// 			});
-// 		});
-// 	</script>
-// 	";
-// }
-
-
-function renderAdminProjectCard2($project, $categoriesDao, $num, $types, $browsing) {
+function renderAdminProjectCard($project, $categoriesDao, $num, $types, $browsing) {
 	global $image_dir;
 	
 	// Capture and format all of the variables we need before rendering the HTML
@@ -479,13 +272,8 @@ function renderAdminProjectCard2($project, $categoriesDao, $num, $types, $browsi
 		$image = $image_dir . 'assets/img/capstone_test.jpg';
 	}
 
-	
 	$lastUpdated = "Last Updated: $dateUpdated";
 	
-	
-	
-	
-	// $statusColor = ($status == 'Pending Approval' || $status == 'Rejected') ? '#fc4a3a' : (($status == 'Created' || $status == 'Incomplete') ? '#ffcc00' : 'inherit');
 	$statusColor = '';
 	$bannerColor = '';
 	if ($archived) {
@@ -543,9 +331,7 @@ function renderAdminProjectCard2($project, $categoriesDao, $num, $types, $browsi
 	
 	// classes for sorting
 	$classes = '';
-	// if ($status != 'Pending Approval') {
-	// 	$classes .= 'adminneeded ';
-	// }
+	
 	if ($status == 'Accepting Applicants') {
 		$classes .= 'acceptingApplicants';
 	}
@@ -622,42 +408,6 @@ function renderAdminProjectCard2($project, $categoriesDao, $num, $types, $browsi
 	";
 }
 
-
-/**
- * Renders the HTML for a project card that displays related project information.
- *
- * @param string $id the ID of the project
- * @param string $title the title of the project
- * @param string $description the description of the project
- * @param string $details the details for the project
- * @param string $imageLink the link to the image to display with the project
- * @return void
- */
-// function renderRelatedProjectCard($id, $title, $description, $details, $imageLink) {
-// 	global $numCardsCreated;
-// 	$viewButton = createLinkButton("pages/viewSingleProject.php?id=$id", 'View');
-
-// 	// decode rich html saved from rich text
-// 	$descriptionDecoded = htmlspecialchars_decode($description);
-
-// 	echo "
-// 	<div class='card capstoneCard my-3' id='projectCard$numCardsCreated'>
-// 		<a href='pages/viewSingleProject.php?id=$id' target='_blank' style='color: black'>
-// 			<img class='card-img-top' id='projectImg$id' src='$imageLink' alt='Card Image Capstone' />
-// 		</a>
-// 		<div class='card-body' id='projectCardBody$numCardsCreated'>
-// 			<h6>$title</h6>
-// 			<small class='text-muted'>$descriptionDecoded</small>
-// 			<br>
-// 			<small class='text-muted'>$details</small>
-// 			<div style='float: right; margin-right: 10px;'>
-// 				$viewButton
-// 			</div>
-// 		</div>
-// 		<br/>
-// 	</div>
-// 	";
-// }
 
 /**
  * Creates the HTML and associated JavaScript required for the project 'Delete' button functionality.

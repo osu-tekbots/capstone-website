@@ -104,17 +104,6 @@ class ProjectsActionHandler extends ActionHandler {
             $ok = $this->categoriesDao->addCategoryInJoinTable($body['categoryId'], $body['projectId']);
         }
         
-        // //Load project
-		// $project = $this->projectsDao->getCapstoneProject($body['projectId']);
-        // $categories = $this->categoriesDao->
-        
-        // // TODO: handle case when project is not found
-
-        // //Update Project
-		// $project->getCategory()->setId($body['categoryId']);
-		
-        // //Save Project
-		// $ok = $this->projectsDao->updateCapstoneProject($project);
         $project = $this->projectsDao->getCapstoneProject($body['projectId']);
         if (!$ok) {
             $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to update project category'));

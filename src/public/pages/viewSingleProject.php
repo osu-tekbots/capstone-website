@@ -130,9 +130,8 @@ if(!@getimagesize($image)){
 	    </div>
 </div>
 
-	  <!-- Page Content -->
-	  <div class="container">
-
+	<!-- Page Content -->
+	<div class="container">
 	    <div class="row">
 	      <div class="col-md-8 mb-5">
 	        <h2>Objectives</h2>
@@ -310,71 +309,7 @@ if(!@getimagesize($image)){
 
 	      </div>
 	    </div>
-			<br>
-			
-			<?php 
-			/*
-			<h2>Related Projects</h2>
-
-			<!-- related_cards is a class used in the javascript below to interface
-			     this section with an open source library called slick, which allows
-				 for a slideshow-like display.
-			-->
-			<div class="related_cards">
-				<?php
-				$numberOfRelatedProjects = 0;
-				//Create Related Project section.
-				foreach ($keywords as $key) {
-				    $result = getRelatedProjects($key, $projectID);
-				    $rowcount = mysqli_num_rows($result);
-				    while ($row = $result->fetch_assoc()) {
-				        $id = $row['project_id'];
-				        $title = $row['title'];
-
-				        //Limit length of title to XX characters for the cards.
-				        $title = strlen($title) > 24 ? substr($title,0,24) . '...' : $title;
-
-				        $description = ($row['description'] != NULL ? $row['description'] : '');
-				        //Limit length of description to XX characters for the cards.
-				        $description = strlen($description) > 70 ? substr($description,0,70) . '...' : $description;
-
-
-				        $status = $row['status'];
-				        $nda = $row['NDA/IP'];
-				        if ($nda == 'NDA Required' || $nda == 'NDA/IP Required') {
-				            $nda = 'NDA/IP Required';
-				        } else {
-				            $nda = '';
-				        }
-
-				        $extra = ($row['year'] != NULL ? $row['type'] . ' ' . $row['year'] : '');
-				        $extra .= '<br> Status: ' . $row['status'];
-				        $extra .= ' ' . '<h6>' . $nda . '</h6>';
-				        $image = $row['image'] != NULL ? $row['image'] : 'capstone.jpg';
-
-				        $relatedProjectKeywords = explode(',', $row['keywords']);
-
-				        foreach ($relatedProjectKeywords as $relatedProjectKey) {
-				            if ($relatedProjectKey != ' ' && strlen($extra) < 400) {
-				                $extra .= '<span class="badge badge-light keywordBadge">' . $relatedProjectKey . '</span>';
-				            }
-				        }
-
-				        //Generate the Project Cards in ./modules/createCards.php.
-				        createRelatedProjectCard($id, $title, $description, $extra, $image);
-				        $numberOfRelatedProjects++;
-				    }
-				    //Set the maximum number of related projects to be displayed in this section.
-				    if ($numberOfRelatedProjects == 12) {
-				        break;
-				    }
-				}
-				?>
-			</div>
-			 */?>
-
-
-			</div>
+	</div>
 <?php 
 // Create Application Functionality
 include_once PUBLIC_FILES . '/modules/newApplicationModal.php';
