@@ -142,6 +142,49 @@ class CapstoneProjectsDao {
                 $this->getCapstoneProjectImages($project, true);
                 $projects[] = $project;
             }
+            
+            $sql = '
+            SELECT * 
+            FROM 
+                capstone_project,
+                capstone_project_edit_permissions,
+                capstone_project_compensation,
+                capstone_project_category,
+                capstone_project_type, 
+                capstone_project_focus,
+                capstone_project_cop,
+                capstone_project_nda_ip,
+                capstone_project_status,
+                user
+            WHERE
+                cp_cpcmp_id = cpcmp_id
+                AND cp_cpc_id = cpc_id
+                AND cp_cpt_id = cpt_id
+                AND cp_cpf_id = cpf_id 
+                AND cp_cpcop_id = cpcop_id
+                AND cp_cpni_id = cpni_id
+                AND cp_cps_id = cps_id
+                AND pf_cp_id = cp_id
+                AND pf_u_id = :uid
+                AND cp_archived = :archived
+            ;';
+            $params = array(':uid' => $userId, ':archived' => false);
+            $results = $this->conn->query($sql, $params);
+
+            foreach ($results as $row) {
+                $project = self::ExtractCapstoneProjectFromRow($row, true);
+                $exists = False;
+                foreach ($projects as $existing) {
+                    if ($existing->getId() == $project->getId()) {
+                        $exists = True;
+                    }
+                }
+                if ($exists) {
+                    continue;
+                }
+                $this->getCapstoneProjectImages($project, true);
+                $projects[] = $project;
+            }
            
             return $projects;
         } catch (\Exception $e) {

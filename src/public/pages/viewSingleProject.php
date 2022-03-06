@@ -40,7 +40,17 @@ $project = $dao->getCapstoneProject($pid);
 $proposer = $project->getProposerId();
 
 // Check if project is hidden or not approved or if the project is the project is the proposers
-allowIf( ($project && !($project->getIsHidden() && !$isAdmin)) || ($project && ($proposer == $userId) ));
+
+$authorizedEditor = False;
+$authorizedEditors = $dao->getCapstoneProjectEditors($project->getId());
+if ($authorizedEditors) {
+	foreach ($authorizedEditors as $editor) {
+		if ($editor->getId() == $userId) {
+			$authorizedEditor = True;
+		}
+	}
+}
+allowIf( ($project && !($project->getIsHidden() && !$isAdmin)) || ($project && ($proposer == $userId)) || $authorizedEditor);
 
 $title = Security::HtmlEntitiesEncode($project->getTitle());
 $status = $project->getStatus()->getName();
