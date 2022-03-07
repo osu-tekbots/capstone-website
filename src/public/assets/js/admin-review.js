@@ -34,7 +34,6 @@ function onCategoryChange(id, c_id) {
         projectId: id
     }
 
-<<<<<<< HEAD
     api.post('/projects.php', body)
         .then(res => {
             location.reload();
@@ -43,13 +42,6 @@ function onCategoryChange(id, c_id) {
         .catch(err => {
             snackbar(err.message, 'error');
         });
-=======
-    api.post('/projects.php', body).then(res => {
-        snackbar(res.message, 'success');
-    }).catch(err => {
-        snackbar(err.message, 'error');
-    });
->>>>>>> Ginny
 }
 
 

@@ -7,11 +7,7 @@
  * @param \Model\CapstoneProjectCategory[] $categories an array of the available project categories
  * @return void
  */
-<<<<<<< HEAD
-function renderAdminReviewPanel($project, $logs, $editors, $categories, $users, $singleView) {
-=======
-function renderAdminReviewPanel($project, $logs, $categoriesDao, $users, $singleView) {
->>>>>>> Ginny
+function renderAdminReviewPanel($project, $logs, $editors, $categoriesDao, $users, $singleView) {
 
     $pId = $project->getId();
     $pStatusName = $project->getStatus()->getName();
@@ -153,29 +149,16 @@ function renderAdminReviewPanel($project, $logs, $categoriesDao, $users, $single
                     $visibility
                     <h6><p style='color:red'>$isArchived</p></h6>
                     $commentsHtml
-<<<<<<< HEAD
-=======
                     <h6><p style='color:black'>Current Project Status: $pStatusName</p></h6>
                     <h6><p style='color:black'>Major Categories: </p></h6>
                     <div class='row'>
                         $categoryCheck
                     </div>
->>>>>>> Ginny
                 </div>
 
                 <div class='row col-12'>
                     <div class='col-4'><h6><p style='color:black'>Current Project Status:</p></h6></div>
                     <div class='col-8'><h6>$pStatusName</h6></div>
-                </div>
-
-                <div class='row col-12 py-1'>
-                    <div class='col-4'><h6><p style='color:black'>Major Categories: </p></h6></div>
-                    <div class='col-8'>
-                        <select class='form-control' id='projectCategorySelect' data-toggle='tooltip'
-                            data-placement='top' title=''>
-                            $options
-                        </select>
-                    </div>
                 </div>
 
                 <div class='row col-12 py-1'>

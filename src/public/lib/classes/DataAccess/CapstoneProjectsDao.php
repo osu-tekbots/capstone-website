@@ -85,6 +85,7 @@ class CapstoneProjectsDao {
      * @return \Model\CapstoneProject[]|boolean an array of projects on success, false otherwise
      */
     public function getActiveCapstoneProjectsForUser($userId) {
+        $this->logger->info("getActiveCapstoneProjectsForUser");
         try {
             $sql = '
             SELECT * 
@@ -110,7 +111,6 @@ class CapstoneProjectsDao {
                 capstone_project,
                 capstone_project_edit_permissions,
                 capstone_project_compensation,
-                capstone_project_category,
                 capstone_project_type, 
                 capstone_project_focus,
                 capstone_project_cop,
@@ -119,7 +119,6 @@ class CapstoneProjectsDao {
                 user
             WHERE
                 cp_cpcmp_id = cpcmp_id
-                AND cp_cpc_id = cpc_id
                 AND cp_cpt_id = cpt_id
                 AND cp_cpf_id = cpf_id 
                 AND cp_cpcop_id = cpcop_id
@@ -520,13 +519,8 @@ class CapstoneProjectsDao {
             SELECT * 
             FROM capstone_project, capstone_project_compensation,
                 capstone_project_type, capstone_project_focus, capstone_project_cop, capstone_project_nda_ip,
-<<<<<<< HEAD
-                capstone_project_status, user
-            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
-=======
                 capstone_project_status, user 
             WHERE cp_cpcmp_id = cpcmp_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
->>>>>>> Ginny
                 AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND cp_u_id = u_id 
                 AND cp_id = :id
             ';
