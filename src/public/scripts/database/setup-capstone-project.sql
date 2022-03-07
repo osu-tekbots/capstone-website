@@ -11,13 +11,6 @@ CREATE TABLE IF NOT EXISTS capstone_project_compensation (
     PRIMARY KEY (cpcmp_id)
 );
 
-CREATE TABLE IF NOT EXISTS capstone_project_category (
-    cpc_id INT NOT NULL AUTO_INCREMENT,
-    cpc_name VARCHAR(128) NOT NULL,
-
-    PRIMARY KEY (cpc_id)
-);
-
 CREATE TABLE IF NOT EXISTS capstone_project_type (
     cpt_id INT NOT NULL AUTO_INCREMENT,
     cpt_name VARCHAR(128) NOT NULL,
@@ -67,7 +60,6 @@ CREATE TABLE IF NOT EXISTS capstone_project (
     cp_preferred_qual TEXT,
     cp_cpcmp_id INT NOT NULL,
     cp_additional_emails TEXT,
-    cp_cpc_id INT NOT NULL,
     cp_cpt_id INT NOT NULL,
     cp_cpf_id INT NOT NULL,
     cp_cpcop_id INT NOT NULL,
@@ -87,7 +79,6 @@ CREATE TABLE IF NOT EXISTS capstone_project (
     PRIMARY KEY (cp_id),
     FOREIGN KEY (cp_u_id) REFERENCES user (u_id),
     FOREIGN KEY (cp_cpcmp_id) REFERENCES capstone_project_compensation (cpcmp_id),
-    FOREIGN KEY (cp_cpc_id) REFERENCES capstone_project_category (cpc_id),
     FOREIGN KEY (cp_cpt_id) REFERENCES capstone_project_type (cpt_id),
     FOREIGN KEY (cp_cpf_id) REFERENCES capstone_project_focus (cpf_id),
     FOREIGN KEY (cp_cpcop_id) REFERENCES capstone_project_cop (cpcop_id),
@@ -150,4 +141,19 @@ CREATE TABLE IF NOT EXISTS capstone_assigned_to (
     PRIMARY KEY (cat_u_id, cat_cpg_id),
     FOREIGN KEY (cat_u_id) REFERENCES user (u_id),
     FOREIGN KEY (cat_cpg_id) REFERENCES capstone_project_group (cpg_id)
+);
+
+CREATE TABLE IF NOT EXISTS capstone_category (
+    cc_id INT NOT NULL AUTO_INCREMENT,
+    cc_name VARCHAR(128) NOT NULL,
+
+    PRIMARY KEY (cc_id)
+);
+
+CREATE TABLE IF NOT EXISTS capstone_category_for (
+    ccf_cc_id INT NOT NULL,
+    ccf_entity_id CHAR(16) NOT NULL,
+
+    PRIMARY KEY (ccf_cc_id, ccf_entity_id),
+    FOREIGN KEY (ccf_cc_id) REFERENCES capstone_category (cc_id)
 );

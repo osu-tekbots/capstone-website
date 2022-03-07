@@ -3,6 +3,7 @@ include_once '../bootstrap.php';
 
 use DataAccess\CapstoneProjectsDao;
 use DataAccess\KeywordsDao;
+use DataAccess\CategoriesDao;
 
 $title = 'Browse Projects';
 include_once PUBLIC_FILES . '/modules/header.php';
@@ -10,14 +11,15 @@ include_once PUBLIC_FILES . '/modules/cards.php';
 
 $dao = new CapstoneProjectsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
+$categoriesDao = new CategoriesDao($dbConn, $logger);
 
-if (isset($_REQUEST['category']))
-	$projects = $dao->getBrowsableCapstoneProjectsByCategory($_REQUEST['category']);
-else
-	$projects = $dao->getBrowsableCapstoneProjects();
+// if (isset($_REQUEST['category']))
+// 	$projects = $dao->getBrowsableCapstoneProjectsByCategory($_REQUEST['category']);
+// else
+$projects = $dao->getBrowsableCapstoneProjects();
 
 
-$categories = $dao->getCapstoneProjectCategories();
+$categories = $categoriesDao->getAllCategories();
 $types = $dao->getCapstoneProjectTypes();
 
 ?> 
@@ -27,9 +29,10 @@ $types = $dao->getCapstoneProjectTypes();
     <nav class="navigation">
         <ul style="margin-bottom: 10px">
             <div class="col-sm-2">
+                <br>
                 <input class="form-control" id="filterInput" type="text" placeholder="Search..." />
                 <br />
-                <button type="button" style="float:right;" class="btn btn-outline-secondary">Search</button>
+                <!-- <button type="button" style="float:right;" class="btn btn-outline-secondary">Search</button> -->
             </div>
             <div class="col-sm-2">
                 <div class="form-check">
@@ -39,7 +42,7 @@ $types = $dao->getCapstoneProjectTypes();
             </div>
             <div class="col-sm-2">
                 <div class="form-group">
-                    <label for="projectTypeFilterSelect">Filter by Keyword</label>
+                    <label for="keywordFilterSelect">Filter by Keyword</label>
                     <select class="form-control" id="keywordFilterSelect" onchange="filterSelectChanged(this)">
                         <option></option>
                         <?php
@@ -56,16 +59,13 @@ $types = $dao->getCapstoneProjectTypes();
                 <div class="form-group">
                     <label for="projectTypeFilterSelect">Filter by Course</label>
                     <select class="form-control" id="projectTypeFilterSelect" onchange="filterSelectChanged(this)">
-                            <?php 
-                                $options = '<option></option>';
-                                foreach ($categories as $c) {
-                                    $name = $c->getName();
-                                    if ($name != 'None'){
-                                        $options .= "<option ".($c->getId() == $_REQUEST['category'] ? 'selected':'').">$name</option>";
-                                    }
-                                }
-                                echo($options);
-                            ?>
+                        <option></option>
+                        <?php 
+                        $categories = $categoriesDao->getAllCategories();
+                        foreach ($categories as $c) {
+                            echo '<option>' . $c->getName() . '</option>';
+                        }
+                        ?>
                     </select>
                 </div>
             </div>
@@ -87,45 +87,51 @@ $types = $dao->getCapstoneProjectTypes();
 
                 <div class="col-sm-6">
                     Sort By...
-                    <div class="custom-control custom-radio">
-                        <input
-                            type="radio"
-                            id="sortTitleAscRadio"
-                            value="sortTitleAsc"
-                            name="sortRadio"
-                            class="custom-control-input"
-                        />
-                        <label class="custom-control-label" for="sortTitleAscRadio">Title (A..Z)</label>
-                    </div>
-                    <div class="custom-control custom-radio">
-                        <input
-                            type="radio"
-                            id="sortTitleDescRadio"
-                            value="sortTitleDesc"
-                            name="sortRadio"
-                            class="custom-control-input"
-                        />
-                        <label class="custom-control-label" for="sortTitleDescRadio">Title (Z..A)</label>
-                    </div>
-                    <div class="custom-control custom-radio">
-                        <input
-                            type="radio"
-                            id="sortDateDescRadio"
-                            value="sortDateDesc"
-                            name="sortRadio"
-                            class="custom-control-input"
-                        />
-                        <label class="custom-control-label" for="sortDateDescRadio">Newest</label>
-                    </div>
-                    <div class="custom-control custom-radio">
-                        <input
-                            type="radio"
-                            id="sortDateAscRadio"
-                            value="sortDateAsc"
-                            name="sortRadio"
-                            class="custom-control-input"
-                        />
-                        <label class="custom-control-label" for="sortDateAscRadio">Oldest</label>
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="custom-control custom-radio">
+                                <input
+                                    type="radio"
+                                    id="sortTitleAscRadio"
+                                    value="sortTitleAsc"
+                                    name="sortRadio"
+                                    class="custom-control-input"
+                                />
+                                <label class="custom-control-label" for="sortTitleAscRadio">Title (A..Z)</label>
+                            </div>
+                            <div class="custom-control custom-radio">
+                                <input
+                                    type="radio"
+                                    id="sortTitleDescRadio"
+                                    value="sortTitleDesc"
+                                    name="sortRadio"
+                                    class="custom-control-input"
+                                />
+                                <label class="custom-control-label" for="sortTitleDescRadio">Title (Z..A)</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="custom-control custom-radio">
+                                <input
+                                    type="radio"
+                                    id="sortDateDescRadio"
+                                    value="sortDateDesc"
+                                    name="sortRadio"
+                                    class="custom-control-input"
+                                />
+                                <label class="custom-control-label" for="sortDateDescRadio">Newest</label>
+                            </div>
+                            <div class="custom-control custom-radio">
+                                <input
+                                    type="radio"
+                                    id="sortDateAscRadio"
+                                    value="sortDateAsc"
+                                    name="sortRadio"
+                                    class="custom-control-input"
+                                />
+                                <label class="custom-control-label" for="sortDateAscRadio">Oldest</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -135,7 +141,7 @@ $types = $dao->getCapstoneProjectTypes();
             <div class="masonry" id="projectCardGroup">
                 <?php
 					// Render the cards to browser here
-					renderProjectCardGroup($projects, $keywordsDao, true);
+					renderProjectCardGroup($projects, $keywordsDao, $categoriesDao, true);
 					?>
             </div>
 

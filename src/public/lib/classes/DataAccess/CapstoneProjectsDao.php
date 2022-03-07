@@ -1,7 +1,7 @@
 <?php
 namespace DataAccess;
 
-use Model\CapstoneProjectCategory;
+// use Model\CapstoneProjectCategory;
 use Model\CapstoneProjectCompensation;
 use Model\CapstoneProjectCop;
 use Model\CapstoneProjectFocus;
@@ -13,6 +13,7 @@ use Model\CapstoneProjectLog;
 use Model\CapstoneProjectImage;
 
 use DataAccess\KeywordsDao;
+use DataAccess\CategoriesDao;
 
 /**
  * Handles all of the logic related to queries on capstone project resources in the database.
@@ -47,9 +48,9 @@ class CapstoneProjectsDao {
         try {
             $sql = '
             SELECT * 
-            FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+            FROM capstone_project, capstone_project_compensation, capstone_project_type, 
                 capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
-            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id 
+            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpt_id = cpt_id 
                 AND cp_cpf_id = cpf_id AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id 
                 AND cp_cps_id = cps_id AND cp_u_id = u_id AND cp_is_hidden = :hidden AND cp_cps_id = :status 
                 AND cp_archived = :archived 
@@ -76,46 +77,6 @@ class CapstoneProjectsDao {
         }
     }
 	
-	/**
-     * Fetches several capstone projects from a specified range.
-     *
-     * @param integer $offset the offset into the results to fetch
-     * @param integer $limit the max number of results to fetch in this batch
-     * @return \Model\CapstoneProject[]|boolean an array of projects on success, false otherwise
-     */
-    public function getBrowsableCapstoneProjectsByCategory($categoryId) {
-        try {
-            $sql = '
-            SELECT * 
-            FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
-                capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
-            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id 
-                AND cp_cpf_id = cpf_id AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id 
-                AND cp_cps_id = cps_id AND cp_u_id = u_id AND cp_is_hidden = :hidden AND cp_cps_id = :status 
-                AND cp_archived = :archived AND cp_cpc_id = :category 
-            ORDER BY cp_title ASC;
-            ';
-            // TODO: enable pagination with the offset and limit
-            $params = array(
-                ':hidden' => false, 
-                ':status' => CapstoneProjectStatus::ACCEPTING_APPLICANTS,
-                ':archived' => false,
-				':category' => $categoryId);
-            $results = $this->conn->query($sql, $params);
-
-            $projects = array();
-            foreach ($results as $row) {
-                $project = self::ExtractCapstoneProjectFromRow($row, true);
-                $this->getCapstoneProjectImages($project, true);
-                $projects[] = $project;
-            }
-
-            return $projects;
-        } catch (\Exception $e) {
-            $this->logger->error('Failed to get many projects: ' . $e->getMessage());
-            return false;
-        }
-    }
 
     /**
      * Fetches capstone projects associated with a user.
@@ -127,9 +88,9 @@ class CapstoneProjectsDao {
         try {
             $sql = '
             SELECT * 
-            FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+            FROM capstone_project, capstone_project_compensation, capstone_project_type, 
                 capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
-            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
                 AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND cp_u_id = u_id 
                 AND cp_u_id = :uid AND cp_archived = :archived
             ';
@@ -203,9 +164,9 @@ class CapstoneProjectsDao {
         try {
             $sql = '
             SELECT * 
-            FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+            FROM capstone_project, capstone_project_compensation, capstone_project_type, 
                 capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
-            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
                 AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND cp_u_id = u_id 
                 AND cp_u_id = :uid
             ';
@@ -236,9 +197,9 @@ class CapstoneProjectsDao {
         try {
             $sql = '
             SELECT * 
-            FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+            FROM capstone_project, capstone_project_compensation, capstone_project_type, 
                 capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
-            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
                 AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND cp_u_id = u_id 
                 AND cp_u_id = :uid AND cp_archived = :archived
             ';
@@ -268,9 +229,9 @@ class CapstoneProjectsDao {
         try {
             $sql = '
             SELECT * 
-            FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+            FROM capstone_project, capstone_project_compensation, capstone_project_type, 
                 capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
-            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
                 AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id
             ORDER BY cp_title ASC
                
@@ -303,9 +264,9 @@ class CapstoneProjectsDao {
         try {
             $sql = '
             SELECT * 
-            FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+            FROM capstone_project, capstone_project_compensation, capstone_project_type, 
                 capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
-            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id 
+            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpt_id = cpt_id 
                 AND cp_cpf_id = cpf_id AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id 
                 AND cp_cps_id = cps_id AND cp_u_id = u_id AND cp_cps_id = :status
                 AND cp_archived = :archived
@@ -342,9 +303,9 @@ class CapstoneProjectsDao {
         try {
             $sql = '
             SELECT * 
-            FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+            FROM capstone_project, capstone_project_compensation, capstone_project_type, 
                 capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
-            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
                 AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND cp_cps_id = :status 
                 AND u_id = cp_u_id AND cp_archived = :archived
             ';
@@ -377,9 +338,9 @@ class CapstoneProjectsDao {
         try {
             $sql = '
             SELECT * 
-            FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+            FROM capstone_project, capstone_project_compensation, capstone_project_type, 
                 capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
-            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
                 AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND cp_cps_id = :status 
                 AND u_id = cp_u_id AND cp_archived = :archived
             ';
@@ -420,15 +381,17 @@ class CapstoneProjectsDao {
                 FROM capstone_project 
                 WHERE cp_cps_id = :pending AND cp_archived = :archived
             ) AS projectsPending,
-                (
+            (
                 SELECT COUNT(*) 
-                FROM capstone_project 
-                WHERE cp_cpc_id = :category AND cp_archived = :archived AND cp_cps_id > 1
+                FROM capstone_project
+                WHERE cp_id NOT IN (SELECT ccf_entity_id FROM capstone_category_for)
             ) AS projectsNeedingCategoryPlacement
             ';
+            
+
             $params = array(
                 ':pending' => CapstoneProjectStatus::PENDING_APPROVAL,
-                ':category' => CapstoneProjectCategory::NONE,
+                // ':category' => '0',
                 ':archived' => false
             );
             $results = $this->conn->query($sql, $params);
@@ -555,10 +518,15 @@ class CapstoneProjectsDao {
             // First fetch the project
             $sql = '
             SELECT * 
-            FROM capstone_project, capstone_project_compensation, capstone_project_category,
+            FROM capstone_project, capstone_project_compensation,
                 capstone_project_type, capstone_project_focus, capstone_project_cop, capstone_project_nda_ip,
+<<<<<<< HEAD
                 capstone_project_status, user
             WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+=======
+                capstone_project_status, user 
+            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+>>>>>>> Ginny
                 AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND cp_u_id = u_id 
                 AND cp_id = :id
             ';
@@ -640,7 +608,6 @@ class CapstoneProjectsDao {
                 :prefq,
                 :cmpid,
                 :emails,
-                :cpcid,
                 :cptid,
                 :cpfid,
                 :cpcopid,
@@ -671,7 +638,6 @@ class CapstoneProjectsDao {
                 ':prefq' => $project->getPreferredQualifications(),
                 ':cmpid' => $project->getCompensation()->getId(),
                 ':emails' => $project->getAdditionalEmails(),
-                ':cpcid' => $project->getCategory()->getId(),
                 ':cptid' => $project->getType()->getId(),
                 ':cpfid' => $project->getFocus()->getId(),
                 ':cpcopid' => $project->getCop()->getId(),
@@ -753,7 +719,6 @@ class CapstoneProjectsDao {
                 cp_preferred_qual = :prefq,
                 cp_cpcmp_id = :cmpid,
                 cp_additional_emails = :emails,
-                cp_cpc_id = :cpcid,
                 cp_cpt_id = :cptid,
                 cp_cpf_id = :cpfid,
                 cp_cpcop_id = :cpcopid,
@@ -783,7 +748,6 @@ class CapstoneProjectsDao {
                 ':prefq' => $project->getPreferredQualifications(),
                 ':cmpid' => $project->getCompensation()->getId(),
                 ':emails' => $project->getAdditionalEmails(),
-                ':cpcid' => $project->getCategory()->getId(),
                 ':cptid' => $project->getType()->getId(),
                 ':cpfid' => $project->getFocus()->getId(),
                 ':cpcopid' => $project->getCop()->getId(),
@@ -1072,27 +1036,6 @@ class CapstoneProjectsDao {
         }
     }
 
-    /**
-     * Fetches a list of categories for capstone projects
-     *
-     * @return \Model\CapstoneProjectCategory[]|boolean an array of categories on success, false otherwise
-     */
-    public function getCapstoneProjectCategories() {
-        try {
-            $sql = 'SELECT * FROM capstone_project_category';
-            $results = $this->conn->query($sql);
-
-            $categories = array();
-            foreach ($results as $row) {
-                $categories[] = self::ExtractCapstoneProjectCategoryFromRow($row);
-            }
-
-            return $categories;
-        } catch (\Exception $e) {
-            $this->logger->error('Failed to get project categories: ' . $e->getMessage());
-            return false;
-        }
-    }
 
     /**
      * Fetches a list of types for capstone projects
@@ -1254,7 +1197,6 @@ class CapstoneProjectsDao {
             ->setPreferredQualifications($row['cp_preferred_qual'])
             ->setCompensation(self::ExtractCapstoneProjectCompensationFromRow($row, true))
             ->setAdditionalEmails($row['cp_additional_emails'])
-            ->setCategory(self::ExtractCapstoneProjectCategoryFromRow($row, true))
             ->setType(self::ExtractCapstoneProjectTypeFromRow($row, true))
             ->setFocus(self::ExtractCapstoneProjectFocusFromRow($row, true))
             ->setCop(self::ExtractCapstoneProjectCopFromRow($row, true))
@@ -1305,18 +1247,6 @@ class CapstoneProjectsDao {
         return $image;
     }
 
-    /**
-     * Create a CapstoneProjectCategory object using information from the database row
-     *
-     * @param mixed[] $row the database row to extract information from
-     * @param boolean $projectInRow indicates whether the project is also included in the row
-     * @return \Model\CapstoneProjectCategory
-     */
-    public static function ExtractCapstoneProjectCategoryFromRow($row, $projectInRow = false) {
-        $id = $projectInRow ? 'cp_cpc_id' : 'cpc_id';
-        $name = isset($row['cpc_name']) ? $row['cpc_name'] : null;
-        return new CapstoneProjectCategory($row[$id], $name);
-    }
 
     /**
      * Create a CapstoneProjectCompensation object using information from the database row

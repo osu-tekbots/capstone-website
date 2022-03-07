@@ -7,6 +7,7 @@ error_reporting(E_ALL); */
 
 use DataAccess\CapstoneProjectsDao;
 use DataAccess\KeywordsDao;
+use DataAccess\CategoriesDao;
 
 session_start();
 
@@ -21,10 +22,10 @@ allowIf($isAdmin);
 
 $projectsDao = new CapstoneProjectsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
+$categoriesDao = new CategoriesDao($dbConn, $logger);
 
 $projects = $projectsDao->getCapstoneProjectsForAdmin();
 $types = $projectsDao->getCapstoneProjectTypes();
-$categories = $projectsDao->getCapstoneProjectCategories();
 $statuses = $projectsDao->getCapstoneProjectStatuses();
 
 if (isset($_REQUEST['archive'])){ //Only show archived projects to admin
@@ -103,30 +104,6 @@ include_once PUBLIC_FILES . '/modules/header.php';
 		});
 	}
 	
-	
-	/*********************************************************************************
-    * Function Name: categoryChange(id)
-    * Description: Updates the category of a project using onchange() for a displayed project.
-    *********************************************************************************/
-    function categoryChange(id) {
-		// Grab the ID of the selected element
-		var childID = $('#categoryselect'+id).children(":selected").attr("value");
-		
-//		alert(childID);
-		
-		let body = {
-			action: 'updateCategory',
-			categoryId: childID,
-			projectId: id
-		}
-
-		api.post('/projects.php', body).then(res => {
-			snackbar(res.message, 'success');
-		}).catch(err => {
-			snackbar(err.message, 'error');
-		});
-		
-	}
 
     $(document).ready(function(){
 
@@ -221,26 +198,6 @@ include_once PUBLIC_FILES . '/modules/header.php';
 				<li class="breadcrumb-item active">Approval Proccess</li>
 			</ol>
 
-		<!--
-					<div class="col-sm-3">
-						<div class="form-group">
-							<label for="projectShowSelect">Show..</label>
-							<select class="form-control" id="projectShowSelect" onchange="showAdminNeeded()">
-								<option></option>
-								<option>Admin Required</option>
-								<option>Approved Projects</option>
-								<option>Not Yet Submitted</option>
-								<option>Archived</option>
-
-							</select>
-						</div>
-					</div>
-
-					
-
-							
--->
-
 		<div class="row">
 		<div class="col-sm-12">
             <div class="row">
@@ -248,14 +205,6 @@ include_once PUBLIC_FILES . '/modules/header.php';
                     <h2>Search and Filter</h2>
 					<input class="form-control" id="filterInput" type="text" placeholder="Search..." />
 					<br />
-
-
-<!-- CHECKBOX HIDE IF PROJECTS REQUIRE NDA NOT FUNCTIONING
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="NDAFilterCheckBox" />
-                        <label for="NDAFilterCheckBox">Hide projects that require an NDA/IP</label>
-                    </div>
--->
                 </div>
 
 				<?php
@@ -314,7 +263,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 				</tr>
 			</thead>
 			<tbody id="projectCardsTable">
-				<?php renderAdminProjectCardGroup2($projects, $keywordsDao, $types, $categories, $statuses, false);?>
+				<?php renderAdminProjectCardGroup($projects, $keywordsDao, $categoriesDao, $types, $statuses, false);?>
 			</tbody>
 		</table>
 
@@ -442,6 +391,7 @@ function toggleApprovedUnpublished(){
 	} 
 }
 $('#ProjectsTable').DataTable({
+		'searching':false,
 		'scrollX':true, 
 		'paging':false, 
 		'order':[[1, 'asc']],

@@ -7,14 +7,16 @@
  * @param \Model\CapstoneProjectCategory[] $categories an array of the available project categories
  * @return void
  */
+<<<<<<< HEAD
 function renderAdminReviewPanel($project, $logs, $editors, $categories, $users, $singleView) {
+=======
+function renderAdminReviewPanel($project, $logs, $categoriesDao, $users, $singleView) {
+>>>>>>> Ginny
 
     $pId = $project->getId();
     $pStatusName = $project->getStatus()->getName();
-    $pCategoryId = $project->getCategory()->getId();
     $pProposerId = $project->getProposerId();
     $pProposer = $project->getProposer(); //This gets a type User
-    $pCategoryName = $project->getCategory()->getName();
     $pIsHidden = $project->getIsHidden();
     $pIsArchived = $project->getIsArchived();
     $pComments = $project->getProposerComments();
@@ -102,7 +104,7 @@ function renderAdminReviewPanel($project, $logs, $editors, $categories, $users, 
     if ($pStatusName == 'Pending Approval') {
         $actions[] = 'Project Review';
     }
-    if ($pCategoryName == 'None') {
+    if ($categoriesDao->getCategoriesForEntity($project->getId()) == null) {
         $actions[] = 'Project Category Placement';
     }
     $visibility = $pIsHidden
@@ -119,14 +121,26 @@ function renderAdminReviewPanel($project, $logs, $editors, $categories, $users, 
                     ? 'Archived Project (Not longer Active)'
                     : '';
 
-    $options = '';
-    foreach ($categories as $c) {
-        $id = $c->getId();
-        $name = $c->getName();
-        $selected = $id == $pCategoryId ? 'selected' : '';
-        $options .= "<option $selected value='$id'>$name</option>";
-        // $options .= "<input type='checkbox' value='$id' checked='$selected'>$name<br>";
-    }
+    // extract each categories and check box if exists for current project
+    $categoryCheck = "<div class='col-sm-7'>";
+	$categories = $categoriesDao->getAllCategories();
+	foreach ($categories as $c){
+        $cId = $c->getId();
+        $cName = $c->getName();
+		if ($categoriesDao->categoryExistsForEntity($cId, $pId)) {
+			$categoryCheck .= "<div class='form-check'>
+				    <input type='checkbox'  class='form-check-input' value='$cId' id='categorycheckbox$cId' onchange='onCategoryChange(\"$pId\",\"$cId\");' checked>
+				    <label for='categorycheckbox$cId'>$cName</label>
+				</div>";
+		}
+        else {
+            $categoryCheck .= "<div class='form-check'>
+				    <input type='checkbox'  class='form-check-input' value='$cId' id='categorycheckbox$cId' onchange='onCategoryChange(\"$pId\",\"$cId\");'>
+				    <label for='categorycheckbox$cId'>$cName</label>
+				</div>";
+        }
+	}
+	$categoryCheck .= "</div>";
 
     echo "
     <br/>
@@ -139,6 +153,14 @@ function renderAdminReviewPanel($project, $logs, $editors, $categories, $users, 
                     $visibility
                     <h6><p style='color:red'>$isArchived</p></h6>
                     $commentsHtml
+<<<<<<< HEAD
+=======
+                    <h6><p style='color:black'>Current Project Status: $pStatusName</p></h6>
+                    <h6><p style='color:black'>Major Categories: </p></h6>
+                    <div class='row'>
+                        $categoryCheck
+                    </div>
+>>>>>>> Ginny
                 </div>
 
                 <div class='row col-12'>

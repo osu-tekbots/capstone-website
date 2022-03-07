@@ -23,9 +23,6 @@ INSERT INTO capstone_application_status (cas_id, cas_name) VALUES
 INSERT INTO capstone_project_compensation (cpcmp_id, cpcmp_name) VALUES 
     (1, 'None'), (2, 'Hourly'), (3, 'Stipend'), (4, 'Completion-dependent'), (5, 'Other');
 
-INSERT INTO capstone_project_category (cpc_id, cpc_name) VALUES 
-    (1, 'None'), (2, 'Electrical Engineering (Not Assigned)'), (3, 'Computer Science (Not Assigned)'), (4, 'CS467 (3 Month)'), (5, 'CS46X (9 Month)'), (6, 'ECE44X (9 Month)'), (7, 'CS467 (3 Month, on-campus only)'), (8, 'CS46X (9 Month, on-campus only)'), (9, 'ECE44X (9 Month, on-campus only)');
-
 INSERT INTO capstone_project_type (cpt_id, cpt_name) VALUES 
     (1, 'Capstone'), (2, 'Long-term'), (3, 'Student Club Project');
 
