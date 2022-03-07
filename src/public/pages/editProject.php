@@ -454,62 +454,8 @@ var availableTags = [
 					</div>
 					
 				</div>
-				<div class="row">
-					<div class="col-sm-6">
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ndaModal">
-  NDA/IP Requirement
-</button>
-
-<!-- Modal -->
-<div class="modal fade" id="ndaModal" tabindex="-1" role="dialog" aria-labelledby="ndaModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="ndaModalLabel">NDA/IP Requirement</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-	  <p>
-													<BR>
-													If your company intends to provide proprietary materials or confidential information requiring an NDA, OSU 
-													can arrange for a written agreement to reviewed and signed amongst the students, your company, and OSU.
-													<br><br>
-													Such an agreement will authorize the students to use and discuss the provided materials or information 
-													with each other and their instructor in confidence.
-													<br><br>
-													<b>The university will not participate in any agreement that requires students to transfer intellectual 
-													property rights ownership to your company or puts overly burdensome confidentiality obligations on 
-													the students.</b>
-													<br><br>Though OSU certainly appreciates your company’s sponsorship, we strongly discourage any agreements 
-													that could deter students from sharing the results of their academic work at OSU with fellow students, 
-													parents or future employers.
-													<br><br>
-													This does not prevent a separate arrangement between you each student individually.
-													</p>
-      </div>
-      <div class="modal-footer">
-	  	<h6><label id="ndaSelectLabel" for="ndaSelect">
-			NDA/IP <?php displayInfoTooltip($tooltipNdaSelect); ?> <font size="2" style="color:red;">*required</font>
-		</label></h6>
-		<select class="form-control input" id="ndaSelect" name="ndaIpId">
-			<?php
-				foreach ($ndaips as $n) {
-				$id = $n->getId();
-				$name = $n->getName();
-				$selected = $id == $pNdaIpId ? 'selected' : '';
-				echo "<option $selected value='$id'>$name</option>";
-			}
-			?>
-		</select>
-		<button type="button" class="btn btn-secondary" data-dismiss="modal">Save</button>
-      </div>
-    </div>
-  </div>
-</div>
-					<div class="col-sm-6">
+				
+				<div class="col-sm-12">
 					<div class="row">
 						<div class="col-sm-6">
 							<div class="form-group">
@@ -573,76 +519,137 @@ var availableTags = [
 					</div>
 				</div>
 
+				<div class="row">
+					<div class="col-sm-12">
+						<!-- Button trigger modal -->
+						<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ndaModal" style="display: block; margin: auto;">
+						NDA/IP Requirement
+						</button>
 
-			<!-- Action Buttons under form -->
-			<div class="row">
-				<!-- Help Button -->
-				<div class="col-sm-5">
-					<div id="helpDiv">
-						<a href="mailto:eecs_capstone_staff@engr.oregonstate.edu" target="_blank" class="btn btn-help">Questions?</a>
-					</div>
-				</div>										
-				<!-- Action Buttons -->
-				<div class="col-sm-3" style="margin-left: auto; margin-right: 50px;">
-					<div class="row" >
-						
-						<div class="row">
-							<div class="col-sm-1"></div>
-							<div id="cssloader" class="col-sm-2"></div>
-							<div class="row" id="formActions">                   
-								<?php 
-								// Display the following only when the user is the proposer
-								if ($isProposer || $isAdmin) {
-									if ($approved){
-										echo "
-										<div class='alert alert-success'>
-											Approved! Your project is now accepting applicants.  Changes can no longer be made to your project.  To make changes, please contact the administer with the information you'd like to change or have them unapprove your project so you can resubmit for approval.  
-										</div>
-										";
-										if ($isAdmin) {
-											echo("
-											<button id='saveProjectDraftBtn' class='btn btn-success capstone-nav-btn' type='button' 
-											data-toggle='tooltip' data-placement='bottom' 
-											title='$tooltipUpdateProjectDraftBtn'>
-											Update Project Information</button>
-											");
+						<!-- Modal -->
+						<div class="modal fade" id="ndaModal" tabindex="-1" role="dialog" aria-labelledby="ndaModalLabel" aria-hidden="true">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="ndaModalLabel">NDA/IP Requirement</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+								<div class="modal-body">
+								<p>
+									<BR>
+									If your company intends to provide proprietary materials or confidential information requiring an NDA, OSU 
+									can arrange for a written agreement to reviewed and signed amongst the students, your company, and OSU.
+									<br><br>
+									Such an agreement will authorize the students to use and discuss the provided materials or information 
+									with each other and their instructor in confidence.
+									<br><br>
+									<b>The university will not participate in any agreement that requires students to transfer intellectual 
+									property rights ownership to your company or puts overly burdensome confidentiality obligations on 
+									the students.</b>
+									<br><br>Though OSU certainly appreciates your company’s sponsorship, we strongly discourage any agreements 
+									that could deter students from sharing the results of their academic work at OSU with fellow students, 
+									parents or future employers.
+									<br><br>
+									This does not prevent a separate arrangement between you each student individually.
+									</p>
+								</div>
+								<div class="modal-footer">
+									<h6><label id="ndaSelectLabel" for="ndaSelect">
+										NDA/IP <?php displayInfoTooltip($tooltipNdaSelect); ?> <font size="2" style="color:red;">*required</font>
+									</label></h6>
+									<select class="form-control input" id="ndaSelect" name="ndaIpId">
+										<?php
+											foreach ($ndaips as $n) {
+											$id = $n->getId();
+											$name = $n->getName();
+											$selected = $id == $pNdaIpId ? 'selected' : '';
+											echo "<option $selected value='$id'>$name</option>";
 										}
-									}
-									else if ($submitted) {
-										echo "
-										<div class='alert alert-success'>
-											Submitted. Your project is pending approval. Changes cannot be made while project is pending approval.
-										</div>
-										";
-
-										if ($isAdmin) {
-											echo("
-											<button id='saveProjectDraftBtn' class='btn btn-success capstone-nav-btn' type='button' 
-											data-toggle='tooltip' data-placement='bottom' 
-											title='$tooltipSaveProjectDraftBtn'>
-											Update Project Information</button>
-											");
-										}
-									} else {
-										echo "
-										<button id='saveProjectDraftBtn' class='btn btn-success capstone-nav-btn' type='button' 
-											data-toggle='tooltip' data-placement='bottom' 
-											title='$tooltipSaveProjectDraftBtn'>
-											Save Project Draft</button>
-										
-										<button name='submitButtonPressed' id='submitForApprovalBtn' 
-											class='btn btn-primary capstone-nav-btn' type='button' data-toggle='tooltip' 
-											data-placement='bottom' title='$tooltipSubmitForApprovalBtn'>
-											Submit for Approval</button>
-										";
-									}
-								}?>
+										?>
+									</select>
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Save</button>
+								</div>
+								</div>
 							</div>
 						</div>
-						
 					</div>
 				</div>
-			</div>		
+
+				<br>
+				<hr>
+
+				<!-- Action Buttons under form -->
+				<div class="row">
+					<!-- Help Button -->
+					<div class="col-sm-5">
+						<div id="helpDiv">
+							<a href="mailto:eecs_capstone_staff@engr.oregonstate.edu" target="_blank" class="btn btn-help">Questions?</a>
+						</div>
+					</div>										
+					<!-- Action Buttons -->
+					<div class="col-sm-3" style="margin-left: auto; margin-right: 50px;">
+						<div class="row" >
+							
+							<div class="row">
+								<div class="col-sm-1"></div>
+								<div id="cssloader" class="col-sm-2"></div>
+								<div class="row" id="formActions">                   
+									<?php 
+									// Display the following only when the user is the proposer
+									if ($isProposer || $isAdmin) {
+										if ($approved){
+											echo "
+											<div class='alert alert-success'>
+												Approved! Your project is now accepting applicants.  Changes can no longer be made to your project.  To make changes, please contact the administer with the information you'd like to change or have them unapprove your project so you can resubmit for approval.  
+											</div>
+											";
+											if ($isAdmin) {
+												echo("
+												<button id='saveProjectDraftBtn' class='btn btn-success capstone-nav-btn' type='button' 
+												data-toggle='tooltip' data-placement='bottom' 
+												title='$tooltipUpdateProjectDraftBtn'>
+												Update Project Information</button>
+												");
+											}
+										}
+										else if ($submitted) {
+											echo "
+											<div class='alert alert-success'>
+												Submitted. Your project is pending approval. Changes cannot be made while project is pending approval.
+											</div>
+											";
+
+											if ($isAdmin) {
+												echo("
+												<button id='saveProjectDraftBtn' class='btn btn-success capstone-nav-btn' type='button' 
+												data-toggle='tooltip' data-placement='bottom' 
+												title='$tooltipSaveProjectDraftBtn'>
+												Update Project Information</button>
+												");
+											}
+										} else {
+											echo "
+											<button id='saveProjectDraftBtn' class='btn btn-success capstone-nav-btn' type='button' 
+												data-toggle='tooltip' data-placement='bottom' 
+												title='$tooltipSaveProjectDraftBtn'>
+												Save Project Draft</button>
+											
+											<button name='submitButtonPressed' id='submitForApprovalBtn' 
+												class='btn btn-primary capstone-nav-btn' type='button' data-toggle='tooltip' 
+												data-placement='bottom' title='$tooltipSubmitForApprovalBtn'>
+												Submit for Approval</button>
+											";
+										}
+									}?>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+				</div>		
+			</form>
 		</div>
 	</div>
 </div>

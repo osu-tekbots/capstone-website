@@ -111,7 +111,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 		//For drop down lists, like filtering by key word, filterInput is programmically
 		//filled and keyup behavior is explicitly called.
 
-		$("#filterInput").on("keyup",function(){
+		$("#filterInput").on("keyup", function(){
 			var value = $(this).val().toLowerCase();
 			
 			$('#projectCardsTable tr').filter(function() {

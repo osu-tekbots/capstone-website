@@ -11,23 +11,6 @@ function getProjectId() {
  * update the category of the project in the database.
  */
 function onCategoryChange(id, c_id) {
-    // projectCategorySelect = $('#projectCategorySelect').val();
-    // projectID = getProjectId();
-
-    // let body = {
-    //     action: 'updateCategory',
-    //     projectId: projectID,
-    //     categoryId: projectCategorySelect
-    // };
-
-    // api.post('/projects.php', body)
-    //     .then(res => {
-    //         snackbar(res.message, 'success');
-    //     })
-    //     .catch(err => {
-    //         snackbar(err.message, 'error');
-    //     });
-            
     let body = {
         action: 'updateCategory',
         categoryId: c_id,
@@ -36,38 +19,12 @@ function onCategoryChange(id, c_id) {
 
     api.post('/projects.php', body)
         .then(res => {
-            location.reload();
-            // snackbar(res.message, 'success');
+            snackbar(res.message, 'success');
         })
         .catch(err => {
             snackbar(err.message, 'error');
         });
 }
-
-
-/**
- * Handler for when a project category box is checked by the admin. The result of the select will automatically
- * update the category of the project in the database.
- */
-//  function onprojectCategoryCheckBox() {
-//     projectCategoryCheckBox = $('#projectCategoryCheckBox').val();
-//     projectID = getProjectId();
-
-//     let body = {
-//         action: 'updateCategory',
-//         projectId: projectID,
-//         categoryId: projectCategoryCheckBox
-//     };
-
-//     api.post('/projects.php', body)
-//         .then(res => {
-//             snackbar(res.message, 'success');
-//         })
-//         .catch(err => {
-//             snackbar(err.message, 'error');
-//         });
-// }
-// $('#projectCategoryCheckBox').change(onprojectCategoryCheckBox);
 
 function onEditorDelete(editorId) {
     console.log("Deleting: ", editorId);
@@ -81,8 +38,8 @@ function onEditorDelete(editorId) {
 
     api.post('/projects.php', body)
         .then(res => {
-            location.reload();
-            // snackbar(res.message, 'success');
+            // location.reload();
+            snackbar(res.message, 'success');
         })
         .catch(err => {
             snackbar(err.message, 'error');
@@ -102,8 +59,8 @@ function onEditorSelect() {
 
     api.post('/projects.php', body)
         .then(res => {
-            location.reload();
-            // snackbar(res.message, 'success');
+            // location.reload();
+            snackbar(res.message, 'success');
         })
         .catch(err => {
             snackbar(err.message, 'error');
@@ -127,8 +84,8 @@ function onProposerSelect() {
 
     api.post('/projects.php', body)
         .then(res => {
-            location.reload();
-            // snackbar(res.message, 'success');
+            // location.reload();
+            snackbar(res.message, 'success');
         })
         .catch(err => {
             snackbar(err.message, 'error');
@@ -151,8 +108,8 @@ function onProjectAdminCommentUpdate() {
 	
     api.post('/projects.php', body)
         .then(res => {
-            location.reload();
-            // snackbar(res.message, 'success');
+            // location.reload();
+            snackbar(res.message, 'success');
         })
         .catch(err => {
             snackbar(err.message, 'error');
@@ -173,8 +130,8 @@ function onProjectApprove() {
 
     api.post('/projects.php', body)
         .then(res => {
-            location.reload();
-            // snackbar(res.message, 'success');
+            // location.reload();
+            snackbar(res.message, 'success');
         })
         .catch(err => {
             snackbar(err.message, 'error');
@@ -197,8 +154,8 @@ function onProjectReject() {
 
     api.post('/projects.php', body)
         .then(res => {
-            location.reload();
-            // snackbar(res.message, 'success');
+            // location.reload();
+            snackbar(res.message, 'success');
         })
         .catch(err => {
             snackbar(err.message, 'error');
@@ -217,8 +174,8 @@ function onMakeProjectPublic() {
 
     api.post('/projects.php', body)
         .then(res => {
-            location.reload();
-            // snackbar(res.message, 'success');
+            // location.reload();
+            snackbar(res.message, 'success');
             // $('#adminViewProjectBtn').show();
         })
         .catch(err => {
@@ -238,8 +195,8 @@ function onMakeProjectPrivate() {
 
     api.post('/projects.php', body)
         .then(res => {
-            location.reload();
-            // snackbar(res.message, 'success');
+            // location.reload();
+            snackbar(res.message, 'success');
             // $('#adminViewProjectBtn').hide();
         })
         .catch(err => {
@@ -259,8 +216,8 @@ function onArchiveProject() {
 
     api.post('/projects.php', body)
         .then(res => {
-            location.reload();
-            // snackbar(res.message, 'success');
+            // location.reload();
+            snackbar(res.message, 'success');
         })
         .catch(err => {
             snackbar(err.message, 'error');
@@ -279,8 +236,8 @@ $('#adminDeleteProjectBtn').on('click', function() {
 
     api.post('/projects.php', body)
         .then(res => {
-            location.reload();
-            // snackbar(res.message, 'success');
+            // location.reload();
+            snackbar(res.message, 'success');
         })
         .catch(err => {
             snackbar(err.message, 'error');
@@ -288,22 +245,3 @@ $('#adminDeleteProjectBtn').on('click', function() {
 });
 
 
-/**
- * Event handler to delete a project 
- 
-function onDeleteProject() {
-    let body = {
-        action: 'deleteProject',
-        id: getProjectId()
-    };
-
-    api.post('/projects.php', body)
-        .then(res => {
-            snackbar(res.message, 'success');
-        })
-        .catch(err => {
-            snackbar(err.message, 'error');
-        });
-}
-$('#adminDeleteProjectBtn').on('click', onDeleteProject);
-**/

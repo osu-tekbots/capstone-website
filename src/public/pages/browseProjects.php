@@ -193,7 +193,7 @@ function toggleNDA(){
       //As each letter is typed in filterInput, filtering of cards will occur.
       //For drop down lists, like filtering by key word, filterInput is programmically
       //filled and keydown behavior is explicitly called.
-      $("#filterInput").keydown(function(){
+      $("#filterInput").on("keyup", function(){
     	var value = $(this).val().toLowerCase();
 
     	for(var i = 0; i < <?php echo $numCardsCreated; ?>; i++){
