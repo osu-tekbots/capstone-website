@@ -131,6 +131,8 @@ dev_setup_containers() {
     docker exec -it "${MYSQL_CONTAINER_NAME}" /bin/bash -c "cd /scripts; mysql --user="${DB_USERNAME}" --password="${DB_PASSWORD}" --database="${DB_NAME}" -e 'source seed-capstone-enums.sql';"
     docker exec -it "${MYSQL_CONTAINER_NAME}" /bin/bash -c "cd /scripts; mysql --user="${DB_USERNAME}" --password="${DB_PASSWORD}" --database="${DB_NAME}" -e 'source seed-capstone-keywords.sql';"
     docker exec -it "${MYSQL_CONTAINER_NAME}" /bin/bash -c "cd /scripts; mysql --user="${DB_USERNAME}" --password="${DB_PASSWORD}" --database="${DB_NAME}" -e 'source seed-capstone-categories.sql';"
+    docker exec -it "${MYSQL_CONTAINER_NAME}" /bin/bash -c "cd /scripts; mysql --user="${DB_USERNAME}" --password="${DB_PASSWORD}" --database="${DB_NAME}" -e 'source seed-capstone-preferred-courses.sql';"
+
 
     # # Setup onid user account
     log_print "Creating fake ONID accounts...";

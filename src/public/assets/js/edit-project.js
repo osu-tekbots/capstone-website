@@ -50,6 +50,9 @@ function getProjectFormDataAsJson() {
      json.keywords = $('#keywordsDiv').html()
              .replace(/<span class="badge badge-light keywordBadge">/g, "[")
              .replace(/ <i class="fas fa-times-circle"><\/i><\/span>/g, "],");
+     json.preferredCourses = $('#preferredCoursesDiv').html()
+             .replace(/<span class="badge badge-light preferredCourseBadge">/g, "[")
+             .replace(/ <i class="fas fa-times-circle"><\/i><\/span>/g, "],");
     return json;
 }
 
@@ -82,6 +85,22 @@ $('#keywordsInput').on('change', function() {
 
 //Remove keywords when clicked.
 $('body').on('click', '.keywordBadge', function(e) {
+    this.remove();
+});
+
+$('#preferredCoursesInput').on('change', function() {
+    course = $('#preferredCoursesInput').val();
+    
+    // course = 'CS261';
+    //Add user-generated course into the preferredCoursesDiv.
+    $('#preferredCoursesDiv').append(
+        '<span class="badge badge-light preferredCourseBadge">' + course + ' <i class="fas fa-times-circle"></i></span>'
+    );
+    $('#preferredCoursesInput').val('');
+});
+
+//Remove course when clicked.
+$('body').on('click', '.preferredCourseBadge', function(e) {
     this.remove();
 });
 

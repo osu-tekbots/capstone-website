@@ -1,7 +1,6 @@
 <?php
 namespace DataAccess;
 
-// use Model\CapstoneProjectCategory;
 use Model\CapstoneProjectCompensation;
 use Model\CapstoneProjectCop;
 use Model\CapstoneProjectFocus;
@@ -390,7 +389,6 @@ class CapstoneProjectsDao {
 
             $params = array(
                 ':pending' => CapstoneProjectStatus::PENDING_APPROVAL,
-                // ':category' => '0',
                 ':archived' => false
             );
             $results = $this->conn->query($sql, $params);

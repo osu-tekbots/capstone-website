@@ -6,6 +6,7 @@ use DataAccess\CapstoneApplicationsDao;
 use DataAccess\UsersDao;
 use DataAccess\KeywordsDao;
 use DataAccess\CategoriesDao;
+use DataAccess\PreferredCoursesDao;
 use Util\Security;
 
 include PUBLIC_FILES . '/lib/shared/authorize.php';
@@ -38,6 +39,7 @@ $usersDao = new UsersDao($dbConn, $logger);
 $applicationsDao = new CapstoneApplicationsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
 $categoriesDao = new CategoriesDao($dbConn, $logger);
+$preferredCoursesDao = new PreferredCoursesDao($dbConn, $logger);
 $project = $dao->getCapstoneProject($pid);
 $proposer = $project->getProposerId();
 
@@ -102,6 +104,7 @@ $name = Security::HtmlEntitiesEncode($project->getProposer()->getFirstName())
 $numberGroups = $project->getNumberGroups();
 $preexistingKeywords = $keywordsDao->getKeywordsForEntity($pid);
 $preexistingCategories = $categoriesDao->getCategoriesForEntity($pid);
+$preexistingPreferredCourses = $preferredCoursesDao->getPreferredCoursesForEntity($pid);
 global $image_dir;
 $image = false;
 $images = $project->getImages();
@@ -159,6 +162,26 @@ if(!@getimagesize($image)){
 					<br><?php echo nl2br($pref_qualifications);?>
 					<p></p>
                     <br>
+
+					<?php
+					if (count($preexistingPreferredCourses) >= 1){		
+						echo"
+						<address>
+							<h2>Preferred Courses Completed:</h2>
+							<br>		
+							";
+							foreach ($preexistingPreferredCourses as $p) {
+								if (trim(Security::HtmlEntitiesEncode($p->getName())) != '') {
+									echo '' . Security::HtmlEntitiesEncode($p->getCode()) . ' ' . Security::HtmlEntitiesEncode($p->getName()) . '<br>';
+								}
+							}
+						echo"	
+							<br>
+						</address>";
+					}
+					?>
+
+					
                     
 					<?php 
                     if ($isLoggedIn){

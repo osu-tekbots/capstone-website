@@ -215,8 +215,6 @@ class CategoriesDao{
         }
     }
 
-    
-
     public static function ExtractCategoryFromRow($row){
         $category = new Category($row['cc_id']);
         $category->setName($row['cc_name']);

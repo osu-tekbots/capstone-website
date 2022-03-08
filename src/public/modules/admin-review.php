@@ -156,11 +156,6 @@ function renderAdminReviewPanel($project, $logs, $editors, $categoriesDao, $user
                     </div>
                 </div>
 
-                <div class='row col-12'>
-                    <div class='col-4'><h6><p style='color:black'>Current Project Status:</p></h6></div>
-                    <div class='col-8'><h6>$pStatusName</h6></div>
-                </div>
-
                 <div class='row col-12 py-1'>
                     <div class='col-4'><h6><p style='color:black'>Project Proposer:</p></h6></div>
                     <div class='col-8'>$proposerHTML</div>

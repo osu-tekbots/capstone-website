@@ -6,6 +6,7 @@ use Model\CapstoneProjectLog;
 use Model\CapstoneProjectStatus;
 use Model\Keyword;
 use Model\Category;
+use Model\PreferredCourse;
 use Model\User;
 use Model\UsersDao;
 
@@ -25,6 +26,8 @@ class ProjectsActionHandler extends ActionHandler {
     private $keywordsDao;	
     /** @var \DataAccess\CategoriesDao */
     private $categoriesDao;
+    /** @var \DataAccess\PreferredCoursesDao */
+    private $preferredCoursesDao;
     /** @var \Email\ProjectMailer */
     private $mailer;
     /** @var \Util\ConfigManager */
@@ -39,12 +42,13 @@ class ProjectsActionHandler extends ActionHandler {
      * @param \Util\ConfigManager $config the configuration manager providing access to site config
      * @param \Util\Logger $logger the logger to use for logging information about actions
      */
-    public function __construct($projectsDao, $usersDao, $keywordsDao, $categoriesDao, $mailer, $config, $logger) {
+    public function __construct($projectsDao, $usersDao, $keywordsDao, $categoriesDao, $preferredCoursesDao, $mailer, $config, $logger) {
         parent::__construct($logger);
         $this->projectsDao = $projectsDao;
         $this->usersDao = $usersDao;
 		$this->keywordsDao = $keywordsDao;
         $this->categoriesDao = $categoriesDao;
+        $this->preferredCoursesDao = $preferredCoursesDao;
         $this->mailer = $mailer;
         $this->config = $config;
     }
@@ -138,6 +142,41 @@ class ProjectsActionHandler extends ActionHandler {
     }
 
     /**
+     * Updates the projects preferred courses in the database.
+     *
+     * @return void
+     */
+    public function handleUpdateProjectPreferredCourse() {
+        // Ensure all required parameters are present
+        $this->requireParam('projectId');
+        $this->requireParam('preferredCourseId');
+
+        $body = $this->requestBody;
+
+        if ($this->preferredCoursesDao->preferredCourseExistsForEntity($body['preferredCourseId'], $body['projectId'])) {
+            $ok = $this->preferredCoursesDao->removePreferredCourseInJoinTable($body['preferredCourseId'], $body['projectId']);
+        }
+        else {
+            $ok = $this->preferredCoursesDao->addPreferredCourseInJoinTable($body['preferredCourseId'], $body['projectId']);
+        }
+        
+        $project = $this->projectsDao->getCapstoneProject($body['projectId']);
+        if (!$ok) {
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to update project preferred course join table'));
+        }
+        $this->projectsDao->insertCapstoneProjectLog(new CapstoneProjectLog(
+            $project->getId(),
+            new \DateTime,
+            "Preferred Courses Updated"
+        ));
+
+        $this->respond(new Response(
+            Response::OK,
+            'Successfully updated the project'
+        ));
+    }
+
+    /**
      * Updates the projects admin comments in the database.
      *
      * @return void
@@ -216,6 +255,28 @@ class ProjectsActionHandler extends ActionHandler {
 				$k = $this->keywordsDao->getKeyword($keyword);
 				//Parameters are the keyword model and the project's id.
 				$this->keywordsDao->addKeywordInJoinTable($k, $id);
+				
+			}			
+		}
+
+        //Clear all existing preferred courses to account for removed courses.
+		$this->preferredCoursesDao->removeAllPreferredCoursesForEntity($id);
+
+        $preferredCoursesBracketSeparatedString = $this->getFromBody('preferredCourses');			
+		$preferredCoursesArray = explode('[', $preferredCoursesBracketSeparatedString);
+
+		//TODO: Remove extra white space character.
+
+		
+		foreach ($preferredCoursesArray as $p){
+			$p = strtok($p, "],");
+            $preferredCourse = $this->preferredCoursesDao->getPreferredCourseById($p);
+            // $preferredCourseId = $preferredCourse->getId();
+			if(!$this->preferredCoursesDao->preferredCourseExistsForEntity($p, $id)){
+				
+				// $p = $this->preferredCoursesDao->addPreferredCourse($preferredCourseId);
+				//Parameters are the keyword model and the project's id.
+				$this->preferredCoursesDao->addPreferredCourseInJoinTable($p, $id);
 				
 			}			
 		}
@@ -762,6 +823,9 @@ class ProjectsActionHandler extends ActionHandler {
             case 'updateCategory':
                 $this->handleUpdateProjectCategory();
 				break;
+            case 'updatePreferredCourse':
+                $this->handleUpdateProjectPreferredCourse();
+                break;
             case 'updateAdminComments':
                 $this->handleUpdateProjectAdminComments();
 				break;

@@ -157,3 +157,19 @@ CREATE TABLE IF NOT EXISTS capstone_category_for (
     PRIMARY KEY (ccf_cc_id, ccf_entity_id),
     FOREIGN KEY (ccf_cc_id) REFERENCES capstone_category (cc_id)
 );
+
+CREATE TABLE IF NOT EXISTS capstone_pref_course (
+    cpc_id INT NOT NULL AUTO_INCREMENT,
+    cpc_code VARCHAR(128) NOT NULL,
+    cpc_name VARCHAR(128) NOT NULL,
+
+    PRIMARY KEY (cpc_id)
+);
+
+CREATE TABLE IF NOT EXISTS capstone_pref_course_for (
+    cpcf_cpc_id INT NOT NULL,
+    cpcf_entity_id CHAR(16) NOT NULL,
+
+    PRIMARY KEY (cpcf_cpc_id, cpcf_entity_id),
+    FOREIGN KEY (cpcf_cpc_id) REFERENCES capstone_pref_course (cpc_id)
+);

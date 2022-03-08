@@ -5,6 +5,7 @@ use DataAccess\CapstoneProjectsDao;
 use DataAccess\UsersDao;
 use DataAccess\KeywordsDao;
 use DataAccess\CategoriesDao;
+use DataAccess\PreferredCoursesDao;
 use Model\CapstoneProjectStatus;
 use Util\Security;
 
@@ -27,6 +28,7 @@ allowIf($authorizedToProceed, 'pages/login.php');
 $dao = new CapstoneProjectsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
 $categoriesDao = new CategoriesDao($dbConn, $logger);
+$preferredCoursesDao = new PreferredCoursesDao($dbConn, $logger);
 $usersDao = new UsersDao($dbConn, $logger);
 
 // Get the project and store properly formatted values into local variables
@@ -83,6 +85,7 @@ $types = $dao->getCapstoneProjectTypes();
 $focuses = $dao->getCapstoneProjectFocuses();
 $compensations = $dao->getCapstoneProjectCompensations();
 $ndaips = $dao->getCapstoneProjectNdaIps();
+$preferredCourses = $preferredCoursesDao->getAllPreferredCourses();
 
 // Status
 
@@ -132,6 +135,7 @@ $tooltipProjectDescriptionText = 'Enter your project description here. It is imp
 $tooltipMotivationText = 'Use this field to describe why you are offering this project. Does this project impact people? Is it helpful? What real life problems does this project solve?';
 $tooltipObjectivesText = 'List the items that you expect this project to achieve. This can include tangible deliverables as well as steps to be completed before the final completion. ';
 $tooltipKeywords = "Type keywords and hit 'Enter' between keywords.";
+$tooltipPreferredCourses = "Select courses that you think relate to this project or would help a student succeed with this project";
 $tooltipMinQualificationsText = 'Please enter a list of skills or prior experience needed to complete this project.';
 $tooltipPrefQualificationsText = 'Please enter a list of skills or prior experience helpful to complete this project';
 $tooltipNdaSelect = "Select this project's NDA settings.";
@@ -298,7 +302,64 @@ var availableTags = [
 									?>
 								</select>
 						</div>
+					</div>
+					<!-- Sidebar -->
+					<div class="col-sm-3">
 						<br>
+						<div class="col-sm-20">
+							<div class="form-group">
+								<div class="input-group">
+									<span class="input-group-btn">
+										<span class="btn btn-outline-secondary btn-file" data-toggle="tooltip" 
+											data-placement="bottom" title="<?php echo $tooltipImgBtn; ?>">
+											Upload Image<input type="file" id="imgInp" accept=".jpg,.jpeg,.gif,.png">
+										</span>
+									</span>
+									<input type="text" class="form-control" id="nameOfImageInput" value="" readonly>
+								</div>
+								<br/>
+								<style>
+									.data-img{
+										background-color:#D1D1D1;
+										width:40px;
+										height:40px;
+									}
+								</style>
+								<div id="indexDiv" style="width:100%;max-height:300px;display:grid;">
+									<select id="defaultImageSelect" class="image-picker show-html">
+										<?php
+										$defaultImage = '';
+										foreach ($pImages as $image) {
+
+											$isDefault = $image->getIsDefault();
+											$id = $image->getId();
+											$name = $image->getName();
+											renderDefaultImageOption($id, $name, $isDefault);
+											if ($isDefault) {
+												$defaultImage = "images/$id";
+												$defaultImageName = $name;
+											}
+										}
+										?>
+									</select>
+									<script type="text/javascript">
+										$("#defaultImageSelect").imagepicker();
+										$("#defaultImageSelect").data('picker').sync_picker_with_select();
+										<?php if (isset($defaultImageName)) {
+											echo "$('#nameOfImageInput').val('$defaultImageName');";
+										} ?>
+									</script>
+								</div>
+							<img id="img-upload" max-width="400px;" max-height="200px;" src="<?php echo $defaultImage; ?>"/>
+							<!-- TODO: Need to put this icon on the image displayed and connect it to the delete functions in the DAO-->
+							<i class="fas fa-trash-alt" style="color:red;" onclick="deleteImg();"></i>
+							</div>
+						</div>	
+					</div>
+				</div>
+				<br>
+				<div class="row">
+					<div class="col-sm-5">
 						<div class="col-sm-20">
 							<div class="form-group">
 								<div class="ui-widget">
@@ -323,60 +384,41 @@ var availableTags = [
 							</div>
 						</div>
 					</div>
-					<!-- Sidebar -->
-					<div class="col-sm-3">
-						<br>
-						<div class="form-group">
-							<div class="input-group">
-								<span class="input-group-btn">
-									<span class="btn btn-outline-secondary btn-file" data-toggle="tooltip" 
-										data-placement="bottom" title="<?php echo $tooltipImgBtn; ?>">
-										Upload Image<input type="file" id="imgInp" accept=".jpg,.jpeg,.gif,.png">
-									</span>
-								</span>
-								<input type="text" class="form-control" id="nameOfImageInput" value="" readonly>
-							</div>
-							<br/>
-							<style>
-								.data-img{
-									background-color:#D1D1D1;
-									width:40px;
-									height:40px;
-								}
-							</style>
-							<div id="indexDiv" style="width:100%;max-height:300px;display:grid;">
-							<select id="defaultImageSelect" class="image-picker show-html">
-									<?php
-									$defaultImage = '';
-									foreach ($pImages as $image) {
-
-										$isDefault = $image->getIsDefault();
-										$id = $image->getId();
-										$name = $image->getName();
-										renderDefaultImageOption($id, $name, $isDefault);
-										if ($isDefault) {
-											$defaultImage = "images/$id";
-											$defaultImageName = $name;
+					<div class="col-sm-5">
+						<div class="col-sm-20">
+							<div class="form-group">
+								<div class="ui-widget">
+									<label for="preferredCoursesInput">
+										Add Preferred Courses Completed for Project: <?php displayInfoTooltip($tooltipPreferredCourses); ?><br>
+										<!-- <font size="2">Press Enter after each course.</font> -->
+									</label>
+									<select id="preferredCoursesInput" class="form-control input">
+										<option></option>
+										<?php
+										foreach ($preferredCourses as $p) {
+											$id = $p->getId();
+											$code = $p->getCode();
+											$name = $p->getName();
+											// $selected = $id == $pFocusId ? 'selected' : '';
+											echo "<option value='$id'>$code $name</option>";
 										}
-									}
+										?>
+									</select>
+								</div>
+								<div id="preferredCoursesDiv" name="preferredCourses">
+									<?php
+										$preexistingPreferredCourses = $preferredCoursesDao->getPreferredCoursesForEntity($pId);
+										if($preexistingPreferredCourses){
+											foreach ($preexistingPreferredCourses as $p) {
+												if (trim(Security::HtmlEntitiesEncode($p->getCode())) != '') {
+													echo '<span class="badge badge-light preferredCourseBadge">' . Security::HtmlEntitiesEncode($p->getCode()) . ' <i class="fas fa-times-circle"></i></span>';
+												}
+											}
+										}
 									?>
-								</select>
-								<script type="text/javascript">
-									$("#defaultImageSelect").imagepicker();
-									$("#defaultImageSelect").data('picker').sync_picker_with_select();
-									<?php if (isset($defaultImageName)) {
-										echo "$('#nameOfImageInput').val('$defaultImageName');";
-									} ?>
-								</script>
+								</div>
 							</div>
-						<img id="img-upload" max-width="400px;" max-height="200px;" src="<?php echo $defaultImage; ?>"/>
-						<!-- TODO: Need to put this icon on the image displayed and connect it to the delete functions in the DAO-->
-						<i class="fas fa-trash-alt" style="color:red;" onclick="deleteImg();"></i>
 						</div>
-						
-						
-						
-								
 					</div>
 				</div>
 
