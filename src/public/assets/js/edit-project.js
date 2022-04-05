@@ -72,7 +72,7 @@ $('#endbydate').datetimepicker({
 $('[data-toggle="tooltip"]').tooltip();
 
 
-
+// Keyword Functionality **********************************
 $('#keywordsInput').on('change', function() {
     key = $('#keywordsInput').val();
     var cleankey = key.replace(/[|&;$%@"<>()+,]/g, "");
@@ -88,11 +88,10 @@ $('body').on('click', '.keywordBadge', function(e) {
     this.remove();
 });
 
+// Courses Functionality **********************************
 $('#preferredCoursesInput').on('change', function() {
     course = $('#preferredCoursesInput').val();
-    
-    // course = 'CS261';
-    //Add user-generated course into the preferredCoursesDiv.
+
     $('#preferredCoursesDiv').append(
         '<span class="badge badge-light preferredCourseBadge">' + course + ' <i class="fas fa-times-circle"></i></span>'
     );
@@ -191,7 +190,9 @@ function onSaveProjectDraftClick() {
     let body = getProjectFormDataAsJson();
 
     if (body.title == '') {
-        return snackbar('Please provide a project title', 'error');
+        // return snackbar('Please provide a project title', 'error');
+        message = 'Preferred Courses: ' + body.preferredCourses;
+        return snackbar(message, 'error');
     }
 	
     body.action = 'saveProject';

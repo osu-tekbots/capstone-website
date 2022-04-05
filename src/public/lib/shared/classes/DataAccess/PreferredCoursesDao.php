@@ -90,6 +90,8 @@ class PreferredCoursesDao{
 
     public function getPreferredCourseByCode($code) {
         try {
+            // $code = 'CS261';
+            $this->logger->error("getPreferredCourseByCode course code given: $code");
             $sql = '
             SELECT * 
             FROM capstone_pref_course
@@ -99,9 +101,10 @@ class PreferredCoursesDao{
             $results = $this->conn->query($sql, $params);
 			
 			if (\count($results) == 0) {
+                // $this->logger->error("getPreferredCourseByCode did not get course by code: $code");
                 return false;
             }
-
+            
 			return self::ExtractPreferredCourseFromRow($results[0], true);
         } catch (\Exception $e) {
             $this->logger->error("Failed to get preferred course for object " . $e->getMessage());
@@ -153,17 +156,17 @@ class PreferredCoursesDao{
         }
     }
 
-    public function preferredCourseExistsForEntity($preferredCourseId, $entityId) {
+    public function preferredCourseExistsForEntity($preferredCourseCode, $entityId) {
         try {
             $sql = '
             SELECT * 
             FROM capstone_pref_course, capstone_pref_course_for 
 			WHERE capstone_pref_course_for.cpcf_cpc_id = capstone_pref_course.cpc_id
-			AND capstone_pref_course.cpc_id = :preferredCourseId
+			AND capstone_pref_course.cpc_code = :preferredCourseCode
 			AND capstone_pref_course_for.cpcf_entity_id = :entityId
             ';
             $params = array(
-                ':preferredCourseId' => $preferredCourseId, 
+                ':preferredCourseCode' => $preferredCourseCode, 
                 ':entityId' => $entityId);
             $results = $this->conn->query($sql, $params);
 
@@ -198,15 +201,15 @@ class PreferredCoursesDao{
         }
     }
 
-    public function addPreferredCourseInJoinTable($preferredCourseId, $entityId) {
+    public function addPreferredCourseInJoinTable($preferredCourse, $entityId) {
         try {
             $sql = '
             INSERT INTO capstone_pref_course_for VALUES (
-                :preferredCourseId,
+                :preferredCourse,
 				:entityId
             )';
             $params = array(
-                ':preferredCourseId' => $preferredCourseId,
+                ':preferredCourse' => $preferredCourse->getId(),
                 ':entityId' => $entityId
             );
             $this->conn->execute($sql, $params);
