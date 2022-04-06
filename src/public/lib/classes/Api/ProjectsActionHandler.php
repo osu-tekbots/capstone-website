@@ -235,8 +235,6 @@ class ProjectsActionHandler extends ActionHandler {
         $preferredCoursesBracketSeparatedString = str_replace(" ", "", $preferredCoursesBracketSeparatedString);
         $preferredCoursesBracketSeparatedString = substr_replace($preferredCoursesBracketSeparatedString, "", -1);
         
-        $this->logger->error("Failed string is: $preferredCoursesBracketSeparatedString");
-
         if (strlen($preferredCoursesBracketSeparatedString) > 0) {
             $preferredCoursesArray = explode(',', $preferredCoursesBracketSeparatedString);
             foreach ($preferredCoursesArray as $code){

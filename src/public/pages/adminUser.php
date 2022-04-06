@@ -56,6 +56,11 @@ include_once PUBLIC_FILES . '/modules/header.php';
 				<i class="fas fa-fw fa-file-invoice"></i>
 				<span>Applications</span></a>
 		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="pages/adminCourses.php">
+				<i class="fas fa-fw fa-table"></i>
+				<span>Course Listings</span></a>
+		</li>
 	</ul>
 
 	<div id="content-wrapper">
@@ -73,69 +78,66 @@ include_once PUBLIC_FILES . '/modules/header.php';
 
 			<h2>Users Table</h2>
 			<h6>*Columns colored orange are editable (click on cell)*</h6>
-	<div class="search-table-outter wrapper">
-	<table id="data_table" class="search-table inner scrolltable">
-		<thead>
-			<tr>
-				<th bgcolor="#FFA500">Last Name <i class="fas fa-edit"></i></th>
-				<th bgcolor="#FFA500">First Name <i class="fas fa-edit"></i></th>
-				<th bgcolor="#FFA500">Email <i class="fas fa-edit"></i></th>
-				<th bgcolor="#FFA500">ONID <i class="fas fa-edit"></i></th>
-				<th bgcolor="#FFA500">Access Level <i class="fas fa-edit"></th>
-				<th bgcolor="#66C2E0">User ID</th>
-				<th bgcolor="#FFA500">Phone <i class="fas fa-edit"></i></th>
-				<th bgcolor="#66C2E0">Salutation</th>
-				<th bgcolor="#FFA500">Affiliation <i class="fas fa-edit"></i></th>
-				<th bgcolor="#FFA500">Major <i class="fas fa-edit"></th>
-				<th bgcolor="#66C2E0">Auth Provider</th>
-				
-				<?php
-				//<th bgcolor="#FFA500">project_assigned <i class="fas fa-edit"></th>
-				?>
-			</tr>
-		</thead>
-		<tbody>
+			<div class="search-table-outter wrapper">
+				<table id="data_table" class="search-table inner scrolltable">
+					<thead>
+						<tr>
+							<th bgcolor="#FFA500">Last Name <i class="fas fa-edit"></i></th>
+							<th bgcolor="#FFA500">First Name <i class="fas fa-edit"></i></th>
+							<th bgcolor="#FFA500">Email <i class="fas fa-edit"></i></th>
+							<th bgcolor="#FFA500">ONID <i class="fas fa-edit"></i></th>
+							<th bgcolor="#FFA500">Access Level <i class="fas fa-edit"></th>
+							<th bgcolor="#66C2E0">User ID</th>
+							<th bgcolor="#FFA500">Phone <i class="fas fa-edit"></i></th>
+							<th bgcolor="#66C2E0">Salutation</th>
+							<th bgcolor="#FFA500">Affiliation <i class="fas fa-edit"></i></th>
+							<th bgcolor="#FFA500">Major <i class="fas fa-edit"></th>
+							<th bgcolor="#66C2E0">Auth Provider</th>
+							
+							<?php
+							//<th bgcolor="#FFA500">project_assigned <i class="fas fa-edit"></th>
+							?>
+						</tr>
+					</thead>
+					<tbody>
+						<?php
+						$users = $usersDao->getAllUsers();
+						foreach ($users as $u) {
+							$uLastName = $u->getLastName();
+							$uFirstName = $u->getFirstName();
+							$uEmail = $u->getEmail();
+							$uOnid = $u->getOnid();
+							$uType = $u->getType()->getName();
+							$uId = $u->getId();
+							$uPhone = $u->getPhone();
+							$uSalutation = $u->getSalutation()->getName();
+							$uAffiliation = $u->getAffiliation();
+							$uMajor = $u->getMajor();
+							$uAuthProvider = $u->getAuthProvider()->getName();
 
+							// TODO: project assigned?
 
-		<?php
-		$users = $usersDao->getAllUsers();
-		foreach ($users as $u) {
-			$uLastName = $u->getLastName();
-			$uFirstName = $u->getFirstName();
-			$uEmail = $u->getEmail();
-			$uOnid = $u->getOnid();
-			$uType = $u->getType()->getName();
-			$uId = $u->getId();
-			$uPhone = $u->getPhone();
-		    $uSalutation = $u->getSalutation()->getName();
-		    $uAffiliation = $u->getAffiliation();
-		    $uMajor = $u->getMajor();
-		    $uAuthProvider = $u->getAuthProvider()->getName();
-
-		    // TODO: project assigned?
-
-		    echo "
-			<tr id='$uId'>
-				<td>$uLastName</td>
-				<td>$uFirstName</td>
-				<td>$uEmail</td>
-				<td>$uOnid</td>
-				<td>$uType</td>
-				<td>$uId</td>
-				<td>$uPhone</td>
-				<td>$uSalutation</td>
-				<td>$uAffiliation</td>
-				<td>$uMajor</td>
-				<td>$uAuthProvider</td>
-		
-			</tr>
-			";
-		}
-		?>
-	 </tbody>
-	</table>
-	</div>
-
+							echo "
+							<tr id='$uId'>
+								<td>$uLastName</td>
+								<td>$uFirstName</td>
+								<td>$uEmail</td>
+								<td>$uOnid</td>
+								<td>$uType</td>
+								<td>$uId</td>
+								<td>$uPhone</td>
+								<td>$uSalutation</td>
+								<td>$uAffiliation</td>
+								<td>$uMajor</td>
+								<td>$uAuthProvider</td>
+						
+							</tr>
+							";
+						}
+						?>
+					</tbody>
+				</table>
+			</div>
 		 </div>
 	</div>
 </div>

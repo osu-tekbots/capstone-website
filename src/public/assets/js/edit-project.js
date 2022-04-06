@@ -190,9 +190,7 @@ function onSaveProjectDraftClick() {
     let body = getProjectFormDataAsJson();
 
     if (body.title == '') {
-        // return snackbar('Please provide a project title', 'error');
-        message = 'Preferred Courses: ' + body.preferredCourses;
-        return snackbar(message, 'error');
+        return snackbar('Please provide a project title', 'error');
     }
 	
     body.action = 'saveProject';

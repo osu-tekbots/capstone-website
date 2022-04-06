@@ -71,6 +71,11 @@ include_once PUBLIC_FILES . '/modules/applications.php';
 			<i class="fas fa-fw fa-file-invoice"></i>
 			<span>Applications</span></a>
 	</li>
+	<li class="nav-item">
+		<a class="nav-link" href="pages/adminCourses.php">
+			<i class="fas fa-fw fa-table"></i>
+			<span>Course Listings</span></a>
+	</li>
 </ul>
 
 <div class="container-fluid">
