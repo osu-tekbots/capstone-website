@@ -61,6 +61,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
         </a>
 		-->
         <hr class="my-4">
+        <a class="forgot-password" href="pages/forgotPassword.php">Forgot Password?</a>
     </div>
 	<div class="col-sm-8">
         <center>
