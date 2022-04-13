@@ -44,16 +44,20 @@ include_once PUBLIC_FILES . '/modules/header.php';
 function onSubmitPassowrdResetClick() {
 
     let email = document.getElementById("email");
-    // generate code and timeout
-    // let resetCode = ???
-    // let timeOut = time + 15min?
+    // generate code
+    let code = generateResetCode();
+    // calculate expiration for reset code
+    var expiresIn = 15;
+    var currentDate = new Date();
+    var timeout = new Date(currentDate.getTime() + expiresIn*60000);
+
     let body = {
         action: 'passwordReset'
     };
 
-    body[userEmail] = email; //wut
-    // body[resetCode] = code;
-    // body[timeOut] = timeOut;
+    body['userEmail'] = email;
+    body['resetCode'] = code;
+    body['timeOut'] = timeOut;
 
     api.post('/users.php', body).then(res => {
         snackbar(res.message, 'success');
@@ -62,6 +66,20 @@ function onSubmitPassowrdResetClick() {
     });
 }
 $('#submitPasswordResetBtn').on('click', onSubmitPassowrdResetClick);
+
+/**
+ * Function to generate a random reset code 
+ */
+function generateResetCode() {
+    $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+    $code = array();
+    for ($i = 0; $i < 8; $i++) {
+        $c = rand(0, strlen($chars) -1);
+        $code[] = $chars[$c];
+    }
+    return implode($code);
+}
+
 
 </script>
 
