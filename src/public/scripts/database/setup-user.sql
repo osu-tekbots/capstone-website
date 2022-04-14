@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS user_auth_provider (
     PRIMARY KEY (uap_id)
 );
 
+
 CREATE TABLE IF NOT EXISTS user (
     u_id CHAR(16) NOT NULL,
     u_ut_id INT NOT NULL,
@@ -45,3 +46,16 @@ CREATE TABLE IF NOT EXISTS user (
     FOREIGN KEY (u_us_id) REFERENCES user_salutation (us_id),
     FOREIGN KEY (u_uap_id) REFERENCES user_auth_provider (uap_id)
 );
+
+CREATE TABLE IF NOT EXISTS user_local_auth (
+    ula_id CHAR(16) NOT NULL,
+    ula_pw CHAR(128) NOT NULL,
+    
+    FOREIGN KEY (ula_id) REFERENCES user(u_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS user_local_auth_salt (
+    ulas_salt CHAR(128) NOT NULL
+);
+

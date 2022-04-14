@@ -31,10 +31,17 @@ include_once PUBLIC_FILES . '/modules/header.php';
             </button>
         </a>
         <hr class="my-4">
-        <h4 class="text-center">Other Users</h4>
+        <h4 class="text-center">Google Users</h4>
         <a class="login" href="auth/index.php?provider=google" style="text-decoration:none;">
             <button id="googleBtn" class="btn btn-lg btn-danger btn-block text-uppercase" type="submit">
                 <i class="fab fa-google mr-2"></i> Sign in With Google
+            </button>
+        </a>
+        <hr class="my-4">
+        <h4 class="text-center">Other Users</h4>
+        <a class="login" href="auth/index.php?provider=local" style="text-decoration:none;">
+            <button id="localBtn" class="btn btn-lg btn-danger btn-block text-uppercase" type="submit">
+                <i class="fas fa-id-badge"></i> Sign in With Local Account
             </button>
         </a>
         <hr class="my-4">

@@ -138,6 +138,106 @@ class UsersDao {
         }
     }
 
+
+
+    private function getSalt() {
+        try {
+            $sql = 'SELECT * FROM user_local_auth_salt LIMIT 1';
+            $params = array();
+            $result = $this->conn->query($sql, $params);
+            if (!$result || \count($result) == 0) {
+                return false;
+            }
+            $salt = $result[0]['ulas_salt'];
+            return $salt;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Fetches a single local user with the user's email.
+     *
+     * @param string $email the email of the user
+     * @return User|boolean the corresponding User from the database if the fetch succeeds and the user exists, 
+     * false otherwise
+     */
+    public function getLocalUserWithCredentials($email, $password) {
+        $salt = $this->getSalt();
+        if (!$salt) {
+            return false;
+        }
+        $ula_pw = hash('sha256', $password . $salt);
+
+        try {
+            # Get user with provided credentials
+            $sql = 'SELECT * FROM ';
+            $sql .= ' user, user_type, user_salutation, user_auth_provider, user_local_auth ';
+            $sql .= ' WHERE';
+            $sql .= ' u_onid = :id';
+            $sql .= ' AND u_ut_id = ut_id';
+            $sql .= ' AND u_us_id = us_id';
+            $sql .= ' AND u_uap_id = uap_id';
+            $sql .= ' AND uap_name = :uap_name';
+            $sql .= ' AND ula_pw = :ula_pw';
+
+            $params = array(
+                ':email' => $email,
+                ':uap_name' => 'Local',
+                ':ula_pw' => $ula_pw
+            );
+
+            $result = $this->conn->query($sql, $params);
+            if (!$result || \count($result) == 0) {
+                return false;
+            }
+
+            return self::ExtractUserFromRow($result[0]);
+        } catch (\Exception $e) {
+            $this->logError('Failed to fetch single user by credentials: ' . $e->getMessage());
+
+            return false;
+        }
+    }
+
+    /**
+     * Adds a new local user to the database.
+     *
+     * @param \Model\User $user the user to add to the database
+     * @return boolean true if the query execution succeeds, false otherwise.
+     */
+    public function addNewLocalUser($user, $password) {
+        $salt = $this->$getSalt();
+        if (!$salt) {
+            return false;
+        }
+        $ula_pw = hash('sha256', $password . $salt);
+
+        try {
+            $sql = 'INSERT INTO user_local_auth (ula_id, ula_pw) VALUES (:ula_id, :ula_pw)';
+            $params = array( ':ula_id' => $user->getId(), ':ula_pw' => $ula_pw );
+            $this->conn->execute($sql, $params);
+            
+        } catch (\Exception $e) {
+            $this->logError('Failed to add new user: ' . $e->getMessage());
+            return false;
+        }
+
+        $success = $this->addNewuser($user);
+
+        if (!$success) {
+            try {
+                $sql = 'DELETE FROM user_local_auth WHERE ula_id = :ula_id';
+                $params = array(':ula_id' => $user->getId());
+                $this->conn->execute($sql, $params);
+                return false;
+            } catch (\Exception $e) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Adds a new user to the database.
      *
