@@ -108,6 +108,7 @@ if ($loggedIn) {
     $buttons['Logout'] = 'pages/logout.php';
 } else {
     $buttons['Login'] = 'pages/login.php';
+    $buttons['Create Account'] = 'pages/createLocalAccount.php';
 }
     
 function displayInfoTooltip($tooltip){
