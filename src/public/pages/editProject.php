@@ -393,14 +393,14 @@ var availableTags = [
 										<!-- <font size="2">Press Enter after each course.</font> -->
 									</label>
 									<select id="preferredCoursesInput" class="form-control input">
-										<option></option>
+										<option selected="selected"></option>
 										<?php
 										foreach ($preferredCourses as $p) {
 											$id = $p->getId();
 											$code = $p->getCode();
 											$name = $p->getName();
 											// $selected = $id == $pFocusId ? 'selected' : '';
-											echo "<option value='$id'>$code $name</option>";
+											echo "<option value='$code'>$code $name</option>";
 										}
 										?>
 									</select>

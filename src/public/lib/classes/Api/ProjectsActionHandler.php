@@ -141,40 +141,6 @@ class ProjectsActionHandler extends ActionHandler {
         ));
     }
 
-    /**
-     * Updates the projects preferred courses in the database.
-     *
-     * @return void
-     */
-    public function handleUpdateProjectPreferredCourse() {
-        // Ensure all required parameters are present
-        $this->requireParam('projectId');
-        $this->requireParam('preferredCourseId');
-
-        $body = $this->requestBody;
-
-        if ($this->preferredCoursesDao->preferredCourseExistsForEntity($body['preferredCourseId'], $body['projectId'])) {
-            $ok = $this->preferredCoursesDao->removePreferredCourseInJoinTable($body['preferredCourseId'], $body['projectId']);
-        }
-        else {
-            $ok = $this->preferredCoursesDao->addPreferredCourseInJoinTable($body['preferredCourseId'], $body['projectId']);
-        }
-        
-        $project = $this->projectsDao->getCapstoneProject($body['projectId']);
-        if (!$ok) {
-            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to update project preferred course join table'));
-        }
-        $this->projectsDao->insertCapstoneProjectLog(new CapstoneProjectLog(
-            $project->getId(),
-            new \DateTime,
-            "Preferred Courses Updated"
-        ));
-
-        $this->respond(new Response(
-            Response::OK,
-            'Successfully updated the project'
-        ));
-    }
 
     /**
      * Updates the projects admin comments in the database.
@@ -238,11 +204,10 @@ class ProjectsActionHandler extends ActionHandler {
 		//Clear all existing keywords to account for removed keywords.
 		$this->keywordsDao->removeAllKeywordsForEntity($id);
 		
-		$keywordsBracketSeparatedString = $this->getFromBody('keywords');			
+		$keywordsBracketSeparatedString = $this->getFromBody('keywords');	
 		$keywordsArray = explode('[', $keywordsBracketSeparatedString);
 
 		//TODO: Remove extra white space character.
-
 		
 		foreach ($keywordsArray as $keyword){
 			$keyword = strtok($keyword, "],");
@@ -261,26 +226,22 @@ class ProjectsActionHandler extends ActionHandler {
 
         //Clear all existing preferred courses to account for removed courses.
 		$this->preferredCoursesDao->removeAllPreferredCoursesForEntity($id);
+        $preferredCoursesBracketSeparatedString = $this->getFromBody('preferredCourses');
 
-        $preferredCoursesBracketSeparatedString = $this->getFromBody('preferredCourses');			
-		$preferredCoursesArray = explode('[', $preferredCoursesBracketSeparatedString);
-
-		//TODO: Remove extra white space character.
-
-		
-		foreach ($preferredCoursesArray as $p){
-			$p = strtok($p, "],");
-            $preferredCourse = $this->preferredCoursesDao->getPreferredCourseById($p);
-            // $preferredCourseId = $preferredCourse->getId();
-			if(!$this->preferredCoursesDao->preferredCourseExistsForEntity($p, $id)){
-				
-				// $p = $this->preferredCoursesDao->addPreferredCourse($preferredCourseId);
-				//Parameters are the keyword model and the project's id.
-				$this->preferredCoursesDao->addPreferredCourseInJoinTable($p, $id);
-				
-			}			
-		}
-		
+        $preferredCoursesBracketSeparatedString = str_replace("[", "", $preferredCoursesBracketSeparatedString);
+        $preferredCoursesBracketSeparatedString = str_replace("]", "", $preferredCoursesBracketSeparatedString);
+        $preferredCoursesBracketSeparatedString = str_replace("\n", "", $preferredCoursesBracketSeparatedString);
+        $preferredCoursesBracketSeparatedString = str_replace("\t", "", $preferredCoursesBracketSeparatedString);
+        $preferredCoursesBracketSeparatedString = str_replace(" ", "", $preferredCoursesBracketSeparatedString);
+        $preferredCoursesBracketSeparatedString = substr_replace($preferredCoursesBracketSeparatedString, "", -1);
+        
+        if (strlen($preferredCoursesBracketSeparatedString) > 0) {
+            $preferredCoursesArray = explode(',', $preferredCoursesBracketSeparatedString);
+            foreach ($preferredCoursesArray as $code){
+                $pc = $this->preferredCoursesDao->getPreferredCourseByCode($code);
+                $this->preferredCoursesDao->addPreferredCourseInJoinTable($pc, $id);
+            }
+        }
 
         $project = $this->projectsDao->getCapstoneProject($id);
         // TODO: handle case when project is not found
@@ -823,9 +784,6 @@ class ProjectsActionHandler extends ActionHandler {
             case 'updateCategory':
                 $this->handleUpdateProjectCategory();
 				break;
-            case 'updatePreferredCourse':
-                $this->handleUpdateProjectPreferredCourse();
-                break;
             case 'updateAdminComments':
                 $this->handleUpdateProjectAdminComments();
 				break;

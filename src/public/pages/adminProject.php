@@ -168,25 +168,30 @@ include_once PUBLIC_FILES . '/modules/header.php';
 			</a>
 		</li>
 		<li class="nav-item">
-				<a class="nav-link" href="pages/adminProject.php">
-					<i class="fas fa-fw fa-chart-area"></i>
-					<span>Active Projects</span></a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="pages/adminProject.php?archive">
-					<i class="fas fa-fw fa-chart-area"></i>
-					<span>Archived Projects</span></a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="pages/adminUser.php">
-					<i class="fas fa-fw fa-table"></i>
-					<span>Users</span></a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="pages/adminApplication.php">
-					<i class="fas fa-fw fa-file-invoice"></i>
-					<span>Applications</span></a>
-			</li>
+			<a class="nav-link" href="pages/adminProject.php">
+				<i class="fas fa-fw fa-chart-area"></i>
+				<span>Active Projects</span></a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="pages/adminProject.php?archive">
+				<i class="fas fa-fw fa-chart-area"></i>
+				<span>Archived Projects</span></a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="pages/adminUser.php">
+				<i class="fas fa-fw fa-table"></i>
+				<span>Users</span></a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="pages/adminApplication.php">
+				<i class="fas fa-fw fa-file-invoice"></i>
+				<span>Applications</span></a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="pages/adminCourses.php">
+				<i class="fas fa-fw fa-table"></i>
+				<span>Course Listings</span></a>
+		</li>
 	</ul>
 	<div class="container-fluid">
 		<br>

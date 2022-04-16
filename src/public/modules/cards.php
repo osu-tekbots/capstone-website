@@ -128,6 +128,68 @@ function renderAdminProjectCardGroup($projects, $keywordsDao, $categoriesDao, $t
     }
 }
 
+function renderCourseListingCardGroup($preferredCourses) {
+	global $numCardsCreated;
+	
+	if(!$preferredCourses || count($preferredCourses) == 0) {
+		return;
+	}
+
+    foreach ($preferredCourses as $p) {	
+		renderCourseListingCard($p);
+        $numCardsCreated++;
+    }
+}
+
+/***************************************************************/
+/* Move me to the bottom please */
+/***************************************************************/
+
+function renderCourseListingCard($preferredCourse) {
+	
+	// Capture and format all of the variables we need before rendering the HTML
+	$id = $preferredCourse->getId();
+	$code = Security::HtmlEntitiesEncode($preferredCourse->getCode());
+	$name = Security::HtmlEntitiesEncode($preferredCourse->getName());
+	
+	if (strlen($name) > 60) { // Restrict the title length
+		$name = substr($name, 0, 60) . '...';
+	}
+    
+	// $editButton = createLinkButton("pages/editProject.php?id=$id", 'Edit') : '';
+	// $deleteButton = (!$browsing) ? createProjectDeleteButton($id, $num) : '';
+		
+	
+	echo "
+	<tr id='preferredCourse$id' style='border-bottom: 1px solid black;'>
+		<td class='col-sm-3' id='preferredCourseBody$id' >
+			<h6>$code</h6>
+		</td>
+		<td class='col-sm-3'>
+			<h6>$name</h6>
+		</td>
+		<td class='col-sm-2'>
+			(keywords)
+		</td>
+		<td class='col-sm-2'>
+			(action buttons)
+		</td>
+	</tr>
+
+	<script type='text/javascript'>
+		$(document).ready(function() {
+			$('#preferredCourse$id').hover(function() {
+				$(this).css('background-color', '#f8f9fa');
+			}, function() {
+				$(this).css('background-color', 'white');
+			});
+		});
+	</script>
+	";
+}
+/***************************************************************/
+/***************************************************************/
+
 /**
  * Renders the HTML required for a project card.
  *
