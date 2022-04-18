@@ -34,6 +34,8 @@ include_once PUBLIC_FILES . '/modules/header.php';
                                 <input type="password" name="localPassword" id="localPassword" class="form-control form-control-lg" />
                             </div>
                             <button class="btn btn-dark btn-lg btn-block" type="submit">Login</button>
+                            <hr class="my-4">
+                            <a class="forgot-password" href="pages/forgotPassword.php">Forgot Password?</a>
                         </div>
                     </div>
                 </div>
