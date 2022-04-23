@@ -808,3 +808,23 @@ include_once PUBLIC_FILES . '/modules/footer.php';
 
 ?>
 
+<script>
+
+// TODO: Attach this to the action of when the user is not typing.
+function getKeywords() {
+	allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_ "
+	// TODO: Get the correct text value not the <p></p> stuff 
+	text = document.getElementById("projectDescriptionText").innerHTML
+	newText = ""
+	console.log(text)
+	for (let i = 0; i < text.length; i++) {
+		if (allowedChars.includes(text[i])) {
+			newText = newText + text[i];
+		}
+	}
+	for (let i = 0; i < textArr.length; i++) {
+		// TODO: If textArray[i] Is not already in the avaialble Tags
+		availableTags.push(textArr[i])
+	}
+}
+</script>
