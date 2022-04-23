@@ -59,3 +59,10 @@ CREATE TABLE IF NOT EXISTS user_local_auth_salt (
     ulas_salt CHAR(128) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS user_local_auth_reset (
+    ular_user CHAR(16) NOT NULL,
+    ular_key VARCHAR(256),
+    ular_date_expires DATETIME NOT NULL,
+
+    FOREIGN KEY (ular_user) REFERENCES user(u_id)
+);
