@@ -177,7 +177,7 @@ class UsersDao {
 
             $params = array(
                 ':email' => $email,
-                ':uap_name' => 'Local',
+                ':uap_name' => 'Local'
             );
 
             $result = $this->conn->query($sql, $params);
@@ -254,22 +254,22 @@ class UsersDao {
      * @return string|boolean reset_code value if success, False if the query execution fails
      */
     public function addNewLocalUserResetAttempt($email) {
-        $user = getLocalUserWithEmail($email)
+        $user = $this->getLocalUserWithEmail($email);
         if (!$user) {
             return false;
         }
 
-        $expire_minutes = 10
+        $expire_minutes = 10;
         $code = $this->getRandomStringOfLength(128);
 
-        $sql =  ' INSERT INTO user_local_auth_reset'
-        $sql .= ' (ular_user, ular_code, ular_date_expires)'
-        $sql .= ' VALUES'
+        $sql =  ' INSERT INTO user_local_auth_reset';
+        $sql .= ' (ular_user, ular_code, ular_date_expires)';
+        $sql .= ' VALUES';
         $sql .= " (:ular_user, :ular_code, NOW() + INTERVAL $expire_minutes MINUTE)";
 
         $params = array(
             ':ular_user' => $user->getId(),
-            ':ular_code' => $code,
+            ':ular_code' => $code
         );
 
         try {
@@ -279,7 +279,7 @@ class UsersDao {
             return false;
         }
 
-        return $code
+        return $code;
     }
 
     /**
@@ -290,7 +290,7 @@ class UsersDao {
      * @return boolean True if valid, False if invalid
      */
     public function checkLocalUserResetAttempt($email, $code) {
-        $user = getLocalUserWithEmail($email)
+        $user = $this->getLocalUserWithEmail($email);
         if (!$user) {
             return false;
         }
