@@ -128,6 +128,10 @@ function renderAdminProjectCardGroup($projects, $keywordsDao, $categoriesDao, $t
     }
 }
 
+/***************************************************************/
+/* Render card group for all preferred course listings */
+/***************************************************************/
+
 function renderCourseListingCardGroup($preferredCourses) {
 	global $numCardsCreated;
 	
@@ -142,7 +146,7 @@ function renderCourseListingCardGroup($preferredCourses) {
 }
 
 /***************************************************************/
-/* Move me to the bottom please */
+/* Render individual cards for preferred course listings */
 /***************************************************************/
 
 function renderCourseListingCard($preferredCourse) {
@@ -151,7 +155,7 @@ function renderCourseListingCard($preferredCourse) {
 	$id = $preferredCourse->getId();
 	$code = Security::HtmlEntitiesEncode($preferredCourse->getCode());
 	$name = Security::HtmlEntitiesEncode($preferredCourse->getName());
-	
+
 	if (strlen($name) > 60) { // Restrict the title length
 		$name = substr($name, 0, 60) . '...';
 	}
@@ -163,25 +167,69 @@ function renderCourseListingCard($preferredCourse) {
 	echo "
 	<tr id='preferredCourse$id' style='border-bottom: 1px solid black;'>
 		<td class='col-sm-3' id='preferredCourseBody$id' >
-			<h6>$code</h6>
+			<textarea class='col-sm-12' id='courseCode$id' name='courseCode'>$code</textarea>
 		</td>
 		<td class='col-sm-3'>
-			<h6>$name</h6>
+			<textarea class='col-sm-12' id='courseName$id' name='courseName'>$name</textarea>
 		</td>
 		<td class='col-sm-2'>
-			(keywords)
-		</td>
-		<td class='col-sm-2'>
-			(action buttons)
+			<button class='btn btn-outline-danger deleteCourseBtn' id='deleteCourseBtn$id' type='button'>
+				Delete
+			</button>
+			<button class='btn btn-outline-primary capstone-nav-btn editCourseBtn' id='editCourseBtn$id' type='button'>
+				Save Changes
+			</button>
+
 		</td>
 	</tr>
 
 	<script type='text/javascript'>
+		
 		$(document).ready(function() {
 			$('#preferredCourse$id').hover(function() {
 				$(this).css('background-color', '#f8f9fa');
 			}, function() {
 				$(this).css('background-color', 'white');
+			});
+		});
+
+		$('#deleteCourseBtn$id').on('click', function() {
+			let res = confirm('You are about to delete a course. This action cannot be undone.');
+			if(!res) return false;
+
+			let courseId = '$id';
+			let data = {
+				action: 'deleteCourse',
+				id: courseId,
+			};
+			api.post('/courses.php', data).then(res => {
+				$('#preferredCourse$id').hide();
+				snackbar(res.message, 'success');
+			}).catch(err => {
+				snackbar(err.message, 'error');
+			});
+		});
+
+		$('#editCourseBtn$id').on('click', function () {
+			// Capture the data we need
+			let courseName = document.getElementById('courseName$id').value;
+			let courseCode = document.getElementById('courseCode$id').value;
+			courseCode = courseCode.replace(/\s/g, '');
+			let courseId = '$id';
+
+			let data = {
+				action: 'editCourse',
+				id: courseId,
+				name: courseName,
+				code: courseCode
+			};
+
+			// Send our request to the API endpoint
+			api.post('/courses.php', data).then(res => {
+				window.location.reload();
+				snackbar(res.message, 'success');
+			}).catch(err => {
+				snackbar(err.message, 'error');
 			});
 		});
 	</script>
