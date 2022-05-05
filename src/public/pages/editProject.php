@@ -700,6 +700,45 @@ var availableTags = [
 <!-- include link for rich text editing and create editor objects for each field -->
 <script src="https://cdn.ckeditor.com/ckeditor5/31.1.0/classic/ckeditor.js"></script>
 <script>
+		
+	function getKeywords(text) {
+		allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_ "
+
+		newText = ""
+		for (let i = 0; i < text.length; i++) {
+			if (allowedChars.includes(text[i])) {
+				newText = newText + text[i];
+			}
+		}
+		var textArr = newText.split(" ")
+		for (let i = 0; i < textArr.length; i++) {
+			if (! availableTags.includes(textArr[i])) {
+				availableTags.push(textArr[i])
+			}
+		}
+	}
+
+	// https://www.geeksforgeeks.org/debouncing-in-javascript/
+	const debounce = (func, delay) => {
+		let debounceTimer;
+		return function() {
+			const context = this;
+			const args = arguments;
+			clearTimeout(debounceTimer)
+			debounceTimer = setTimeout(() => func.apply(context, args), delay);
+		}
+	}
+
+	document.addEventListener('readystatechange', event => {
+		if (event.target.readyState === "complete") {
+			text = document.getElementById("projectDescriptionText").innerHTML
+			text = text.replace("&lt;p&gt;","").replace("&lt;/p&gt;","")
+			getKeywords(text);
+
+			document.getElementById("keywordsInput").autocomplete = "on";
+		}
+	})
+
 	let descriptionEditor;
     ClassicEditor
         .create( document.querySelector( '#projectDescriptionText' ), {
@@ -712,6 +751,11 @@ var availableTags = [
 		} )
 		.then( newEditor => {
 			descriptionEditor = newEditor;
+			newEditor.model.document.on('change', debounce(function() {
+				text = newEditor.getData();
+				text = text.replace("<p>", "").replace("</p>","")
+				getKeywords(text);
+			}, 2000))
     	} )
         .catch( error => {
             console.error( error );
@@ -796,6 +840,10 @@ var availableTags = [
         .catch( error => {
             console.error( error );
         } );
+
+
+
+
 </script>
 
 <?php 
@@ -807,24 +855,3 @@ if(($submitted || $approved) && !$isAdmin) {
 include_once PUBLIC_FILES . '/modules/footer.php'; 
 
 ?>
-
-<script>
-
-// TODO: Attach this to the action of when the user is not typing.
-function getKeywords() {
-	allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_ "
-	// TODO: Get the correct text value not the <p></p> stuff 
-	text = document.getElementById("projectDescriptionText").innerHTML
-	newText = ""
-	console.log(text)
-	for (let i = 0; i < text.length; i++) {
-		if (allowedChars.includes(text[i])) {
-			newText = newText + text[i];
-		}
-	}
-	for (let i = 0; i < textArr.length; i++) {
-		// TODO: If textArray[i] Is not already in the avaialble Tags
-		availableTags.push(textArr[i])
-	}
-}
-</script>
