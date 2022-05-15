@@ -187,12 +187,10 @@ class PreferredCoursesDao{
             $sql = '
             INSERT INTO capstone_pref_course VALUES (
                 NULL,
-                :code,
-                :name
+                :preferredCourse,
             )';
             $params = array(
-                ':code' => $preferredCourse->getCode(),
-                ':name' => $preferredCourse->getName()
+                ':preferredCourse' => $preferredCourse
             );
             $this->conn->execute($sql, $params);
 
@@ -243,24 +241,6 @@ class PreferredCoursesDao{
         }
     }
 
-    public function deletePreferredCourse($entityId) {
-        try {
-            $sql = '
-            DELETE FROM capstone_pref_course
-            WHERE capstone_pref_course.cpc_id = :entityId
-            ';
-            $params = array(
-                ':entityId' => $entityId
-            );
-            $this->conn->execute($sql, $params);
-
-            return true;
-        } catch (\Excception $e) {
-            $this->logger->error('Failed to delete course');
-            return false;
-        }
-    }
-
     public function removeAllPreferredCoursesForEntity($entityId){
         try {
            $sql = '
@@ -278,35 +258,6 @@ class PreferredCoursesDao{
            return false;
         }
     }
-
-    /**
-     * Updates an existing capstone course entry into the database.
-     *
-     * @param \Model\CapstoneCourse $course the course to update
-     * @return boolean true if successful, false otherwise
-     */
-    public function updatePreferredCourse($course) {
-        try {
-            $sql = '
-            UPDATE capstone_pref_course SET
-                cpc_name = :name,
-                cpc_code = :code
-            WHERE cpc_id = :id
-            ';
-            $params = array(
-                ':id' => $course->getId(),
-                ':name' => $course->getName(),
-                ':code' => $course->getCode()
-            );
-            $this->conn->execute($sql, $params);
-            return true;
-        } catch (\Exception $e) {
-            $id = $course->getId();
-            $this->logger->error("Failed to update course with id '$id': " . $e->getMessage());
-            return false;
-        }
-    }
-
 
     public static function ExtractPreferredCourseFromRow($row){
         $preferredCourse = new PreferredCourse($row['cpc_id']);

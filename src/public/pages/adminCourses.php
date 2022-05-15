@@ -1,6 +1,5 @@
 <?php
 include_once '../bootstrap.php';
-include_once PUBLIC_FILES . '/modules/newCourseModal.php';
 
 use DataAccess\PreferredCoursesDao;
 
@@ -84,7 +83,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
                         <input class="form-control" id="filterInput" type="text" placeholder="Search..." />
                     </div>
                     <div class="col-sm-3" style="margin-left: auto; margin-right: 50px;">
-                        <button type="button" id="openNewCourseModal" class="btn btn-primary" data-toggle="modal" data-target="#newCourseModal" style="display: block; margin: auto;">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ndaModal" style="display: block; margin: auto;">
                             + Add Course Listing
                         </button>
                     </div>
@@ -96,6 +95,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
                         <tr>
                             <th>Course Code</th>
                             <th>Course Title</th>
+                            <th>Associated Keywords</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -138,36 +138,6 @@ include_once PUBLIC_FILES . '/modules/header.php';
 
     });
 
-    //$('#createCourseBtn').on('click', function () {
-    function createCourse() {
-        console.log("yo");
-        // Capture the data we need
-        let courseName = $('#courseNameInput').val();
-        let courseCode = $('#courseCodeInput').val();
-        courseCode = courseCode.replace(/\s/g, '');
-        console.log("name: ", courseName);
-        console.log("code: ", courseCode);
-
-        let data = {
-            action: 'createCourse',
-            name: courseName,
-            code: courseCode
-        };
-
-        // Send our request to the API endpoint
-        api.post('/courses.php', data).then(res => {
-            window.location.reload();
-            snackbar(res.message, 'success');
-        }).catch(err => {
-            snackbar(err.message, 'error');
-        });
-    };
-
-    $('#testbtn').on('click', function () {
-		snackbar(res.message, 'success');
-
-	});
-
     function filterSelectChanged(filterObject){
         var value = filterObject.value;
         $("#filterInput").val(value);
@@ -179,8 +149,6 @@ include_once PUBLIC_FILES . '/modules/header.php';
         e.which = 77;
         $("#filterInput").trigger(e);
     }
-
-
 
 </script>
 
