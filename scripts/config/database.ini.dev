@@ -1,0 +1,4 @@
+host = ${MYSQL_CONTAINER_NAME}
+user = ${DB_USERNAME}
+password = ${DB_PASSWORD}
+db_name = ${DB_NAME}
