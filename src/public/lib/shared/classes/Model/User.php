@@ -67,7 +67,7 @@ class User {
             $this->setType(new UserType());
             $this->setAuthProvider(new UserAuthProvider());
             $this->setSalutation(new UserSalutation());
-            $this->setDateCreated(new \DateTime());
+            $this->setDateCreated(new \DateTime("now")); //Edit made on 3/31/23 not tested
         } else {
             $this->setId($id);
         }

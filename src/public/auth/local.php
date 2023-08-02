@@ -11,17 +11,19 @@ if (!isset($_SESSION)) {
 }
 
 function authenticateWithLocal() {
+	global $configManager;
+	
     // Redirect to their profile page
     $isLoggedIn = isset($_SESSION['userID']) && !empty($_SESSION['userID']);
     if ($isLoggedIn) {
         $redirect = $configManager->getBaseUrl() . 'pages/myProfile.php';
-        echo "<script>window.location.replace('$redirect');</script>";
+        echo "<script>alert('You are already logged in.');window.location.replace('$redirect');</script>";
         die();
     }
 
 
     // Redirect to the local login page
-    $pageURL = 'http';
+/*    $pageURL = 'http';
     if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
         $pageURL .= 's';
     }
@@ -32,8 +34,10 @@ function authenticateWithLocal() {
     } else {
         $pageURL .= $_SERVER['SERVER_NAME'];
     }
-
-    $url = $pageURL . '/pages/localLogin.php';
+*/
+	$pageURL = $configManager->getBaseUrl();
+    $url = $pageURL . 'pages/localLogin.php';
+    //$url = $pageURL . '/pages/localLogin.php';
     echo "<script>location.replace('" . $url . "');</script>";
     die();
 

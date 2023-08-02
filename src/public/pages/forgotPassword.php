@@ -19,7 +19,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 ?>
 
 <section class="vh-100" style="background-color: #D73F09;">
-    <form action="/pages/forgotPasswordAttempt.php" method="POST">
+    <form action="./pages/forgotPasswordAttempt.php" method="POST">
         <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col-12 col-md-8 col-lg-6 col-xl-5">
@@ -30,7 +30,16 @@ include_once PUBLIC_FILES . '/modules/header.php';
                                 <label class="form-label" for="userEmail">Email</label>
                                 <input type="email" name="userEmail" id="userEmail" class="form-control form-control-lg" />
                             </div>
-                            <button class="btn btn-dark btn-lg btn-block" type="submit">Submit</button>
+							<button class="btn btn-dark btn-lg btn-block" type="submit">Submit</button>
+							<h3>If you are a new user, enter the information below as well</h3>
+							<div class="form-outline mb-4">
+                                <label class="form-label" for="userFirst">First Name</label>
+                                <input type="text" name="userFirst" id="userFirst" class="form-control form-control-lg" />
+                            </div>
+							<div class="form-outline mb-4">
+                                <label class="form-label" for="userLast">Last Name</label>
+                                <input type="text" name="userLast" id="userLast" class="form-control form-control-lg" />
+                            </div> 
                         </div>
                     </div>
                 </div>

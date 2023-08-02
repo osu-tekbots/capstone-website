@@ -46,15 +46,25 @@ include_once PUBLIC_FILES . '/modules/header.php';
 				<i class="fas fa-fw fa-chart-area"></i>
 				<span>Archived Projects</span></a>
 		</li>
-		<li class="nav-item">
+		<li class="nav-item active">
 			<a class="nav-link" href="pages/adminUser.php">
 				<i class="fas fa-fw fa-table"></i>
 				<span>Users</span></a>
 		</li>
-		<li class="nav-item">
+		<!-- <li class="nav-item">
 			<a class="nav-link" href="pages/adminApplication.php">
 				<i class="fas fa-fw fa-file-invoice"></i>
 				<span>Applications</span></a>
+		</li> -->
+		<li class="nav-item">
+			<a class="nav-link" href="pages/adminCourses.php">
+			<i class="fas fa-fw fa-table"></i>
+			<span>Course Listings</span></a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="pages/adminKeywords.php">
+				<i class="fas fa-fw fa-table"></i>
+				<span>Keywords</span></a>
 		</li>
 		<li class="nav-item">
 			<a class="nav-link" href="pages/adminCourses.php">
@@ -147,6 +157,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 <script type="text/javascript">
 
 $(document).ready(function(){
+	let startTime = Date.now();
 	$('#data_table').Tabledit({
 		url: 'modules/live_edit.php',
 		editmethod: 'post',
@@ -157,6 +168,7 @@ $(document).ready(function(){
 		deleteButton: false,
 		autoFocus: false,
 		editButton: false,
+		paging: true,
 		columns: {
 		  identifier: [5, 'u_id'],
 		  editable: [[1, 'u_fname'], [0, 'u_lname'], [3, 'u_onid'], [6, 'u_phone'], [9, 'u_major'], [4, 'u_ut_id', '{"1": "Student", "2": "Proposer", "3": "Admin"}'], [11, 'project_assigned'], [8, 'u_affiliation'], [2, 'u_email'] ]
@@ -175,6 +187,7 @@ $(document).ready(function(){
 		
 
 	});
+	console.log('Building Tabledit took ' + (Date.now() - startTime) + 'ms');
 });
 
 </script>

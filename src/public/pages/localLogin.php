@@ -18,7 +18,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 
 ?>
 <section class="vh-100" style="background-color: #D73F09;">
-    <form action="/auth/localAttempt.php" method="POST">
+    <form action="./auth/localAttempt.php" method="POST">
         <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col-12 col-md-8 col-lg-6 col-xl-5">
@@ -35,7 +35,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
                             </div>
                             <button class="btn btn-dark btn-lg btn-block" type="submit">Login</button>
                             <hr class="my-4">
-                            <a class="forgot-password" href="pages/forgotPassword.php">Forgot Password?</a>
+                            <a class="forgot-password" href="pages/forgotPassword.php">New User/Forgot Password?</a>
                         </div>
                     </div>
                 </div>

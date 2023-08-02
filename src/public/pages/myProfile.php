@@ -138,7 +138,8 @@ $uTypeName = $user->getType()->getName();
 						</div>
 						<hr class="my-4">
 						<div class="form-group">
-							<p class="form-control-static">User Type: <?php echo $user->getType()->getName(); ?> </p>
+							<p class="form-control-static">User Type: <?php echo $user->getType()->getName(); ?> <BR>
+							Authentication: <?php echo $user->getAuthProvider()->getName(); ?> </p>
 							<div class="col">
 
 							</div>

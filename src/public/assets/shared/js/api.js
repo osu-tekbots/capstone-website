@@ -26,6 +26,7 @@ function request(method, url, data, encoded) {
             //alert(this.response);
 			try {        
                 data = JSON.parse(this.response);
+				console.log(this.response);
             } catch(err) { 
 				console.log(this.response);
 				console.log(err);

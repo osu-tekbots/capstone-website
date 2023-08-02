@@ -50,10 +50,10 @@ function getProjectFormDataAsJson() {
      json.keywords = $('#keywordsDiv').html()
              .replace(/<span class="badge badge-light keywordBadge">/g, "[")
              .replace(/ <i class="fas fa-times-circle"><\/i><\/span>/g, "],");
-     json.preferredCourses = $('#preferredCoursesDiv').html()
+/*     json.preferredCourses = $('#preferredCoursesDiv').html()
              .replace(/<span class="badge badge-light preferredCourseBadge">/g, "[")
              .replace(/ <i class="fas fa-times-circle"><\/i><\/span>/g, "],");
-    return json;
+*/    return json;
 }
 
 //

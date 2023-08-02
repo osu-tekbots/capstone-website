@@ -54,8 +54,8 @@ if ($provider) {
                 renderErrorMessage();
             }
             break;
-
-        case 'local':
+		
+		case 'local':
             include_once PUBLIC_FILES . '/auth/local.php';
     
             $ok = authenticateWithLocal();
@@ -63,7 +63,7 @@ if ($provider) {
                 renderErrorMessage();
             }
             break;
-    
+			
         default:
             renderErrorMessage();
     }

@@ -21,7 +21,8 @@ if (!session_id()) {
 #}
 
 $baseUrl = $configManager->getBaseUrl();
-$image_dir = 'https://eecs.oregonstate.edu/capstone/submission/';
+$image_dir = 'https://eecs.engineering.oregonstate.edu/capstone/submission/';
+//$image_dir = '';
 
 $title = isset($title) ? $title : 'EECS Project Submission Form | OSU';
 
@@ -93,7 +94,7 @@ if ($loggedIn) {
     }
 	
 	//All user types can view these pages
-    $buttons['My Applications'] = 'pages/myApplications.php';
+//    $buttons['My Applications'] = 'pages/myApplications.php';
     $buttons['My Profile'] = 'pages/myProfile.php';
     
     // Admin only
@@ -103,12 +104,12 @@ if ($loggedIn) {
 }
 
 // All users
-$buttons['Info'] = 'pages/info.php';
+//$buttons['Info'] = 'pages/info.php';
 if ($loggedIn) {
     $buttons['Logout'] = 'pages/logout.php';
 } else {
-    $buttons['Login'] = 'pages/login.php';
-    $buttons['Create Account'] = 'pages/createLocalAccount.php';
+    $buttons['Login/Create'] = 'pages/login.php';
+//    $buttons['Create Account'] = 'pages/createLocalAccount.php';
 }
     
 function displayInfoTooltip($tooltip){

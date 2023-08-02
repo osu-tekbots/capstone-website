@@ -25,7 +25,7 @@ class CategoriesDao{
         try {
             $sql = '
             SELECT * 
-            FROM capstone_category
+            FROM capstone_project_category
             ';
 
             $results = $this->conn->query($sql);
@@ -43,15 +43,20 @@ class CategoriesDao{
         }
     }
 
+	
     public function getCategoriesForEntity($entityId) {
         try {
             $sql = '
             SELECT * 
-            FROM capstone_category, capstone_category_for
-			WHERE capstone_category_for.ccf_cc_id = capstone_category.cc_id
-			AND capstone_category_for.ccf_entity_id = :entityId
+            FROM capstone_project_category, capstone_project_category_for
+			WHERE capstone_project_category_for.cpcf_cpc_id = capstone_project_category.cpc_id
+			AND capstone_project_category_for.cpcf_entity_id = :entityId
             ';
-            $params = array(':entityId' => $entityId);
+         //8/5/2022: Removing category mapping per entity?
+		/*	$sql = '
+            SELECT * FROM capstone_project_category 
+            ';
+		*/	$params = array(':entityId' => $entityId);
             $results = $this->conn->query($sql, $params);
 
             $categories = array();
@@ -71,8 +76,8 @@ class CategoriesDao{
         try {
             $sql = '
             SELECT * 
-            FROM capstone_category
-			WHERE capstone_category.cc_name = :name
+            FROM capstone_project_category
+			WHERE capstone_project_category.cpc_name = :name
             ';
             $params = array(':name' => $name);
             $results = $this->conn->query($sql, $params);
@@ -94,8 +99,8 @@ class CategoriesDao{
         try {
             $sql = '
             SELECT * 
-            FROM capstone_category
-			WHERE capstone_category.cc_name = :category
+            FROM capstone_project_category
+			WHERE capstone_project_category.cpc_name = :category
             ';
             $params = array(':category' => $category);
             $results = $this->conn->query($sql, $params);
@@ -112,14 +117,14 @@ class CategoriesDao{
         }
     }
 
-    public function categoryExistsForEntity($categoryId, $entityId) {
-        try {
+    public function categoryExistsForEntity($categoryId, $entityId) {	
+		try {
             $sql = '
             SELECT * 
-            FROM capstone_category, capstone_category_for 
-			WHERE capstone_category_for.ccf_cc_id = capstone_category.cc_id
-			AND capstone_category.cc_id = :categoryId
-			AND capstone_category_for.ccf_entity_id = :entityId
+            FROM capstone_project_category, capstone_project_category_for 
+			WHERE capstone_project_category_for.cpcf_cpc_id = capstone_project_category.cpc_id
+			AND capstone_project_category.cpc_id = :categoryId
+			AND capstone_project_category_for.cpcf_entity_id = :entityId
             ';
             $params = array(
                 ':categoryId' => $categoryId, 
@@ -141,7 +146,7 @@ class CategoriesDao{
     public function addCategory($category) {
         try {
             $sql = '
-            INSERT INTO capstone_category VALUES (
+            INSERT INTO capstone_project_category VALUES (
                 NULL,
                 :category,
             )';
@@ -160,9 +165,9 @@ class CategoriesDao{
     public function addCategoryInJoinTable($categoryId, $entityId) {
         try {
             $sql = '
-            INSERT INTO capstone_category_for VALUES (
-                :categoryId,
-				:entityId
+            INSERT INTO capstone_project_category_for (cpcf_entity_id, cpcf_cpc_id) VALUES (
+                :entityId,
+				:categoryId
             )';
             $params = array(
                 ':categoryId' => $categoryId,
@@ -180,9 +185,9 @@ class CategoriesDao{
     public function removeCategoryInJoinTable($categoryId, $entityId) {
         try {
             $sql = '
-            DELETE FROM capstone_category_for 
-            WHERE capstone_category_for.ccf_entity_id = :entityId
-            AND capstone_category_for.ccf_cc_id = :categoryId
+            DELETE FROM capstone_project_category_for 
+            WHERE capstone_project_category_for.cpcf_entity_id = :entityId
+            AND capstone_project_category_for.cpcf_cpc_id = :categoryId
             ';
             $params = array(
                 ':entityId' => $entityId,
@@ -200,8 +205,8 @@ class CategoriesDao{
     public function removeAllCategoriesForEntity($entityId){
         try {
            $sql = '
-           DELETE FROM capstone_category_for
-           WHERE capstone_category_for.ccf_entity_id = :entityId
+           DELETE FROM capstone_project_category_for
+           WHERE capstone_project_category_for.cpcf_entity_id = :entityId
            ';
            $params = array(
                ':entityId' => $entityId
@@ -216,8 +221,8 @@ class CategoriesDao{
     }
 
     public static function ExtractCategoryFromRow($row){
-        $category = new Category($row['cc_id']);
-        $category->setName($row['cc_name']);
+        $category = new Category($row['cpc_id']);
+        $category->setName($row['cpc_name']);
         return $category;
     } 
     

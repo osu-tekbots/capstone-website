@@ -1,4 +1,9 @@
 <?php
+
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL); 
+
 include_once '../bootstrap.php';
 
 use DataAccess\CapstoneProjectsDao;
@@ -6,7 +11,7 @@ use DataAccess\CapstoneApplicationsDao;
 use DataAccess\UsersDao;
 use DataAccess\KeywordsDao;
 use DataAccess\CategoriesDao;
-use DataAccess\PreferredCoursesDao;
+//use DataAccess\PreferredCoursesDao;
 use Util\Security;
 
 include PUBLIC_FILES . '/lib/shared/authorize.php';
@@ -39,12 +44,13 @@ $usersDao = new UsersDao($dbConn, $logger);
 $applicationsDao = new CapstoneApplicationsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
 $categoriesDao = new CategoriesDao($dbConn, $logger);
-$preferredCoursesDao = new PreferredCoursesDao($dbConn, $logger);
+//$preferredCoursesDao = new PreferredCoursesDao($dbConn, $logger);
 $project = $dao->getCapstoneProject($pid);
 $proposer = $project->getProposerId();
 
 // Check if project is hidden or not approved or if the project is the project is the proposers
 
+/* Removed while I resolve the multiple editor ability
 $authorizedEditor = False;
 $authorizedEditors = $dao->getCapstoneProjectEditors($project->getId());
 if ($authorizedEditors) {
@@ -54,6 +60,7 @@ if ($authorizedEditors) {
 		}
 	}
 }
+*/
 allowIf( ($project && !($project->getIsHidden() && !$isAdmin)) || ($project && ($proposer == $userId)) || $authorizedEditor);
 
 $title = Security::HtmlEntitiesEncode($project->getTitle());
@@ -104,7 +111,7 @@ $name = Security::HtmlEntitiesEncode($project->getProposer()->getFirstName())
 $numberGroups = $project->getNumberGroups();
 $preexistingKeywords = $keywordsDao->getKeywordsForEntity($pid);
 $preexistingCategories = $categoriesDao->getCategoriesForEntity($pid);
-$preexistingPreferredCourses = $preferredCoursesDao->getPreferredCoursesForEntity($pid);
+//$preexistingPreferredCourses = $preferredCoursesDao->getPreferredCoursesForEntity($pid);
 global $image_dir;
 $image = false;
 $images = $project->getImages();
@@ -117,14 +124,18 @@ if($images) {
 	}
 }
 if (!$image) {
-	$image = $image_dir . 'assets/img/capstone_test.jpg';
+	$image = 'assets/img/capstone_test.jpg';
+//	$image = $image_dir . 'assets/img/capstone_test.jpg';
 } else {
-	$image = $image_dir . "images/$image";
+	$image = "images/$image";
+//	$image = $image_dir . "images/$image";
 }
 
+/*
 if(!@getimagesize($image)){
 	$image = $image_dir . 'assets/img/capstone_test.jpg';
 }
+*/
 
 ?>
 <div class="viewSingleProject">
@@ -164,7 +175,7 @@ if(!@getimagesize($image)){
                     <br>
 
 					<?php
-					if (count($preexistingPreferredCourses) >= 1){		
+/*					if (count($preexistingPreferredCourses) >= 1){		
 						echo"
 						<address>
 							<h2>Preferred Courses Completed:</h2>
@@ -179,11 +190,12 @@ if(!@getimagesize($image)){
 							<br>
 						</address>";
 					}
-					?>
+*/					?>
 
 					
                     
 					<?php 
+/* Removed application display information
                     if ($isLoggedIn){
 						$applications = $applicationsDao->getAllApplicationsForUserAndProject($userId, $pid);
 						if (count($applications) > 0){
@@ -221,7 +233,7 @@ if(!@getimagesize($image)){
 						}
                   
 					}
-
+*/
                 	?>
 
 					<?php
@@ -297,6 +309,7 @@ if(!@getimagesize($image)){
 			</address>";
 			}
 
+/*Removed while integrating
 			if (count($preexistingCategories) > 1){		
 				echo"
 				<address>
@@ -312,7 +325,7 @@ if(!@getimagesize($image)){
 					<br>
 				</address>";
 			}
-			
+*/			
 			if (count($preexistingKeywords) > 1){		
 			echo"
 			<address>

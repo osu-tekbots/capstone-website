@@ -7,6 +7,67 @@ include_once PUBLIC_FILES . '/modules/button.php';
 $numCardsCreated = 0;
 
 
+// Cuts a string to a specified number of characters that will be displayed on-screen while preserving HTML tags
+// NOTE: Not resilient to '<'/'>' symbols that aren't for HTML tags -- but the HTML parser would be confused by them anyway, so they should be escaped before this function is called
+function cutHtmlAware($string, $characters) {
+	// Escape quick if no cutting needed
+	if(strlen($string) < $characters) {
+		return $string;
+	}
+
+	// Escape quick if no HTML tags to worry about
+	if(strpos($string, "<") === FALSE) {
+		return substr($string, 0, $characters);
+	}
+
+	// Arrays to hold the different components of the string
+	$visualSegments = array();
+	$tagSegments = array();
+	// $tagsList = array(); // -- Can use this for smarter checking (ensuring there's no unclosed tags in the input text)
+// Split up all visual text & html tags
+	while(strpos($string, "<") !== FALSE) {
+		$openTagPos = strpos($string, '<');
+		$closeTagPos = strpos($string, '>');
+		$distToClose = $closeTagPos - $openTagPos;
+
+		$visualChunk = substr($string, 0, $openTagPos);
+		array_push($visualSegments, $visualChunk);
+
+		$tagChunk = substr($string, $openTagPos, $distToClose + 1);
+		array_push($tagSegments, $tagChunk);
+
+		$string = substr($string, $closeTagPos + 1);
+	}
+	// Add the remaining text (after the final HTML tag) to the array
+	array_push($visualSegments, $string);
+
+	$finalString = '';
+	$index = 0;
+	$visualLength = 0;
+	// Start building the final string until there's enough visual characters included
+	while($visualLength < $characters) {
+		if(strlen($visualSegments[$index]) + $visualLength < $characters) {
+			$finalString .= $visualSegments[$index];
+			$visualLength += strlen($visualSegments[$index]);
+		} else {
+			$finalString .= substr($visualSegments[$index], 0, $characters - $visualLength);
+			$visualLength = $characters;
+		}
+
+		$finalString .= $tagSegments[$index];
+		$index++;
+	}
+
+	// Add all remaining HTML tags to the final string
+	for($i = $index; $i < count($tagSegments); $i++) {
+		$finalString .= $tagSegments[$i];
+	}
+
+	// Give back the final string with all HTML tags and [$characters] visible characters
+	return $finalString;
+}
+
+
 /**
  * Renders the HTML for the card group that displays projects.
  * 
@@ -35,9 +96,11 @@ function renderProjectCardGroup($projects, $keywordsDao, $categoriesDao, $browsi
             $title = substr($title, 0, 60) . '...';
         }
         $description = Security::HtmlEntitiesEncode($p->getDescription());
-        if (strlen($description) > 90) {
+        if (strlen($description) > 150) {
             // Restrict the description length
-            $description = substr($description,0,90) . '...';
+			// TODO: 6/29/2023  This is not HTML tag aware so it is messing with formatting if it happens to activate in an HTML tag.
+            $description = substr($description,0,150) . '...';
+			
         }
         $status = $p->getStatus()->getName();
 		$nda = $p->getNdaIp()->getName();
@@ -58,8 +121,8 @@ function renderProjectCardGroup($projects, $keywordsDao, $categoriesDao, $browsi
 		}
 
         // The details string contains the small text for the project
-		$details = $p->getType()->getName() . ' ' . $p->getDateStart()->format('Y') . '<br/>';
-		$details .= "Courses: $courses <br/>";
+		//$details = $p->getType()->getName() . '<br/>';
+		$details = "Courses: $courses <br/>";
 		$details .= "Proposer: $name <br/>";
         if (!$browsing) {
             $details .= "Status: $status";
@@ -88,16 +151,18 @@ function renderProjectCardGroup($projects, $keywordsDao, $categoriesDao, $browsi
 		}
 		
         if (!$image) {
-            $image = $image_dir . 'assets/img/capstone_test.jpg';
+			$image = 'assets/img/capstone_test.jpg';
+		//	$image = $image_dir . 'assets/img/capstone_test.jpg';
+		} else {
+			$image = "images/$image";
+		//	$image = $image_dir . "images/$image";
 		}
-		else {
-            $image = $image_dir . "images/$image";
+/*
+		if(!getimagesize($image)){
+			$image = 'assets/img/capstone_test.jpg';
+//			$image = $image_dir . 'assets/img/capstone_test.jpg';
 		}
-
-		if(!@getimagesize($image)){
-			$image = $image_dir . 'assets/img/capstone_test.jpg';
-		}
-		
+*/	
 		
 	
 
@@ -110,6 +175,9 @@ function renderProjectCardGroup($projects, $keywordsDao, $categoriesDao, $browsi
 			$numCardsCreated, $browsing, $published, $extra, $nda);
 
         $numCardsCreated++;
+		
+//		if ($numCardsCreated > 55 AND $numCardsCreated < 63)
+//			echo "<script>alert('Card $numCardsCreated: $title');</script>";
     }
 }
 
@@ -214,7 +282,7 @@ function renderProjectCard($id, $title, $description, $details, $imageLink, $sta
 		$classes .= 'reqNDA ';
 
 	// decode rich html saved from rich text
-	$descriptionDecoded = htmlspecialchars_decode($description);
+	$descriptionDecoded = strip_tags(htmlspecialchars_decode($description));
 	
     echo "
 	<div class='masonry-brick $classes' id='projectCard$num'>
@@ -285,6 +353,13 @@ function renderAdminProjectCard($project, $categoriesDao, $num, $types, $browsin
 	}
 
 
+	//Make a Type drop down based on type
+	// $type_select = "<select id='typeselect$id' onchange='typeChange(\"$id\");'>";
+	// foreach ($types AS $type){
+	// 	$type_select .= "<option value='".$type->getId()."' ".($type->getId() == $project->getType()->getId() ? 'selected':'').">".$type->getName()."</option>";
+	// }
+	// $type_select .= "</select>";
+
 	//Make a Category checkbox form based on type
 	$courses = '<p>';
 	$categories = $categoriesDao->getCategoriesForEntity($id);
@@ -298,19 +373,15 @@ function renderAdminProjectCard($project, $categoriesDao, $num, $types, $browsin
 		}
 	}
 	$courses .= '</p>';
-
-	//Make a Type drop down based on type
-	// $type_select = "<select id='typeselect$id' onchange='typeChange(\"$id\");'>";
-	// foreach ($types AS $type){
-	// 	$type_select .= "<option value='".$type->getId()."' ".($type->getId() == $project->getType()->getId() ? 'selected':'').">".$type->getName()."</option>";
-	// }
-	// $type_select .= "</select>";
 	
-	$details = '';
+	if ($courses == '<p>')
+		$details = 'Category not assigned.';
+	else
+		$details = $courses;
 	if (($project->getIsSponsored()))
 			$details .= "<BR>Sponsored";
-	// $details .= '<br/>Type: '. $type_select;
-	$details .= '<br/>Categories: '. $courses;
+	//$details .= '<br/>Type: '. $type_select;
+	//$details .= '<br/>Categories: '. $courses;
 
 
 	$image = false;
@@ -325,15 +396,18 @@ function renderAdminProjectCard($project, $categoriesDao, $num, $types, $browsin
 	}
 	
 	if (!$image) {
+	//	$image = 'assets/img/capstone_test.jpg';
 		$image = $image_dir . 'assets/img/capstone_test.jpg';
 	} else {
-		$image = $image_dir . "images/$image";
+		$image = "images/$image";
+	//	$image = $image_dir . "images/$image";
 	}
-	
+
+/*	
 	if(!@getimagesize($image)){
 		$image = $image_dir . 'assets/img/capstone_test.jpg';
 	}
-
+*/
 	$lastUpdated = "Last Updated: $dateUpdated";
 	
 	$statusColor = '';
@@ -411,7 +485,7 @@ function renderAdminProjectCard($project, $categoriesDao, $num, $types, $browsin
 	}
 	
 	// decode rich html saved from rich text
-	$descriptionDecoded = htmlspecialchars_decode($description);
+	$descriptionDecoded = strip_tags(htmlspecialchars_decode($description));
 	
 	echo "
 	<tr id='projectCard$id' style='border-bottom: 1px solid black;' class='$classes'>
@@ -440,8 +514,9 @@ function renderAdminProjectCard($project, $categoriesDao, $num, $types, $browsin
 			<small class='text-muted'>$descriptionDecoded</small>
 		</td>
 		<td class='col-sm-3'>
-			<small class='text-muted'>NDA: $nda $details</small>
-			</td>
+			<small class='text-muted'>$details</small>
+
+		</td>
 		<td class='col-sm-2'>
 			
 			<small class='text-muted'>Proposer: <a href='mailto:$email'>$partnername</a><BR>Phone: $proposerPhone<BR>Email: $email</small><BR>
@@ -555,8 +630,8 @@ function createProjectArchiveButton($projectId, $cardNumber) {
 	
 	<script type='text/javascript'>
 		$('#archiveProjectBtn$projectId').on('click', function() {
-			let res = confirm('You are about to Archive a project.');
-			if(!res) return false;
+//			let res = confirm('You are about to Archive a project.');
+//			if(!res) return false;
 			let projectId = '$projectId';
 			let data = {
 				action: 'archiveProject',

@@ -56,15 +56,15 @@ class UsersActionHandler extends ActionHandler {
             ->setPhone($body['phone'])
             ->setAffiliation($body['affiliation'])
             ->setMajor($major)
-            ->setDateUpdated(new \DateTime());
+            ->setDateUpdated(new \DateTime("now"));//Edit made on 3/31/23 not tested
 
         $ok = $this->dao->updateUser($user);
 
         if(!$ok) {
-            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to save user profile information'));
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to save user profile information: ' . $user->getEmail()));
         }
 
-        $this->respond(new Response(Response::OK, 'Successfully saved profile information'));
+        $this->respond(new Response(Response::OK, 'Successfully saved profile information: ' . $user->getEmail()));
 
     }
 

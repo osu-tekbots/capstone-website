@@ -93,7 +93,7 @@ class ApplicationsActionHandler extends ActionHandler {
             ->setSkillSet($skillSet)
             ->setTimeAvailable($timeAvailable)
             ->setPortfolioLink($portfolioLink)
-            ->setDateUpdated(new \DateTime());
+            ->setDateUpdated(new \DateTime("now")); //Edit made on 3/31/23 not tested
 
         $ok = $this->applicationsDao->updateApplication($application);
         if (!$ok) {
@@ -129,7 +129,7 @@ class ApplicationsActionHandler extends ActionHandler {
             ->setSkillSet($skillSet)
             ->setTimeAvailable($timeAvailable)
             ->setPortfolioLink($portfolioLink)
-            ->setDateUpdated(new \DateTime());
+            ->setDateUpdated(new \DateTime("now")); //Edit made on 3/31/23 not tested
 
         $ok = $this->applicationsDao->updateApplication($application);
         if (!$ok) {

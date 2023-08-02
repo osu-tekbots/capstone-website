@@ -1,4 +1,10 @@
 <?php
+
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
+
+
 include_once '../bootstrap.php';
 
 use DataAccess\CapstoneProjectsDao;
@@ -78,6 +84,7 @@ include_once PUBLIC_FILES . '/modules/cards.php';
 				api.post('/projects.php', data).then(res => {
 					window.location.replace('pages/editProject.php?id=' + res.content.id);
 				}).catch(err => {
+					console.log(err);
 					snackbar(err.message, 'error');
 				});
 			});

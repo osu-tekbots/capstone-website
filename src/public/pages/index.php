@@ -15,7 +15,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 					multitude of projects as part of their education and extracurricular activities. If you have a project idea that you would love to see become a reality we encourage you to become a 
 					Project Partner and submit your idea.
 				</p>
-				<a href='https://eecs.oregonstate.edu/capstone/submission/pages/login.php'><h3>Submit a Project (Login Required) >>></h3></a>
+				<a href='/capstone/submission/pages/login.php'><h3>Submit a Project (Login Required) >>></h3></a>
 			</div>
 		</div>
 	</div>

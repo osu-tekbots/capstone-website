@@ -157,7 +157,7 @@ class DateTime
 
                 break;
             case Functions::RETURNDATE_PHP_DATETIME_OBJECT:
-                $retValue = new \DateTime();
+                $retValue = new \DateTime("now"); //Edit made on 3/31/23 not tested
 
                 break;
         }

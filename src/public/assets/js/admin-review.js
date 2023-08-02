@@ -226,6 +226,26 @@ function onArchiveProject() {
 $('#adminMakeProjectArchivedBtn').on('click', onArchiveProject);
 
 
+/**
+ * Event handler to archive a project
+ */
+function onUnarchiveProject() {
+    let body = {
+        action: 'unarchiveProject',
+        id: getProjectId()
+    };
+
+    api.post('/projects.php', body)
+        .then(res => {
+            // location.reload();
+            snackbar(res.message, 'success');
+        })
+        .catch(err => {
+            snackbar(err.message, 'error');
+        });
+}
+$('#adminUnarchiveProjectBtn').on('click', onUnarchiveProject);
+
 $('#adminDeleteProjectBtn').on('click', function() {
     let res = confirm('You are about to delete a project completely (Images, Applications, Project). This action cannot be undone.');
     if(!res) return false;

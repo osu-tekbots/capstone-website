@@ -6,10 +6,10 @@ error_reporting(E_ALL);
 */
 include_once '../bootstrap.php';
 
-function __autoload($class_name) {
-		$file = str_replace('\\', DIRECTORY_SEPARATOR, $class_name);      
-		require_once(dirname(__FILE__) . '/./includes/'.$file.'.php');
-	}
+//function __autoload($class_name) {
+//		$file = str_replace('\\', DIRECTORY_SEPARATOR, $class_name);      
+//		require_once(dirname(__FILE__) . '/./includes/'.$file.'.php');
+//	}
 	
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;

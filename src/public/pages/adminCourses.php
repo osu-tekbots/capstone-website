@@ -57,16 +57,21 @@ include_once PUBLIC_FILES . '/modules/header.php';
                     <i class="fas fa-fw fa-table"></i>
                     <span>Users</span></a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="pages/adminApplication.php">
-                    <i class="fas fa-fw fa-file-invoice"></i>
-                    <span>Applications</span></a>
-            </li>
-            <li class="nav-item">
+<!--	<li class="nav-item">
+		<a class="nav-link" href="pages/adminApplication.php">
+			<i class="fas fa-fw fa-file-invoice"></i>
+			<span>Applications</span></a>
+	</li>
+--><li class="nav-item active">
                 <a class="nav-link" href="pages/adminCourses.php">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Course Listings</span></a>
             </li>
+			<li class="nav-item">
+				<a class="nav-link" href="pages/adminKeywords.php">
+					<i class="fas fa-fw fa-table"></i>
+					<span>Keywords</span></a>
+			</li>
         </ul>
 
         
@@ -90,7 +95,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
                 </div>
                 <br/>
                 <table class='table' id='CourseListingsTable'>	
-                    <caption>Current Inventory</caption>
+                    <caption>Current Course Listings</caption>
                     <thead>
                         <tr>
                             <th>Course Code</th>

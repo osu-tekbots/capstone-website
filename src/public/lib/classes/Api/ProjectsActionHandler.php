@@ -10,9 +10,6 @@ use Model\PreferredCourse;
 use Model\User;
 use Model\UsersDao;
 
-
-
-
 /**
  * Defines the logic for how to handle AJAX requests made to modify project information.
  */
@@ -91,7 +88,7 @@ class ProjectsActionHandler extends ActionHandler {
 
         $ok = $this->projectsDao->addNewCapstoneProject($project);
         if (!$ok) {
-            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'Failed to create new project'));
+            $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, 'AH: Failed to create new project'));
         }
         $this->projectsDao->insertCapstoneProjectLog(new CapstoneProjectLog(
             $project->getId(),
@@ -223,7 +220,7 @@ class ProjectsActionHandler extends ActionHandler {
 				
 			}			
 		}
-
+/*
         //Clear all existing preferred courses to account for removed courses.
 		$this->preferredCoursesDao->removeAllPreferredCoursesForEntity($id);
         $preferredCoursesBracketSeparatedString = $this->getFromBody('preferredCourses');
@@ -242,7 +239,7 @@ class ProjectsActionHandler extends ActionHandler {
                 $this->preferredCoursesDao->addPreferredCourseInJoinTable($pc, $id);
             }
         }
-
+*/
         $project = $this->projectsDao->getCapstoneProject($id);
         // TODO: handle case when project is not found
 
@@ -269,7 +266,7 @@ class ProjectsActionHandler extends ActionHandler {
         $project->getNdaIp()->setId($ndaIpId);
         $project->getType()->setId($typeId);
 		
-        $project->setDateUpdated(new \DateTime());
+        $project->setDateUpdated(new \DateTime("now")); //Edit made on 3/31/23 not tested
 
         $ok = $this->projectsDao->updateCapstoneProject($project);
         if (!$ok) {
@@ -338,7 +335,7 @@ class ProjectsActionHandler extends ActionHandler {
         $project->getNdaIp()->setId($ndaIpId);
         $project->getType()->setId($typeId);
 
-        $project->setDateUpdated(new \DateTime());
+        $project->setDateUpdated(new \DateTime("now")); //Edit made on 3/31/23 not tested
 
         $ok = $this->projectsDao->updateCapstoneProject($project);
         if (!$ok) {

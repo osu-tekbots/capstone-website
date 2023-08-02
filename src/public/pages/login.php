@@ -41,17 +41,17 @@ include_once PUBLIC_FILES . '/modules/header.php';
         <h4 class="text-center">Other Users</h4>
         <a class="login" href="auth/index.php?provider=local" style="text-decoration:none;">
             <button id="localBtn" class="btn btn-lg btn-danger btn-block text-uppercase" type="submit">
-                <i class="fas fa-id-badge"></i> Sign in With Local Account
+                <i class="fas fa-id-badge"></i> Sign in/Create Local Account
             </button>
         </a>
-        <hr class="my-4">
+<!--	<hr class="my-4">
         <h4 class="text-center">Administrators</h4>
         <a class="login" href="pages/adminLogin.php" style="text-decoration:none;">
             <button id="adminBtn" class="btn btn-lg btn-outline-dark btn-block text-uppercase" type="submit">
                 <i class="fas fa-id-badge"></i> Admin Login
             </button>
         </a>
-        <br/>
+-->        <br/>
         <!--
         <a class="login" href="auth/index.php?provider=microsoft" style="text-decoration:none;">
             <button id="microsoftBtn" class="btn btn-lg btn-success btn-block text-uppercase" type="submit">
