@@ -1,12 +1,13 @@
 <?php
 include_once '../bootstrap.php';
 
-/* ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL); */
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL); 
 
 use DataAccess\CapstoneProjectsDao;
 use DataAccess\KeywordsDao;
+use DataAccess\CategoriesDao;
 
 session_start();
 
@@ -17,14 +18,45 @@ $isAdmin = isset($_SESSION['userID']) && !empty($_SESSION['userID'])
 
 $userId = $_SESSION['userID'];
 
-allowIf($isAdmin);
+allowIf($isAdmin, '../pages/login.php');
 
 $projectsDao = new CapstoneProjectsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
+$categoriesDao = new CategoriesDao($dbConn, $logger);
 
-$projects = $projectsDao->getCapstoneProjectsForAdmin();
+if (isset($_REQUEST['status']))
+	if ($_REQUEST['status'] == 0)
+		unset($_SESSION['status']);
+	else
+		$_SESSION['status'] = $_REQUEST['status'];
+
+if (isset($_REQUEST['category']))
+	if ($_REQUEST['category'] == 0)
+		unset($_SESSION['category']);
+	else
+		$_SESSION['category'] = $_REQUEST['category'];
+
+
+$breadcrumb = "All Projects";
+if(isset($_REQUEST['category'])){
+	$projects = $projectsDao->getCapstoneProjectsForAdminByCategory(0);
+	$breadcrumb = "Projects not Assigned to Course";
+} else {
+	if(isset($_SESSION['status'])){
+		$projects = $projectsDao->getCapstoneProjectsForAdmin($_SESSION['status']);
+		if ($_SESSION['status'] == 1)
+			$breadcrumb = "Created Projects";
+		if ($_SESSION['status'] == 2)
+			$breadcrumb = "Pending Approval Projects";
+		if ($_SESSION['status'] == 3)
+			$breadcrumb = "Rejected Projects";
+		if ($_SESSION['status'] == 4)
+			$breadcrumb = "Approved Projects";
+	} else {
+		$projects = $projectsDao->getCapstoneProjectsForAdmin();
+	}
+}
 $types = $projectsDao->getCapstoneProjectTypes();
-$categories = $projectsDao->getCapstoneProjectCategories();
 $statuses = $projectsDao->getCapstoneProjectStatuses();
 
 if (isset($_REQUEST['archive'])){ //Only show archived projects to admin
@@ -103,6 +135,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 		});
 	}
 	
+
 	
 	/*********************************************************************************
     * Function Name: categoryChange(id)
@@ -132,68 +165,17 @@ include_once PUBLIC_FILES . '/modules/header.php';
 
 		//As each letter is typed in filterInput, filtering of cards will occur.
 		//For drop down lists, like filtering by key word, filterInput is programmically
-		//filled and keydown behavior is explicitly called.
-		$("#filterInput").keydown(function(){
+		//filled and keyup behavior is explicitly called.
+
+		$("#filterInput").on("keyup", function(){
 			var value = $(this).val().toLowerCase();
-			var projects = document.getElementById($('[id^=editDialog]'));
 			
-			$('[id^=projectCard]').each(function() {
-				if($(this).text().toLowerCase().indexOf(value) > -1){
-					$(this).show();
-				}
-				else 
-					$(this).hide();
+			$('#projectCardsTable tr').filter(function() {
+				$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
 				
 			});
 		});
 		
-/*		$("#filterInput").keydown(function(){
-			var value = $(this).val().toLowerCase();
-
-			for(var i = 0; i < <?php echo $CardCount; ?>; i++){
-				if($("#projectCard" + i).text().toLowerCase().indexOf(value) > -1){
-					$("#projectCard" + i).show();
-				}
-				else{
-					$("#projectCard" + i).hide();
-				}
-			}
-		});
-*/
-		 $("#ApprovalRequiredCheckBox").change(function(){
-			if($(this).is(":checked")){
-				for(var i = 0; i < <?php echo $CardCount; ?>; i++){
-					if(($("#projectCard" + i).text().toLowerCase().indexOf("category placement") <= -1) && ($("#projectCard" + i).text().toLowerCase().indexOf("pending approval") <= -1)) {
-						$("#projectCard" + i).hide();
-					}
-				}
-
-			}
-			 else{
-				for(var i = 0; i < <?php echo $CardCount; ?>; i++){
-					$("#projectCard" + i).show();
-				}
-			 }
-		});
-
-		$("#notSubmittedCheckBox").change(function(){
-			if($(this).is(":checked")){
-				for(var i = 0; i < <?php echo $CardCount; ?>; i++){
-					if($("#projectCard" + i).text().toLowerCase().indexOf("not yet submitted") > -1)  {
-						$("#projectCard" + i).hide();
-					}
-				}
-			 }
-			 else{
-				for(var i = 0; i < <?php echo $CardCount; ?>; i++){
-					$("#projectCard" + i).show();
-				}
-			 }
-		});
-
-			
-		// Automatically check the Hide Projects that do NOT need Admin Approval Checkbox and trigger ajax
-	//	$('#ApprovalRequiredCheckBox').prop('checked', true).change();
     });
 
     function filterSelectChanged(filterObject){
@@ -241,26 +223,36 @@ include_once PUBLIC_FILES . '/modules/header.php';
 				<span>Dashboard</span>
 			</a>
 		</li>
+		<li class="nav-item<?php echo !isset($_GET['archive'])? ' active' : '' ?>">
+			<a class="nav-link" href="pages/adminProject.php">
+				<i class="fas fa-fw fa-chart-area"></i>
+				<span>Active Projects</span></a>
+		</li>
+		<li class="nav-item<?php echo isset($_GET['archive'])? ' active' : '' ?>">
+			<a class="nav-link" href="pages/adminProject.php?archive">
+				<i class="fas fa-fw fa-chart-area"></i>
+				<span>Archived Projects</span></a>
+		</li>
 		<li class="nav-item">
-				<a class="nav-link" href="pages/adminProject.php">
-					<i class="fas fa-fw fa-chart-area"></i>
-					<span>Active Projects</span></a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="pages/adminProject.php?archive">
-					<i class="fas fa-fw fa-chart-area"></i>
-					<span>Archived Projects</span></a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="pages/adminUser.php">
-					<i class="fas fa-fw fa-table"></i>
-					<span>Users</span></a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" href="pages/adminApplication.php">
-					<i class="fas fa-fw fa-file-invoice"></i>
-					<span>Applications</span></a>
-			</li>
+			<a class="nav-link" href="pages/adminUser.php">
+				<i class="fas fa-fw fa-table"></i>
+				<span>Users</span></a>
+		</li>
+<!--	<li class="nav-item">
+		<a class="nav-link" href="pages/adminApplication.php">
+			<i class="fas fa-fw fa-file-invoice"></i>
+			<span>Applications</span></a>
+	</li>
+--><li class="nav-item">
+			<a class="nav-link" href="pages/adminCourses.php">
+				<i class="fas fa-fw fa-table"></i>
+				<span>Course Listings</span></a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="pages/adminKeywords.php">
+				<i class="fas fa-fw fa-table"></i>
+				<span>Keywords</span></a>
+		</li>
 	</ul>
 	<div class="container-fluid">
 		<br>
@@ -269,77 +261,61 @@ include_once PUBLIC_FILES . '/modules/header.php';
 				<li class="breadcrumb-item">
 					<a>Projects</a>
 				</li>
-				<li class="breadcrumb-item active">Approval Proccess</li>
+				<li class="breadcrumb-item active"><?php echo $breadcrumb;?></li>
 			</ol>
-
-		<!--
-					<div class="col-sm-3">
-						<div class="form-group">
-							<label for="projectShowSelect">Show..</label>
-							<select class="form-control" id="projectShowSelect" onchange="showAdminNeeded()">
-								<option></option>
-								<option>Admin Required</option>
-								<option>Approved Projects</option>
-								<option>Not Yet Submitted</option>
-								<option>Archived</option>
-
-							</select>
-						</div>
-					</div>
-
-					
-
-							
--->
 
 		<div class="row">
 		<div class="col-sm-12">
             <div class="row">
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <h2>Search and Filter</h2>
-<!--					<input class="form-control" id="filterInput" type="text" placeholder="Search..." />
-                    <br />
--->
-
-<!-- CHECKBOX HIDE IF PROJECTS REQUIRE NDA NOT FUNCTIONING
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="NDAFilterCheckBox" />
-                        <label for="NDAFilterCheckBox">Hide projects that require an NDA/IP</label>
-                    </div>
--->
+					<input class="form-control" id="filterInput" type="text" placeholder="Search..." />
+					<br />
                 </div>
-
-
-                <div class="col-sm-4">				
-						<div class="form-check">
-							<input type="checkbox" class="form-check-input" id="ApprovalRequiredCheckBox" onchange="toggleAdminNeeded();">
-							<label for="ApprovalRequiredCheckBox">Hide projects do NOT need Admin Action</label>
+					<div class='col-sm-5' style='border: 2px solid grey; border-radius: 10px; margin-bottom: 10px; padding: 10px;'>				
+					<div class='row'>
+						<div class='col-sm-6'>
+							<div class='form-check'>
+								<a href="./pages/adminProject.php?status=1">Projects that are: CREATED</a>
+							</div>
+							<div class='form-check'>
+								<a href="./pages/adminProject.php?status=2">Projects that are: PENDING</a>
+							</div>
+							<div class='form-check'>
+								<a href="./pages/adminProject.php?status=3">Projects that are: REJECTED</a>
+							</div>
+						</div>	
+						<div class='col-sm-6'>
+							<div class='form-check'>
+								<a href="./pages/adminProject.php?status=4">Projects that are: APPROVED</a>
+							</div>
+							<div class='form-check'>
+								<a href="./pages/adminProject.php?status=0&category=0">Projects without a Course</a>
+							</div>
+							<div class='form-check'>
+								<a href="./pages/adminProject.php?status=0">All Projects</a>
+							</div>
 						</div>
-
-
-						<div class="form-check">
-							<input type="checkbox" class="form-check-input" id="notSubmittedCheckBox" onchange="toggleShowCreated();" checked>
-							<label for="notSubmittedCheckBox">Show Not-Submitted projects</label>
-						</div>
-
+					</div>
 				</div>
             </div>
         </div>
 	</div>
 
 		<table class='table' id='ProjectsTable'>	
-			<caption>Current Inventory</caption>
+			<caption>Projects List</caption>
 			<thead>
 				<tr>
+					<th>Status</th>
 					<th></th>
 					<th>Description</th>
-					<th>Status</th>
-					<th>Partner<BR>Info</th>
+					<th>Project Info</th>
+					<th>Partner Info</th>
 					<th>Actions</th>
 				</tr>
 			</thead>
-			<tbody>
-				<?php renderAdminProjectCardGroup2($projects, $keywordsDao, $types, $categories, $statuses, false);?>
+			<tbody id="projectCardsTable">
+				<?php renderAdminProjectCardGroup($projects, $keywordsDao, $categoriesDao, $types, $statuses, false);?>
 			</tbody>
 		</table>
 
@@ -351,48 +327,133 @@ include_once PUBLIC_FILES . '/modules/header.php';
 <script>
 function toggleAdminNeeded(){
 	
-	var archivedItems = document.getElementsByClassName('adminneeded');
+	var activeProjectsAccepting = document.getElementsByClassName('acceptingApplicants');
+	var activeProjectsCreated = document.getElementsByClassName('created');
+	var activeProjectsRejected = document.getElementsByClassName('rejected');
 	var checkBox = document.getElementById("ApprovalRequiredCheckBox");
 	
 	if (checkBox.checked == true){
-		for (var i = 0; i < archivedItems.length; i ++) {
-			archivedItems[i].style.display = 'none';
+		for (var i = 0; i < activeProjectsAccepting.length; i ++) {
+			activeProjectsAccepting[i].style.display = 'none';
+		}
+		for (var i = 0; i < activeProjectsCreated.length; i ++) {
+			activeProjectsCreated[i].style.display = 'none';
+		}
+		for (var i = 0; i < activeProjectsRejected.length; i ++) {
+			activeProjectsRejected[i].style.display = 'none';
 		}
 	} else {
-		for (var i = 0; i < archivedItems.length; i ++) {
-			archivedItems[i].style.display = '';
+		for (var i = 0; i < activeProjectsAccepting.length; i ++) {
+			activeProjectsAccepting[i].style.display = '';
+		}
+		for (var i = 0; i < activeProjectsCreated.length; i ++) {
+			activeProjectsCreated[i].style.display = '';
+		}
+		for (var i = 0; i < activeProjectsRejected.length; i ++) {
+			activeProjectsRejected[i].style.display = '';
 		}
 	} 
 		
 }
 
+// Toggle projects that are just created and not submitted
 function toggleShowCreated(){
 	
-	var archivedItems = document.getElementsByClassName('createdonly');
+	var activeProjects = document.getElementsByClassName('created');
 	var checkBox = document.getElementById("notSubmittedCheckBox");
 	
 	if (checkBox.checked == true){
-		for (var i = 0; i < archivedItems.length; i ++) {
-			archivedItems[i].style.display = '';
+		for (var i = 0; i < activeProjects.length; i ++) {
+			activeProjects[i].style.display = '';
 		}
 	} else {
-		for (var i = 0; i < archivedItems.length; i ++) {
-			archivedItems[i].style.display = 'none';
+		for (var i = 0; i < activeProjects.length; i ++) {
+			activeProjects[i].style.display = 'none';
 		}
 	} 
 		
 }
 
+// Toggle projects that are accepting applicants
+function toggleAcceptingApplicants(){
+
+	var activeProjects = document.getElementsByClassName('acceptingApplicants');
+	var checkBox = document.getElementById("AcceptingApplicantsCheckBox");
+	
+	if (checkBox.checked == true){
+		for (var i = 0; i < activeProjects.length; i ++) {
+			activeProjects[i].style.display = '';
+		}
+	} else {
+		for (var i = 0; i < activeProjects.length; i ++) {
+			activeProjects[i].style.display = 'none';
+		}
+	} 
+}
+
+// Toggle projects that are pending approval
+function togglePendingApproval(){
+
+	var activeProjects = document.getElementsByClassName('pendingApproval');
+	var checkBox = document.getElementById("PendingApprovalCheckBox");
+
+	if (checkBox.checked == true){
+		for (var i = 0; i < activeProjects.length; i ++) {
+			activeProjects[i].style.display = '';
+		}
+	} else {
+		for (var i = 0; i < activeProjects.length; i ++) {
+			activeProjects[i].style.display = 'none';
+		}
+	} 
+}
+
+// Toggle projects that are rejected
+function toggleRejected(){
+
+	var activeProjects = document.getElementsByClassName('rejected');
+	var checkBox = document.getElementById("RejectedCheckBox");
+
+	if (checkBox.checked == true){
+		for (var i = 0; i < activeProjects.length; i ++) {
+			activeProjects[i].style.display = '';
+		}
+	} else {
+		for (var i = 0; i < activeProjects.length; i ++) {
+			activeProjects[i].style.display = 'none';
+		}
+	} 
+}
+
+
+// Toggle projects that are approved but unpublished
+function toggleApprovedUnpublished(){
+
+	var activeProjects = document.getElementsByClassName('approvedUnpublished');
+	var checkBox = document.getElementById("ApprovedUnpublishedCheckBox");
+
+	if (checkBox.checked == true){
+		for (var i = 0; i < activeProjects.length; i ++) {
+			activeProjects[i].style.display = '';
+		}
+	} else {
+		for (var i = 0; i < activeProjects.length; i ++) {
+			activeProjects[i].style.display = 'none';
+		}
+	} 
+}
 $('#ProjectsTable').DataTable({
+		'searching':false,
 		'scrollX':true, 
 		'paging':false, 
 		'order':[[1, 'asc']],
 		"columns": [
+			{ "orderable": true },
 			{ "orderable": false },
-			null,
-			null,
-			null,
-			null
+			{ "orderable": true },
+			{ "orderable": true },
+			{ "orderable": false },
+			{ "orderable": true }
 		  ]
 		});
 </script>

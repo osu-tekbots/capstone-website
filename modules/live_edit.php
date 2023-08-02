@@ -3,7 +3,7 @@
 // UPDATES DATABASE WHEN CELLS ARE UPDATED ON THE TABLE
 //SQL database configuration is in the ../database.ini file.
 
-
+// TODO: Not using DAO
 
 
 header('Content-Type: application/json');

@@ -18,7 +18,9 @@ class Security {
      */
     public static function HtmlEntitiesEncode($string, $encoding = 'UTF-8') {
         $quoteStyle = defined('ENT_HTML5') ? \ENT_QUOTES | \ENT_HTML5 : \ENT_QUOTES;
-        return \htmlspecialchars($string, $quoteStyle, $encoding);
+        if ($string == null)
+			$string = '';
+		return \htmlspecialchars($string, $quoteStyle, $encoding);
     }
 
     /**

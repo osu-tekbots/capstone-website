@@ -49,11 +49,26 @@ $readOnly = $submitted ? 'readonly' : '';
 
 // Get Project Information
 $projectTitle = Security::HtmlEntitiesEncode($project->getTitle());
+
 $description = Security::HtmlEntitiesEncode($project->getDescription());
+// decode rich html saved from rich text
+$description = htmlspecialchars_decode($description);
+
 $motivation = Security::HtmlEntitiesEncode($project->getMotivation());
+// decode rich html saved from rich text
+$motivation = htmlspecialchars_decode($motivation);
+
 $objectives = Security::HtmlEntitiesEncode($project->getObjectives());
+// decode rich html saved from rich text
+$objectives = htmlspecialchars_decode($objectives);
+
 $minQualifications = Security::HtmlEntitiesEncode($project->getMinQualifications());
+// decode rich html saved from rich text
+$minQualifications = htmlspecialchars_decode($minQualifications);
+
 $prefQualifications = Security::HtmlEntitiesEncode($project->getPreferredQualifications());
+// decode rich html saved from rich text
+$prefQualifications = htmlspecialchars_decode($prefQualifications);
 
 // Set tooltip texts
 $createApplicationInfo = 'When creating an application to a project it is important to present yourself in a clear and professional manner. The project partner, after getting your application, can indicate a preference to the course instructors but course instructors have the final word in assembling groups. You are only allowed to apply once to each project so plan accordingly. If you would like to communicate back and forth, be sure to include your email address in the application so that the project partner has it.';

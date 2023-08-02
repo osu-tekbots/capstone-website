@@ -54,7 +54,16 @@ if ($provider) {
                 renderErrorMessage();
             }
             break;
+		
+		case 'local':
+            include_once PUBLIC_FILES . '/auth/local.php';
     
+            $ok = authenticateWithLocal();
+            if (!$ok) {
+                renderErrorMessage();
+            }
+            break;
+			
         default:
             renderErrorMessage();
     }

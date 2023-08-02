@@ -49,7 +49,7 @@ class CapstoneApplication {
             $this->setId($id);
             $this->setStatus(new CapstoneApplicationStatus());
             $this->setReviewInterestLevel(new CapstoneInterestLevel());
-            $this->setDateCreated(new \DateTime());
+            $this->setDateCreated(new \DateTime("now")); //Edit made on 3/31/23 not tested
         } else {
             $this->setId($id);
         }

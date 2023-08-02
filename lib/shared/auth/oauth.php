@@ -83,7 +83,7 @@ function authenticateWithOAuth2($name, $clientId, $secret, $scope, $serverUrl) {
     // Set the configuration and keys
     
 	if ($name == 'Microsoft' || $name == 'github' )
-		$client->redirect_uri = "https://eecs.oregonstate.edu/capstone/submission";
+		$client->redirect_uri = "https://eecs.engineering.oregonstate.edu/capstone/submission";
 	else
 		$client->redirect_uri = $pageURL;
 

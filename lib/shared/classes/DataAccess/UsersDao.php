@@ -137,6 +137,262 @@ class UsersDao {
             return false;
         }
     }
+	
+	/**
+     * Fetches a single user with the user's email.
+     *
+     * @param string $email the email of the user
+     * @return User|boolean the corresponding User from the database if the fetch succeeds and the user exists, 
+     * false otherwise
+     */
+    public function getUserByEmail($email) {
+        try {
+            $sql = 'SELECT * FROM user, user_type, user_salutation, user_auth_provider ';
+            $sql .= 'WHERE u_email = :email AND u_ut_id = ut_id AND u_us_id = us_id AND u_uap_id = uap_id';
+            $params = array(':email' => $email);
+            $result = $this->conn->query($sql, $params);
+            if (!$result || \count($result) == 0) {
+                return false;
+            }
+
+            return self::ExtractUserFromRow($result[0]);
+        } catch (\Exception $e) {
+            $this->logError('Failed to fetch single user by ID: ' . $e->getMessage());
+
+            return false;
+        }
+    }
+
+    /**
+     * Fetches a single local user with the user's email.
+     *
+     * @param string $email the email of the user
+     * @return User|boolean the corresponding User from the database if the fetch
+     * succeeds and the user exists, false otherwise
+     */
+    public function getLocalUserWithEmail($email) {
+
+        try {
+            # Get user with provided credentials
+            $sql = 'SELECT * FROM user, user_type, user_salutation, user_auth_provider 
+				WHERE 
+				u_email = :email AND 
+				u_ut_id = ut_id AND 
+				u_us_id = us_id AND 
+				u_uap_id = uap_id AND 
+				uap_name = :uap_name';
+            $params = array(
+                ':email' => $email,
+                ':uap_name' => 'Local'
+            );
+
+            $result = $this->conn->query($sql, $params);
+            if ($result) {
+                return self::ExtractUserFromRow($result[0]);
+            }
+
+            return false;
+        } catch (\Exception $e) {
+            $this->logError('Failed to fetch single user by credentials: ' . $e->getMessage());
+
+            return false;
+        }
+    }
+    /**
+     * Fetches a single local user with the user's email.
+     *
+     * @param string $email the email of the user
+     * @return User|boolean the corresponding User from the database if the fetch succeeds and the user exists, 
+     * false otherwise
+     */
+    public function getLocalUserWithCredentials($email, $password) {
+        $user = $this->getLocalUserWithEmail($email);
+        if (!$user) {
+            return false;
+        }
+		try {
+            $sql = 'SELECT * FROM user, user_type, user_salutation, user_auth_provider, user_local_auth 
+				WHERE 
+				u_email = :email AND 
+				u_ut_id = ut_id AND 
+				u_us_id = us_id AND 
+				u_uap_id = uap_id AND 
+				uap_name = :uap_name AND
+				ula_id = u_id';
+            $params = array(
+                ':email' => $email,
+                ':uap_name' => 'Local'
+            );
+
+            $result = $this->conn->query($sql, $params);
+            if ($result) {
+				if(password_verify($password, $result[0]['ula_pw'])) {
+						return self::ExtractUserFromRow($result[0]);
+					}
+                return false;
+            }
+            return false;
+        } catch (\Exception $e) {
+            $this->logError('Failed to fetch single user by credentials: ' . $e->getMessage());
+
+            return false;
+        }
+    }
+
+    public function getRandomStringOfLength($n = 128) {
+        $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        $str = "";
+        $len = strlen($chars) - 1;
+        for ($i = 0; $i < $n; $i++) {
+            $str .= $chars[rand(0, $len)];
+        }
+        return $str;
+    }
+
+    /**
+     * Adds a new local password reset attempt.
+     *
+     * @param string $email the email of the user requesting a password reset
+     * @return string|boolean reset_code value if success, False if the query execution fails
+     */
+    public function addNewLocalUserResetAttempt($email) {
+        $user = $this->getLocalUserWithEmail($email);
+        if (!$user) {
+            return false;
+        }
+
+        $expire_minutes = 60;
+        $code = $this->getRandomStringOfLength(24);
+
+        $sql =  ' INSERT INTO user_local_auth_reset';
+        $sql .= ' (ular_user, ular_code, ular_date_expires)';
+        $sql .= ' VALUES';
+        $sql .= " (:ular_user, :ular_code, NOW() + INTERVAL $expire_minutes MINUTE)";
+
+        $params = array(
+            ':ular_user' => $user->getId(),
+            ':ular_code' => $code
+        );
+
+        try {
+            $this->conn->execute($sql, $params);
+        } catch (\Exception $e) {
+            $this->logError('Failed to add new password reset attempt: ' . $e->getMessage());
+            return false;
+        }
+
+        return $code;
+    }
+
+    /**
+     * Checks if user has a valid password reset code.
+     *
+     * @param string $email the email of the user
+     * @param string $code the password reset code
+     * @return boolean True if valid, False if invalid
+     */
+    public function checkLocalUserResetAttempt($email, $code) {
+        $user = $this->getLocalUserWithEmail($email);
+        if (!$user) {
+            return false;
+        }
+
+        try {
+            $sql  = 'SELECT * FROM  user_local_auth_reset 
+				WHERE 
+				ular_user = :ular_user AND 
+				ular_code = :ular_code AND 
+				ular_date_expires > NOW()';
+
+            $params = array(
+                ':ular_user' => $user->getId(),
+                ':ular_code' => $code
+            );
+
+            $result = $this->conn->query($sql, $params);
+            if ($result) {
+                return true;
+            }
+        } catch (\Exception $e) {
+            $this->logError('Failed to fetch from table: ' . $e->getMessage());
+            return false;
+        }
+
+        return false;
+    }
+	
+	/**
+     * Clears all reset codes for local user by email address.
+     *
+     * @param string $email the email of the user
+     * @return boolean True if valid, False if invalid
+     */
+    public function deleteLocalUserResetAttempts($email) {
+        $user = $this->getLocalUserWithEmail($email);
+        if (!$user)
+            return false;
+
+		try {
+			$sql  = ' DELETE FROM user_local_auth_reset WHERE ular_user = :ular_user';
+			$params = array(
+				':ular_user' => $user->getId()
+			);
+
+			$this->conn->execute($sql, $params);
+
+			return true;
+		} catch (\Exception $e) {
+			$this->logError('Failed to delete reset code from database: ' . $e->getMessage());
+			return false;
+		}
+        return false;
+    }
+
+    /**
+     * Checks if user has a valid password reset code.
+     *
+     * @param string $email the email of the user
+     * @param string $password the password to write tot he db
+     * @return boolean True if success, False if fail
+     */
+    public function setLocalUserPassword($email, $password) {
+        $user = $this->getLocalUserWithEmail($email);
+        if (!$user)
+            return false;
+
+		$ula_pw = password_hash($password, PASSWORD_DEFAULT);
+
+        try {
+            $sql = 'UPDATE user_local_auth SET ula_pw = :ula_pw WHERE ula_id = :ula_id';
+            $params = array( ':ula_id' => $user->getId(), ':ula_pw' => $ula_pw );
+            $this->conn->execute($sql, $params);
+            return true;
+        } catch (\Exception $e) {
+            $this->logError('Failed to update user password: ' . $e->getMessage());
+            return false;
+        }
+        return false;
+    }
+
+    /**
+     * Adds a new local user to the database.
+     *
+     * @param \Model\User $user the user to add to the database
+     * @return boolean true if the query execution succeeds, false otherwise.
+     */
+    public function setupLocalUserPassword($user) {
+        try {
+            $sql = 'INSERT INTO user_local_auth (ula_id, ula_pw) VALUES (:ula_id, null)';
+            $params = array( ':ula_id' => $user->getId());
+            $this->conn->execute($sql, $params);
+            
+        } catch (\Exception $e) {
+            $this->logError('Failed to add new user: ' . $e->getMessage());
+            return false;
+        }
+
+        return true;
+    }
 
     /**
      * Adds a new user to the database.
@@ -288,9 +544,9 @@ class UsersDao {
             ->setOnid($row['u_onid'])
             ->setAuthProvider(self::ExtractUserAuthProviderFromRow($row, true))
             ->setAuthProviderId($row['u_uap_provided_id'])
-            ->setDateCreated(new \DateTime($row['u_date_created']))
-            ->setDateUpdated(new \DateTime($row['u_date_updated']))
-            ->setDateLastLogin(new \DateTime($row['u_date_last_login']));
+            ->setDateCreated(new \DateTime(($row['u_date_created'] == '' ? "now" : $row['u_date_created']))) //Edit made on 3/31/23 not tested
+            ->setDateUpdated(new \DateTime(($row['u_date_updated'] == '' ? "now" : $row['u_date_updated'])))
+            ->setDateLastLogin(new \DateTime(($row['u_date_last_login'] == '' ? "now" : $row['u_date_last_login'])));
         
         return $user;
     }

@@ -26,5 +26,5 @@ if (isset($_SESSION['userID']) && !empty($_SESSION['userID'])) {
     // Handle the request
     $handler->handleRequest();
 } else {
-    $handler->respond(new Response(Response::UNAUTHORIZED, 'You do not have permission to access this resource'));
+    $handler->respond(new Response(Response::UNAUTHORIZED, 'You do not have permission to access this resource. Do you need to log in again?'));
 }

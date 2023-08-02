@@ -69,8 +69,9 @@ class ProjectMailer extends Mailer {
         Senior Design Capstone Team
         Oregon State University
         ";
-
-        return $this->sendEmail($project->getProposer()->getEmail(), $subject, $message);
+		
+		$to = Array($project->getProposer()->getEmail(), "eecs_capstone_staff@engr.orst.edu");
+        return $this->sendEmail($to, $subject, $message);
     }
 
     /**
@@ -133,7 +134,7 @@ class ProjectMailer extends Mailer {
         Reason for rejection: $reason
         ---------------------------
 
-        If you have any further questions, please send us an email at heer@oregonstate.edu.
+        If you have any further questions, please send us an email at eecs_capstone_staff@engr.orst.edu.
 
         Sincerely,
 

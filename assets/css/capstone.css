@@ -81,13 +81,13 @@ button h6{
 	padding: 5px;
 }
 
-.navbarColor{
-/*	background: linear-gradient(to bottom right, #D1D1D1, #ffffff 100%);*/
-}
+/* .navbarColor{
+	background: linear-gradient(to bottom right, #D1D1D1, #ffffff 100%);
+} */
 
-.jumbotron, .formSection{
-/*	background: linear-gradient(to bottom, #B1B1B1, #ffffff 100%); */
-}
+/* .jumbotron, .formSection{
+	background: linear-gradient(to bottom, #B1B1B1, #ffffff 100%);
+} */
 
 .keywordBadge{
 	margin: 2px;
@@ -359,7 +359,7 @@ a:hover{
 }
 
 .masonry-brick {
-  flex: auto;
+  /*flex: auto;*/
   height: 650px;
   overflow: none;
   line-height: normal;
@@ -656,3 +656,68 @@ Oregon State University
 }
 
 /********************************/
+
+/* Add flexbox classes for screen reader-friendly grid styling */
+.tableWrapper {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #777;
+  margin-bottom: 15px;
+  /* overflow: scroll; */
+}
+
+.tableHead {
+  color: black; 
+  text-align: center;
+  padding: 5px;
+  min-height: 35px;
+  border-bottom: 2px solid #777;
+  position: sticky;
+  top: 0;
+}
+
+.tableBody {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  box-sizing: border-box;
+}
+
+.tableRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  box-sizing: border-box;
+  margin: 10px 15px;
+  align-items: center;
+}
+
+.tableElement {
+  min-height: 35px;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 200px;
+
+  padding: 5px;
+
+  border: 1px solid #777; 
+
+  text-align: center;
+
+  overflow-wrap: break-word;
+  overflow: hidden;
+}
+
+.tableElementPlaceholder {
+  min-height: 35px;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 200px;
+
+  padding: 5px;
+
+  text-align: center;
+
+  overflow-wrap: break-word;
+  overflow: hidden;
+}

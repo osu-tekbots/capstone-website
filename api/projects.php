@@ -9,6 +9,8 @@ use DataAccess\UsersDao;
 use Api\Response;
 use DataAccess\CapstoneProjectsDao;
 use DataAccess\KeywordsDao;
+use DataAccess\CategoriesDao;
+use DataAccess\PreferredCoursesDao;
 use Api\ProjectsActionHandler;
 use Email\ProjectMailer;
 
@@ -22,13 +24,15 @@ session_start();
 $projectsDao = new CapstoneProjectsDao($dbConn, $logger);
 $usersDao = new UsersDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
+$categoriesDao = new CategoriesDao($dbConn, $logger);
+$preferredCoursesDao = new PreferredCoursesDao($dbConn, $logger);
 $mailer = new ProjectMailer($configManager->get('email.from_address'), $configManager->get('email.subject_tag'));
-$handler = new ProjectsActionHandler($projectsDao, $usersDao, $keywordsDao, $mailer, $configManager, $logger);
+$handler = new ProjectsActionHandler($projectsDao, $usersDao, $keywordsDao, $categoriesDao, $preferredCoursesDao, $mailer, $configManager, $logger);
 
 // Authorize the request
 if (isset($_SESSION['userID']) && !empty($_SESSION['userID'])) {
     // Handle the request
     $handler->handleRequest();
 } else {
-	$handler->respond(new Response(Response::UNAUTHORIZED, 'You do not have permission to access this resource'));
+	$handler->respond(new Response(Response::UNAUTHORIZED, 'You do not have permission to access this resource. Do you need to log in again?'));
 }

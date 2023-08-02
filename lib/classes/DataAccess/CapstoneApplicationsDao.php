@@ -328,9 +328,9 @@ class CapstoneApplicationsDao {
             ->setStatus(self::ExtractApplicationStatusFromRow($row, true))
             ->setReviewInterestLevel(self::ExtractCapstoneInterestLevelFromRow($row, true))
             ->setReviewProposerComments($row['ca_review_proposer_comments'])
-            ->setDateCreated(new \DateTime($row['ca_date_created']))
-            ->setDateUpdated(new \DateTime($row['ca_date_updated']))
-            ->setDateSubmitted(new \DateTime($row['ca_date_submitted']));
+            ->setDateCreated(new \DateTime(($row['ca_date_created'] == '' ? "now" : $row['ca_date_created']))) //Edit made on 3/31/23 not tested
+            ->setDateUpdated(new \DateTime(($row['ca_date_updated'] == '' ? "now" : $row['ca_date_updated']))) //Edit made on 3/31/23 not tested
+            ->setDateSubmitted(new \DateTime(($row['ca_date_submitted'] == '' ? "now" : $row['ca_date_submitted']))); //Edit made on 3/31/23 not tested
         if ($includeProject) {
             $app->setCapstoneProject(CapstoneProjectsDao::ExtractCapstoneProjectFromRow($row));
         }

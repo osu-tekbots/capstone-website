@@ -32,6 +32,13 @@ function getProjectId() {
 function getProjectFormDataAsJson() {
     let form = document.getElementById('formProject');
     let data = new FormData(form);
+    // editors would have to be passed in as parameters
+    data.append("description", descriptionEditor.getData());
+    data.append("motivation", motivationEditor.getData());
+    data.append("objectives", objectivesEditor.getData());
+    data.append("minQualifications", minQualEditor.getData());
+    data.append("preferredQualifications", prefQualEditor.getData());
+    data.append("comments", commentsEditor.getData());
 
     let json = {
         title: $('#projectTitleInput').val()
@@ -43,7 +50,10 @@ function getProjectFormDataAsJson() {
      json.keywords = $('#keywordsDiv').html()
              .replace(/<span class="badge badge-light keywordBadge">/g, "[")
              .replace(/ <i class="fas fa-times-circle"><\/i><\/span>/g, "],");
-    return json;
+/*     json.preferredCourses = $('#preferredCoursesDiv').html()
+             .replace(/<span class="badge badge-light preferredCourseBadge">/g, "[")
+             .replace(/ <i class="fas fa-times-circle"><\/i><\/span>/g, "],");
+*/    return json;
 }
 
 //
@@ -62,7 +72,7 @@ $('#endbydate').datetimepicker({
 $('[data-toggle="tooltip"]').tooltip();
 
 
-
+// Keyword Functionality **********************************
 $('#keywordsInput').on('change', function() {
     key = $('#keywordsInput').val();
     var cleankey = key.replace(/[|&;$%@"<>()+,]/g, "");
@@ -78,28 +88,43 @@ $('body').on('click', '.keywordBadge', function(e) {
     this.remove();
 });
 
+// Courses Functionality **********************************
+$('#preferredCoursesInput').on('change', function() {
+    course = $('#preferredCoursesInput').val();
+
+    $('#preferredCoursesDiv').append(
+        '<span class="badge badge-light preferredCourseBadge">' + course + ' <i class="fas fa-times-circle"></i></span>'
+    );
+    $('#preferredCoursesInput').val('');
+});
+
+//Remove course when clicked.
+$('body').on('click', '.preferredCourseBadge', function(e) {
+    this.remove();
+});
+
 /**
  * Updates the layout of the page if the project type is selected. This is
  * because certain text boxes appear for certain types and not others
- */
-function updateEditProjectLayout() {
-    // If it is a capstone project (enum of 1)
-    if ($('#projectTypeSelect').val() == 1) {
-        $('#dateDiv').hide();
-        $('#ndaDiv').show();
-        $('#numberGroupsDesiredDiv').show();
-        $('#compensationDiv').hide();
-        $('#numberGroupsDiv').show();
-    } else {
-        $('#dateDiv').show();
-        $('#ndaDiv').hide();
-        $('#numberGroupsDesiredDiv').hide();
-        $('#compensationDiv').show();
-        $('#numberGroupsDiv').hide();
-    }
-}
-$('#projectTypeSelect').change(updateEditProjectLayout);
-updateEditProjectLayout();
+//  */
+// function updateEditProjectLayout() {
+//     // If it is a capstone project (enum of 1)
+//     if ($('#projectTypeSelect').val() == 1) {
+//         $('#dateDiv').hide();
+//         $('#ndaDiv').show();
+//         $('#numberGroupsDesiredDiv').show();
+//         $('#compensationDiv').hide();
+//         $('#numberGroupsDiv').show();
+//     } else {
+//         $('#dateDiv').show();
+//         $('#ndaDiv').hide();
+//         $('#numberGroupsDesiredDiv').hide();
+//         $('#compensationDiv').show();
+//         $('#numberGroupsDiv').hide();
+//     }
+// }
+// $('#projectTypeSelect').change(updateEditProjectLayout);
+// updateEditProjectLayout();
 
 /**
  * Uploads a newly selected image to the server. This function will be invoked when a change is detected in the

@@ -10,6 +10,7 @@ use Model\CapstoneProjectStatus;
 use Model\CapstoneProjectType;
 use Model\CapstoneProject;
 use Model\CapstoneProjectImage;
+use Model\CapstoneProjectLog;
 
 use DataAccess\KeywordsDao;
 
@@ -76,10 +77,9 @@ class CapstoneProjectsDao {
     }
 	
 	/**
-     * Fetches several capstone projects from a specified range.
+     * Fetches all capstone projects with specific category id.
      *
-     * @param integer $offset the offset into the results to fetch
-     * @param integer $limit the max number of results to fetch in this batch
+     * @param integer $categoryId the category id
      * @return \Model\CapstoneProject[]|boolean an array of projects on success, false otherwise
      */
     public function getBrowsableCapstoneProjectsByCategory($categoryId) {
@@ -117,7 +117,8 @@ class CapstoneProjectsDao {
     }
 
     /**
-     * Fetches capstone projects associated with a user.
+     * TODO: Seems like student version does work with images too? Need to inspect.
+	 * Fetches capstone projects associated with a user.
      *
      * @param string $userId the ID of the user whose projects to fetch
      * @return \Model\CapstoneProject[]|boolean an array of projects on success, false otherwise
@@ -216,24 +217,38 @@ class CapstoneProjectsDao {
     }
 
     /**
-     * Fetches capstone projects relevent for an admin to view.
+     * Fetches capstone projects relevant for an admin to view.
      *
      * @return \Model\CapstoneProject[]|boolean an array of projects on success, false otherwise
      */
-    public function getCapstoneProjectsForAdmin() {
+    public function getCapstoneProjectsForAdmin($status = null) {
         try {
-            $sql = '
-            SELECT * 
-            FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
-                capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
-            WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
-                AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id
-            ORDER BY cp_title ASC
-               
-            ';
-          
-            $results = $this->conn->query($sql);
-
+			if (!($status === null)){
+				$sql = '
+					SELECT * 
+					FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+						capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
+					WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+						AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id 
+						AND cp_cps_id = :status 
+					ORDER BY cp_date_updated DESC
+					   
+					';  
+				$params = array(':status' => $status);
+				$results = $this->conn->query($sql, $params);				
+			} else {
+				$sql = '
+				SELECT * 
+				FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+					capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
+				WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+					AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id
+				ORDER BY cp_date_updated DESC
+				   
+				';  
+				$results = $this->conn->query($sql);
+			}
+			
             $projects = array();
             foreach ($results as $row) {
                 $project = self::ExtractCapstoneProjectFromRow($row, true);
@@ -247,12 +262,100 @@ class CapstoneProjectsDao {
             return false;
         }
     }
-
-        /**
-     * Fetches several capstone projects from a specified range.
+	
+	
+	/**
+     * Fetches capstone projects relevant for an admin to view.
      *
-     * @param integer $offset the offset into the results to fetch
-     * @param integer $limit the max number of results to fetch in this batch
+     * @return \Model\CapstoneProject[]|boolean an array of projects on success, false otherwise
+     */
+    public function getCapstoneProjectsForAdminByCategory($category, $status = null) {
+        try {
+			if ($category == 0){ //Look for ones without a category
+				if (!($status == null)){
+					$sql = '
+					SELECT * 
+					FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+						capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user 
+					WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+						AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id 
+						AND cp_cps_id = :status 
+					ORDER BY cp_date_updated DESC
+					   
+					';  
+					$params = array(':status' => $status);
+					$results = $this->conn->query($sql, $params);
+				} else {
+					$sql = '
+					SELECT * 
+					FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+						capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user 
+					WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+						AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id  
+					ORDER BY cp_date_updated DESC  
+					';  
+					$params = array();
+					$results = $this->conn->query($sql, $params);
+				
+					
+				}
+			} else {
+				if (!($status === null)){
+					$sql = '
+					SELECT * 
+					FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+						capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user, capstone_project_category_for 
+					WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+						AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id AND cpcf_entity_id = cp_id 
+						AND cp_cps_id = :status 
+						AND cpcf_cpc_id = :category 
+					ORDER BY cp_date_updated DESC
+					   
+					';  
+					$params = array(':status' => $status,
+									':category' => $category);
+					$results = $this->conn->query($sql, $params);
+				} else {
+					$sql = '
+					SELECT * 
+					FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+						capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user, capstone_project_category_for 
+					WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+						AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id AND cpcf_entity_id = cp_id 
+						AND cpcf_cpc_id = :category 
+					ORDER BY cp_date_updated DESC
+					   
+					';  
+					$params = array(':category' => $category);
+					$results = $this->conn->query($sql, $params);
+				}				
+			}
+			
+            $projects = array();
+            foreach ($results as $row) {
+                $project = self::ExtractCapstoneProjectFromRow($row, true);
+                $this->getCapstoneProjectImages($project, true);
+				if ($category === 0){
+					$sql = "SELECT * FROM capstone_project_category_for WHERE cpcf_entity_id = :id";
+					$params = array(':id' => $project->getId());
+					$tempresults = $this->conn->query($sql, $params);
+					if (sizeof($tempresults) == 0) //Not Found
+						$projects[] = $project;
+				} else {
+					$projects[] = $project;
+				}
+            }
+
+            return $projects;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to get projects for admin: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Fetches all 'approved' capstone projects.
+     *
      * @return \Model\CapstoneProject[]|boolean an array of projects on success, false otherwise
      */
     public function getAllApprovedCapstoneProjects() {
@@ -404,6 +507,101 @@ class CapstoneProjectsDao {
     public function getRelatedCapstoneProjects($project) {
         return false;
     }
+	
+	/**
+     * Fetches the list of editors for a project with the provided ID
+     *
+     * @param string $id
+     * @return array(\Model\User)|boolean the users on success, false otherwise
+     */
+    public function getCapstoneProjectEditors($projectId) {
+        try {
+            $sql = '
+            SELECT *
+            FROM user, capstone_project_edit_permissions
+            WHERE pf_cp_id = :projectId and pf_u_id = u_id';
+            $params = array(':projectId' => $projectId);
+            $results = $this->conn->query($sql, $params);
+            if (\count($results) == 0) {
+                return false;
+            }
+            $editors = array();
+            foreach ($results as $row) {
+                $user = UsersDao::ExtractUserFromRow($row);
+                array_push($editors, $user);
+            }
+            return $editors;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to get capstone project editors:' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function addCapstoneProjectEditor($projectId, $editorId) {
+        try {
+            $sql = '
+            INSERT INTO capstone_project_edit_permissions
+                ( pf_cp_id , pf_u_id )
+            VALUES
+                ( :projectId, :editorId )
+            ';
+            $params = array(
+                ':projectId' => $projectId,
+                ':editorId' => $editorId
+            );
+            $this->conn->execute($sql, $params);
+
+            $sql = '
+            SELECT *
+            FROM user, capstone_project_edit_permissions
+            WHERE pf_cp_id = :projectId and pf_u_id = :editorId';
+            $params = array(
+                ':projectId' => $projectId,
+                ':editorId' => $editorId
+            );
+            $results = $this->conn->query($sql, $params);
+            if (\count($results) == 0) {
+                return false;
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to get capstone project editors:' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function deleteCapstoneProjectEditor($projectId, $editorId) {
+        try {
+            $sql = '
+            DELETE
+            FROM capstone_project_edit_permissions
+            WHERE pf_cp_id = :projectId AND pf_u_id = :editorId';
+            $params = array(
+                ':projectId' => $projectId,
+                ':editorId' => $editorId
+            );
+            $this->conn->execute($sql, $params);
+
+            $sql = '
+            SELECT *
+            FROM user, capstone_project_edit_permissions
+            WHERE pf_cp_id = :projectId AND pf_u_id = :editorId';
+            $params = array(
+                ':projectId' => $projectId,
+                ':editorId' => $editorId
+            );
+            $results = $this->conn->query($sql, $params);
+            if (\count($results) == 0) {
+                return true;
+            }
+
+            return false;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to get capstone project editors:' . $e->getMessage());
+            return false;
+        }
+    }
 
     /**
      * Fetches the capstone project with the provided ID
@@ -442,6 +640,39 @@ class CapstoneProjectsDao {
             return $project;
         } catch (\Exception $e) {
             $this->logger->error("Failed to fetch project with id '$id': " . $e->getMessage());
+            return false;
+        }
+    }
+
+/**
+     * Fetches the capstone project logs with a given project ID
+     *
+     * @param string $project_id
+     * @return array(\Model\CapstoneProjectLog)|boolean the project on success, false otherwise
+     */
+    public function getCapstoneProjectLogs($projectId) {
+        try {
+            $sql = '
+            SELECT *
+            FROM capstone_project_log
+            WHERE lg_cp_id = :project_id
+            ORDER BY lg_date_created DESC
+            ';
+            $params = array(':project_id' => $projectId);
+            $results = $this->conn->query($sql, $params);
+            if (\count($results) == 0) {
+                return false;
+            }
+
+            $projectLogs = array();
+            foreach ($results as $row) {
+                $projectLog = self::ExtractCapstoneProjectLogFromRow($row);
+                array_push($projectLogs, $projectLog);
+            }
+
+            return $projectLogs;
+        } catch (\Exception $e) {
+            $this->logger->error("Failed to fetch project logs for the project with id '$projectId': " . $e->getMessage());
             return false;
         }
     }
@@ -524,6 +755,42 @@ class CapstoneProjectsDao {
         }
     }
 
+/**
+     * Adds a new capstone project log entry into the database.
+     *
+     * @param \Model\CapstoneProjectLog $log the log to insert
+     * @return boolean true if successful, false otherwise
+     */
+    public function insertCapstoneProjectLog($log) {
+        try {
+            $sql = '
+            INSERT INTO capstone_project_log 
+                (
+                    lg_cp_id,
+                    lg_date_created,
+                    lg_message
+                )
+            VALUES
+                (
+                    :lg_cp_id,
+                    :lg_date_created,
+                    :lg_message
+                )
+            ';
+            $params = array(
+                ':lg_cp_id' => $log->getProjectId(),
+                ':lg_date_created' => QueryUtils::FormatDate($log->getDateCreated()),
+                ':lg_message' => $log->getMessage()
+            );
+            $this->conn->execute($sql, $params);
+            return true;
+        } catch (\Exception $e) {
+            $projectId = $log->getProjectId();
+            $this->logger->error("Failed to create a log entry for the project with id '$projectId': " . $e->getMessage());
+            return false;
+        }
+    }
+
     /**
      * Updates an existing capstone project entry into the database.
      *
@@ -599,6 +866,8 @@ class CapstoneProjectsDao {
             return false;
         }
     }
+
+
 
     /**
      * Removes user application from project
@@ -1040,8 +1309,8 @@ class CapstoneProjectsDao {
             ->setMotivation($row['cp_motivation'])
             ->setDescription($row['cp_description'])
             ->setObjectives($row['cp_objectives'])
-            ->setDateStart(new \DateTime($row['cp_date_start']))
-            ->setDateEnd(new \DateTime($row['cp_date_end']))
+            ->setDateStart(new \DateTime(($row['cp_date_start'] == '' ? "now" : $row['cp_date_start'])))
+            ->setDateEnd(new \DateTime(($row['cp_date_end'] == '' ? "now" : $row['cp_date_end'])))
             ->setMinQualifications($row['cp_min_qual'])
             ->setPreferredQualifications($row['cp_preferred_qual'])
             ->setCompensation(self::ExtractCapstoneProjectCompensationFromRow($row, true))
@@ -1060,12 +1329,23 @@ class CapstoneProjectsDao {
             ->setAdminComments($row['cp_admin_comments'])
             ->setStatus(self::ExtractCapstoneProjectStatusFromRow($row, true))
             ->setIsArchived($row['cp_archived'] ? true : false)
-            ->setDateCreated(new \DateTime($row['cp_date_created']))
-            ->setDateUpdated(new \DateTime($row['cp_date_updated']));
+            ->setDateCreated(new \DateTime(($row['cp_date_created'] == '' ? "now" : $row['cp_date_created'])))
+            ->setDateUpdated(new \DateTime(($row['cp_date_updated'] == '' ? "now" : $row['cp_date_updated'])));
         if ($userInRow) {
             $project->setProposer(UsersDao::ExtractUserFromRow($row));
         }
         return $project;
+    }
+	
+	/**
+     * Creates a new CapstoneProjectLog object using information from the database row
+     *
+     * @param mixed[] $row the row in the database from which information is to be extracted
+     * @return \Model\CapstoneProjectLog
+     */
+    public static function ExtractCapstoneProjectLogFromRow($row) {
+        $projectLog = new CapstoneProjectLog($row['lg_cp_id'], $row['lg_date_created'], $row['lg_message']);
+        return $projectLog;
     }
 
     /**

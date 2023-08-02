@@ -47,11 +47,26 @@ $buttonPortfolioLink = !empty($external_link) ? "
 // Get project information
 $project_id = $application->getCapstoneProject()->getId();
 $title = Security::HtmlEntitiesEncode($application->getCapstoneProject()->getTitle());
+
 $description = Security::HtmlEntitiesEncode($application->getCapstoneProject()->getDescription());
+// decode rich html saved from rich text
+$description = htmlspecialchars_decode($description);
+
 $motivation = Security::HtmlEntitiesEncode($application->getCapstoneProject()->getMotivation());
+// decode rich html saved from rich text
+$motivation = htmlspecialchars_decode($motivation);
+
 $objectives = Security::HtmlEntitiesEncode($application->getCapstoneProject()->getObjectives());
+// decode rich html saved from rich text
+$objectives = htmlspecialchars_decode($objectives);
+
 $minQualifications = Security::HtmlEntitiesEncode($application->getCapstoneProject()->getMinQualifications());
+// decode rich html saved from rich text
+$minQualifications = htmlspecialchars_decode($minQualifications);
+
 $prefQualifications = Security::HtmlEntitiesEncode($application->getCapstoneProject()->getPreferredQualifications());
+// decode rich html saved from rich text
+$prefQualifications = htmlspecialchars_decode($prefQualifications);
 
 // Get review information
 $reviewInterest = $application->getReviewInterestLevel()->getId();

@@ -1,8 +1,15 @@
 <?php
+
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
+
+
 include_once '../bootstrap.php';
 
 use DataAccess\CapstoneProjectsDao;
 use DataAccess\KeywordsDao;
+use DataAccess\CategoriesDao;
 
 if (!session_id()) {
     session_start();
@@ -19,6 +26,7 @@ $isProposer = isset($_SESSION['accessLevel']) && $_SESSION['accessLevel'] == 'Pr
 // Get all the projects that need to be displayed on this page
 $dao = new CapstoneProjectsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
+$categoriesDao = new CategoriesDao($dbConn, $logger);
 
 $projects = $dao->getActiveCapstoneProjectsForUser($userId);
 $archived = $dao->getArchivedCapstoneProjectsForUser($userId);
@@ -28,7 +36,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 include_once PUBLIC_FILES . '/modules/cards.php';
 
 ?>
-<br><br>
+<br><br><br>
 <div class="container-fluid">
 	<h1>My Projects</h1>
 	<div class="row">
@@ -45,7 +53,7 @@ include_once PUBLIC_FILES . '/modules/cards.php';
 		<h3>Active Projects</h3>
 		<div class="col-sm-12 scroll jumbotron capstoneJumbotron">
 			<div class="masonry" id="projectCardGroup">
-				<?php renderProjectCardGroup($projects, $keywordsDao); ?>
+				<?php renderProjectCardGroup($projects, $keywordsDao, $categoriesDao); ?>
 			</div>
 		</div>
 	</div>
@@ -53,7 +61,7 @@ include_once PUBLIC_FILES . '/modules/cards.php';
 		<h3>Archived Projects</h3>
 		<div class="col-sm-12 scroll jumbotron capstoneJumbotron">
 			<div class="masonry" id="projectArchiveCardGroup">
-				<?php renderProjectCardGroup($archived, $keywordsDao); ?>
+				<?php renderProjectCardGroup($archived, $keywordsDao, $categoriesDao); ?>
 			</div>
 		</div>
 
@@ -76,6 +84,7 @@ include_once PUBLIC_FILES . '/modules/cards.php';
 				api.post('/projects.php', data).then(res => {
 					window.location.replace('pages/editProject.php?id=' + res.content.id);
 				}).catch(err => {
+					console.log(err);
 					snackbar(err.message, 'error');
 				});
 			});

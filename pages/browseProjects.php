@@ -1,8 +1,13 @@
 <?php
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
+
 include_once '../bootstrap.php';
 
 use DataAccess\CapstoneProjectsDao;
 use DataAccess\KeywordsDao;
+use DataAccess\CategoriesDao;
 
 $title = 'Browse Projects';
 include_once PUBLIC_FILES . '/modules/header.php';
@@ -10,159 +15,145 @@ include_once PUBLIC_FILES . '/modules/cards.php';
 
 $dao = new CapstoneProjectsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
+$categoriesDao = new CategoriesDao($dbConn, $logger);
 
-if (isset($_REQUEST['category']))
-	$projects = $dao->getBrowsableCapstoneProjectsByCategory($_REQUEST['category']);
-else
-	$projects = $dao->getBrowsableCapstoneProjects();
+// if (isset($_REQUEST['category']))
+// 	$projects = $dao->getBrowsableCapstoneProjectsByCategory($_REQUEST['category']);
+// else
+$projects = $dao->getBrowsableCapstoneProjects();
 
+//var_dump($projects);
 
-$categories = $dao->getCapstoneProjectCategories();
+$categories = $categoriesDao->getAllCategories();
+//var_dump($categories);
 $types = $dao->getCapstoneProjectTypes();
 
 ?> 
 <br /><br />
 <div class="container-fluid">
     <h1>Browse Projects</h1>
-    <div class="row">
-        <div class="col-sm-3">
-            <h2>Search and Filter</h2>
-            <div class="row">
-                <div class="col-sm-12">
-                    <input class="form-control" id="filterInput" type="text" placeholder="Search..." />
-                    <br />
-                    <button type="button" style="float:right;" class="btn btn-outline-secondary">Search</button>
-                    <br /><br />
-
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="NDAFilterCheckBox" onchange="toggleNDA();"/>
-                        <label for="NDAFilterCheckBox">Hide projects that require NDA/IP agreements</label>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="projectTypeFilterSelect">Filter by Keyword</label>
-                        <select class="form-control" id="keywordFilterSelect" onchange="filterSelectChanged(this)">
-                            <option></option>
-                            <?php
-                            //Generate content for dropdown list.
-							$availableKeywords = $keywordsDao->getAllKeywords();
-							foreach ($availableKeywords as $k) {
-								echo '<option>' . $k->getName() . '</option>';
-							}
-                            ?>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label for="projectTypeFilterSelect">Filter by Course</label>
-                        <select class="form-control" id="projectTypeFilterSelect" onchange="filterSelectChanged(this)">
-                                <?php 
-                                    $options = '<option></option>';
-                                    foreach ($categories as $c) {
-                                        $name = $c->getName();
-                                        if ($name != 'None'){
-                                            $options .= "<option ".($c->getId() == $_REQUEST['category'] ? 'selected':'').">$name</option>";
-                                        }
-                                    }
-                                    echo($options);
-                                ?>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="projectCategoryFilterSelect">Filter by Project Type</label>
-                        <select class="form-control" id="projectCategoryFilterSelect" onchange="filterSelectChanged(this)">
-                            <?php 
-                                    $options = '<option></option>';
-                                    foreach ($types as $t) {
-                                        $name = $t->getName();
-                                        if ($name != 'None'){
-                                            $options .= "<option>$name</option>";
-                                        }
-                                    }
-                                    echo($options);
-                            ?>
-                        </select>
-                    </div>
-
-                   <?php /*echo '<div class="form-group">
-                        <label for="yearFilterSelect">Filter by Year</label>
-                        <select class="form-control" id="yearFilterSelect" onchange="filterSelectChanged(this)">
-                            <option></option>
-                            <option>'. date('Y') . '</option>
-                            <option>'. (date('Y') - 1) . '</option>
-                            <option>'. (date('Y') - 2) . '</option>
-                            <option>'. (date('Y') - 3) . '</option>
-                            <option>'. (date('Y') - 4) . '</option>
-                            <option>'. (date('Y') - 5) . ' and earlier</option>
-                        </select>
-                    </div>';*/
-				?>
-
-
-                    
-                </div>
-
-                <div class="col-sm-6">
-                    
-                    Sort By...
-                    <div class="custom-control custom-radio">
-                        <input
-                            type="radio"
-                            id="sortTitleAscRadio"
-                            value="sortTitleAsc"
-                            name="sortRadio"
-                            class="custom-control-input"
-                        />
-                        <label class="custom-control-label" for="sortTitleAscRadio">Title (A..Z)</label>
-                    </div>
-                    <div class="custom-control custom-radio">
-                        <input
-                            type="radio"
-                            id="sortTitleDescRadio"
-                            value="sortTitleDesc"
-                            name="sortRadio"
-                            class="custom-control-input"
-                        />
-                        <label class="custom-control-label" for="sortTitleDescRadio">Title (Z..A)</label>
-                    </div>
-                    <div class="custom-control custom-radio">
-                        <input
-                            type="radio"
-                            id="sortDateDescRadio"
-                            value="sortDateDesc"
-                            name="sortRadio"
-                            class="custom-control-input"
-                        />
-                        <label class="custom-control-label" for="sortDateDescRadio">Date (Recent)</label>
-                    </div>
-                    <div class="custom-control custom-radio">
-                        <input
-                            type="radio"
-                            id="sortDateAscRadio"
-                            value="sortDateAsc"
-                            name="sortRadio"
-                            class="custom-control-input"
-                        />
-                        <label class="custom-control-label" for="sortDateAscRadio">Date (Oldest)</label>
-                    </div>
-                    
+    <nav class="navigation">
+        <ul style="margin-bottom: 10px">
+            <div class="col-sm-2">
+                <br>
+                <input class="form-control" id="filterInput" type="text" placeholder="Search..." />
+                <br />
+                <!-- <button type="button" style="float:right;" class="btn btn-outline-secondary">Search</button> -->
+            </div>
+            <div class="col-sm-2">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="NDAFilterCheckBox" onchange="toggleNDA();"/>
+                    <label for="NDAFilterCheckBox">Hide projects that require NDA/IP agreements</label>
                 </div>
             </div>
-        </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="keywordFilterSelect">Filter by Keyword</label>
+                    <select class="form-control" id="keywordFilterSelect" onchange="filterSelectChanged(this)">
+                        <option></option>
+                        <?php
+                        //Generate content for dropdown list.
+                        $availableKeywords = $keywordsDao->getAllKeywords();
+                        foreach ($availableKeywords as $k) {
+                            echo '<option>' . $k->getName() . '</option>';
+                        }
+                        ?>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="projectTypeFilterSelect">Filter by Course</label>
+                    <select class="form-control" id="projectTypeFilterSelect" onchange="filterSelectChanged(this)">
+                        <option></option>
+                        <?php 
+                        $categories = $categoriesDao->getAllCategories();
+                        foreach ($categories as $c) {
+                            if (in_array($c->getId(), array(5,6,8,10)))
+								echo '<option>' . $c->getName() . '</option>';
+                        }
+                        ?>
+                    </select>
+                </div>
+            </div>
 
-        <div class="col-sm-9 scroll jumbotron capstoneJumbotron">
+                <?php /*echo '<div class="form-group">
+                    <label for="yearFilterSelect">Filter by Year</label>
+                    <select class="form-control" id="yearFilterSelect" onchange="filterSelectChanged(this)">
+                        <option></option>
+                        <option>'. date('Y') . '</option>
+                        <option>'. (date('Y') - 1) . '</option>
+                        <option>'. (date('Y') - 2) . '</option>
+                        <option>'. (date('Y') - 3) . '</option>
+                        <option>'. (date('Y') - 4) . '</option>
+                        <option>'. (date('Y') - 5) . ' and earlier</option>
+                    </select>
+                </div>';*/
+            ?>
+            
+
+                <div class="col-sm-6">
+                    Sort By...
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="custom-control custom-radio">
+                                <input
+                                    type="radio"
+                                    id="sortTitleAscRadio"
+                                    value="sortTitleAsc"
+                                    name="sortRadio"
+                                    class="custom-control-input"
+                                />
+                                <label class="custom-control-label" for="sortTitleAscRadio">Title (A..Z)</label>
+                            </div>
+                            <div class="custom-control custom-radio">
+                                <input
+                                    type="radio"
+                                    id="sortTitleDescRadio"
+                                    value="sortTitleDesc"
+                                    name="sortRadio"
+                                    class="custom-control-input"
+                                />
+                                <label class="custom-control-label" for="sortTitleDescRadio">Title (Z..A)</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="custom-control custom-radio">
+                                <input
+                                    type="radio"
+                                    id="sortDateDescRadio"
+                                    value="sortDateDesc"
+                                    name="sortRadio"
+                                    class="custom-control-input"
+                                />
+                                <label class="custom-control-label" for="sortDateDescRadio">Newest</label>
+                            </div>
+                            <div class="custom-control custom-radio">
+                                <input
+                                    type="radio"
+                                    id="sortDateAscRadio"
+                                    value="sortDateAsc"
+                                    name="sortRadio"
+                                    class="custom-control-input"
+                                />
+                                <label class="custom-control-label" for="sortDateAscRadio">Oldest</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ul>
+
+        <div class="col-sm-12 scroll jumbotron capstoneJumbotron">
             <div class="masonry" id="projectCardGroup">
                 <?php
 					// Render the cards to browser here
-					renderProjectCardGroup($projects, $keywordsDao, true);
+					renderProjectCardGroup($projects, $keywordsDao, $categoriesDao, true);
 					?>
             </div>
 
        </div> 
-    </div>
+    </nav>
 </div>
 <script type="text/javascript">
 
@@ -209,7 +200,7 @@ function toggleNDA(){
       //As each letter is typed in filterInput, filtering of cards will occur.
       //For drop down lists, like filtering by key word, filterInput is programmically
       //filled and keydown behavior is explicitly called.
-      $("#filterInput").keydown(function(){
+      $("#filterInput").on("keyup", function(){
     	var value = $(this).val().toLowerCase();
 
     	for(var i = 0; i < <?php echo $numCardsCreated; ?>; i++){
@@ -304,8 +295,8 @@ function toggleNDA(){
     	//Manually trigger keydown to mimic keydown function feature.
     	//Attempted to programmically toggleProjectCard, but ran into
     	//logical bug 2/26/19.
-        var e = jQuery.Event("keydown");
-        e.which = 77;
+        var e = jQuery.Event("keyup");
+        e.which = 13;
         $("#filterInput").trigger(e);
     }
 </script>

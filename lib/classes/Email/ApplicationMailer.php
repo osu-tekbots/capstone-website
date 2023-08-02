@@ -67,7 +67,7 @@ class ApplicationMailer extends Mailer {
         $first_name = $application->getCapstoneProject()->getProposer()->getFirstName();
         $last_name = $application->getCapstoneProject()->getProposer()->getLastName();
         $title = $application->getCapstoneProject()->getTitle();
-        $myapplicationLink = "https://eecs.oregonstate.edu/capstone/submission/pages/myApplications.php";
+        $myapplicationLink = "https://eecs.engineering.oregonstate.edu/capstone/submission/pages/myApplications.php";
 
         $subject = "An Application has been submitted for: $title";
 
@@ -96,7 +96,7 @@ class ApplicationMailer extends Mailer {
 
     public function sendUnreviewedApplicationNotification($first_name, $last_name, $title, $email_to){
 
-        $myapplicationLink = "https://eecs.oregonstate.edu/capstone/submission/pages/myApplications.php";
+        $myapplicationLink = "https://eecs.engineering.oregonstate.edu/capstone/submission/pages/myApplications.php";
 
         $subject = "Student Applications for your project: $title";
 

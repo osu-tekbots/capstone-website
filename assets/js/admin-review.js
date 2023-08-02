@@ -10,15 +10,12 @@ function getProjectId() {
  * Handler for when the project category is selected by the admin. The result of the select will automatically
  * update the category of the project in the database.
  */
-function onProjectCategorySelect() {
-    projectCategorySelect = $('#projectCategorySelect').val();
-    projectID = getProjectId();
-
+function onCategoryChange(id, c_id) {
     let body = {
         action: 'updateCategory',
-        projectId: projectID,
-        categoryId: projectCategorySelect
-    };
+        categoryId: c_id,
+        projectId: id
+    }
 
     api.post('/projects.php', body)
         .then(res => {
@@ -28,8 +25,49 @@ function onProjectCategorySelect() {
             snackbar(err.message, 'error');
         });
 }
-$('#projectCategorySelect').change(onProjectCategorySelect);
 
+function onEditorDelete(editorId) {
+    console.log("Deleting: ", editorId);
+    projectId = getProjectId();
+
+    let body = {
+        action: 'deleteEditor',
+        projectId: projectId,
+        editorId: editorId
+    };
+
+    api.post('/projects.php', body)
+        .then(res => {
+            // location.reload();
+            snackbar(res.message, 'success');
+        })
+        .catch(err => {
+            snackbar(err.message, 'error');
+        });
+}
+
+function onEditorSelect() {
+    editorId = $('#editorSelect').val();
+    projectId = getProjectId();
+
+
+    let body = {
+        action: 'addEditor',
+        projectId: projectId,
+        editorId: editorId
+    };
+
+    api.post('/projects.php', body)
+        .then(res => {
+            // location.reload();
+            snackbar(res.message, 'success');
+        })
+        .catch(err => {
+            snackbar(err.message, 'error');
+        });
+
+}
+$('#editorSelect').change(onEditorSelect);
 
 /**
  * Handler for when the proposer is updated.
@@ -46,6 +84,7 @@ function onProposerSelect() {
 
     api.post('/projects.php', body)
         .then(res => {
+            // location.reload();
             snackbar(res.message, 'success');
         })
         .catch(err => {
@@ -69,6 +108,7 @@ function onProjectAdminCommentUpdate() {
 	
     api.post('/projects.php', body)
         .then(res => {
+            // location.reload();
             snackbar(res.message, 'success');
         })
         .catch(err => {
@@ -90,6 +130,7 @@ function onProjectApprove() {
 
     api.post('/projects.php', body)
         .then(res => {
+            // location.reload();
             snackbar(res.message, 'success');
         })
         .catch(err => {
@@ -113,6 +154,7 @@ function onProjectReject() {
 
     api.post('/projects.php', body)
         .then(res => {
+            // location.reload();
             snackbar(res.message, 'success');
         })
         .catch(err => {
@@ -132,8 +174,9 @@ function onMakeProjectPublic() {
 
     api.post('/projects.php', body)
         .then(res => {
+            // location.reload();
             snackbar(res.message, 'success');
-            $('#adminViewProjectBtn').show();
+            // $('#adminViewProjectBtn').show();
         })
         .catch(err => {
             snackbar(err.message, 'error');
@@ -152,8 +195,9 @@ function onMakeProjectPrivate() {
 
     api.post('/projects.php', body)
         .then(res => {
+            // location.reload();
             snackbar(res.message, 'success');
-            $('#adminViewProjectBtn').hide();
+            // $('#adminViewProjectBtn').hide();
         })
         .catch(err => {
             snackbar(err.message, 'error');
@@ -172,6 +216,7 @@ function onArchiveProject() {
 
     api.post('/projects.php', body)
         .then(res => {
+            // location.reload();
             snackbar(res.message, 'success');
         })
         .catch(err => {
@@ -180,6 +225,26 @@ function onArchiveProject() {
 }
 $('#adminMakeProjectArchivedBtn').on('click', onArchiveProject);
 
+
+/**
+ * Event handler to archive a project
+ */
+function onUnarchiveProject() {
+    let body = {
+        action: 'unarchiveProject',
+        id: getProjectId()
+    };
+
+    api.post('/projects.php', body)
+        .then(res => {
+            // location.reload();
+            snackbar(res.message, 'success');
+        })
+        .catch(err => {
+            snackbar(err.message, 'error');
+        });
+}
+$('#adminUnarchiveProjectBtn').on('click', onUnarchiveProject);
 
 $('#adminDeleteProjectBtn').on('click', function() {
     let res = confirm('You are about to delete a project completely (Images, Applications, Project). This action cannot be undone.');
@@ -191,6 +256,7 @@ $('#adminDeleteProjectBtn').on('click', function() {
 
     api.post('/projects.php', body)
         .then(res => {
+            // location.reload();
             snackbar(res.message, 'success');
         })
         .catch(err => {
@@ -199,22 +265,3 @@ $('#adminDeleteProjectBtn').on('click', function() {
 });
 
 
-/**
- * Event handler to delete a project 
- 
-function onDeleteProject() {
-    let body = {
-        action: 'deleteProject',
-        id: getProjectId()
-    };
-
-    api.post('/projects.php', body)
-        .then(res => {
-            snackbar(res.message, 'success');
-        })
-        .catch(err => {
-            snackbar(err.message, 'error');
-        });
-}
-$('#adminDeleteProjectBtn').on('click', onDeleteProject);
-**/

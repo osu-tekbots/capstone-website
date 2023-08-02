@@ -211,7 +211,7 @@ class ProjectsActionHandler extends ActionHandler {
         $project->getNdaIp()->setId($ndaIpId);
         $project->getType()->setId($typeId);
 		
-        $project->setDateUpdated(new \DateTime());
+        $project->setDateUpdated(new \DateTime("now")); //Edit made on 3/31/23 not tested
 
         $ok = $this->projectsDao->updateCapstoneProject($project);
         if (!$ok) {
@@ -275,7 +275,7 @@ class ProjectsActionHandler extends ActionHandler {
         $project->getNdaIp()->setId($ndaIpId);
         $project->getType()->setId($typeId);
 
-        $project->setDateUpdated(new \DateTime());
+        $project->setDateUpdated(new \DateTime("now"));//Edit made on 3/31/23 not tested
 
         $ok = $this->projectsDao->updateCapstoneProject($project);
         if (!$ok) {
