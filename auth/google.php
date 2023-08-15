@@ -44,6 +44,9 @@ function authenticateWithGoogle() {
         $_SESSION['userID'] = $u->getId();
         $_SESSION['accessLevel'] = $u->getType()->getName();
         $_SESSION['newUser'] = false;
+
+        $u->setDateLastLogin(new DateTime());
+        $dao->updateUser($u);
     } else {
         $u = new User();
         $u->setAuthProvider(new UserAuthProvider(UserAuthProvider::GOOGLE, 'Google'))
@@ -51,7 +54,8 @@ function authenticateWithGoogle() {
             ->setAuthProviderId($authProvidedId)
             ->setFirstName($_SESSION['auth']['firstName'])
             ->setLastName($_SESSION['auth']['lastName'])
-            ->setEmail($_SESSION['auth']['email']);
+            ->setEmail($_SESSION['auth']['email'])
+            ->setDateLastLogin(new DateTime());
         $ok = $dao->addNewUser($u);
         // TODO: handle error
 

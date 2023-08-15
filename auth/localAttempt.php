@@ -28,6 +28,10 @@ if ($u) {
     $_SESSION['userID'] = $u->getId();
     $_SESSION['accessLevel'] = $u->getType()->getName();
     $_SESSION['newUser'] = false;
+
+    $u->setDateLastLogin(new DateTime());
+    $dao->updateUser($u);
+    
     $redirect = $configManager->getBaseUrl() . 'pages/myProfile.php';
     echo "<script>location.replace('" . $redirect . "');</script>";
 	die();

@@ -3,7 +3,7 @@ include_once '../bootstrap.php';
 
 use DataAccess\PreferredCoursesDao;
 
-session_start();
+if (!session_id()) session_start();
 
 include_once PUBLIC_FILES . '/lib/shared/authorize.php';
 include_once PUBLIC_FILES . '/modules/cards.php';
@@ -55,7 +55,12 @@ include_once PUBLIC_FILES . '/modules/header.php';
             <li class="nav-item">
                 <a class="nav-link" href="pages/adminUser.php">
                     <i class="fas fa-fw fa-table"></i>
-                    <span>Users</span></a>
+                    <span>Active Users</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="pages/adminUser.php?inactive">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Inactive Users</span></a>
             </li>
 <!--	<li class="nav-item">
 		<a class="nav-link" href="pages/adminApplication.php">

@@ -3,7 +3,7 @@ include_once '../bootstrap.php';
 
 use DataAccess\UsersDao;
 
-session_start();
+if (!session_id()) session_start();
 
 include_once PUBLIC_FILES . '/lib/shared/authorize.php';
 
@@ -16,10 +16,11 @@ $usersDao = new UsersDao($dbConn, $logger);
 
 $title = 'Admin User Control';
 $css = array(
-    'assets/css/sb-admin.css'
+    'assets/css/sb-admin.css',
+	'https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css'
 );
 $js = array(
-    'assets/js/jquery.tableedit.js'
+    'https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js'
 );
 include_once PUBLIC_FILES . '/modules/header.php';
 ?>
@@ -46,10 +47,15 @@ include_once PUBLIC_FILES . '/modules/header.php';
 				<i class="fas fa-fw fa-chart-area"></i>
 				<span>Archived Projects</span></a>
 		</li>
-		<li class="nav-item active">
+		<li class="nav-item <?php echo isset($_REQUEST['inactive']) ? '' : 'active' ?>">
 			<a class="nav-link" href="pages/adminUser.php">
 				<i class="fas fa-fw fa-table"></i>
-				<span>Users</span></a>
+				<span>Active Users</span></a>
+		</li>
+		<li class="nav-item <?php echo isset($_REQUEST['inactive']) ? 'active' : '' ?>">
+			<a class="nav-link" href="pages/adminUser.php?inactive">
+				<i class="fas fa-fw fa-table"></i>
+				<span>Inactive Users</span></a>
 		</li>
 		<!-- <li class="nav-item">
 			<a class="nav-link" href="pages/adminApplication.php">
@@ -84,7 +90,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 			<h2>Users Table</h2>
 			<h6>*Columns colored orange are editable (click on cell)*</h6>
 			<div class="search-table-outter wrapper">
-				<table id="data_table" class="search-table inner scrolltable">
+				<table id="data_table" class="search-table inner scrolltable" width="2250" style="overflow: scroll">
 					<thead>
 						<tr>
 							<th bgcolor="#FFA500">Last Name <i class="fas fa-edit"></i></th>
@@ -106,7 +112,15 @@ include_once PUBLIC_FILES . '/modules/header.php';
 					</thead>
 					<tbody>
 						<?php
-						$users = $usersDao->getAllUsers();
+
+						if (isset($_REQUEST['inactive'])) { 
+							// Only show archived users
+							$users = $usersDao->getInactiveUsers();
+						} else {
+							// Only show unarchived users
+							$users = $usersDao->getActiveUsers();
+						}
+
 						foreach ($users as $u) {
 							$uLastName = $u->getLastName();
 							$uFirstName = $u->getFirstName();
@@ -124,17 +138,21 @@ include_once PUBLIC_FILES . '/modules/header.php';
 
 							echo "
 							<tr id='$uId'>
-								<td>$uLastName</td>
-								<td>$uFirstName</td>
-								<td>$uEmail</td>
-								<td>$uOnid</td>
-								<td>$uType</td>
-								<td>$uId</td>
-								<td>$uPhone</td>
-								<td>$uSalutation</td>
-								<td>$uAffiliation</td>
-								<td>$uMajor</td>
-								<td>$uAuthProvider</td>
+								<td style='overflow: hidden'><input type='text' value='$uLastName' onchange='editValue(this, \"u_lname\")' onkeypress='checkEnterKey(event)' style='border: none'></td>
+								<td style='overflow: hidden'><input type='text' value='$uFirstName' onchange='editValue(this, \"u_fname\")' onkeypress='checkEnterKey(event)' style='border: none'></td>
+								<td style='overflow: hidden'><input type='text' value='$uEmail' onchange='editValue(this, \"u_email\")' onkeypress='checkEnterKey(event)' style='border: none'></td>
+								<td style='overflow: hidden'><input type='text' value='$uOnid' onchange='editValue(this, \"u_onid\")' onkeypress='checkEnterKey(event)' style='border: none'></td>
+								<td style='overflow: hidden'><select onchange='editValue(this, \"u_ut_id\")' style='border: none; -webkit-appearance:none; text-indent: 1px; text-overflow: \"\"'>
+									<option value='1' ".($uType=='Student' ? 'selected' : '').">Student</option>
+									<option value='2' ".($uType=='Proposer' ? 'selected' : '').">Proposer</option>
+									<option value='3' ".($uType=='Admin' ? 'selected' : '').">Admin</option>
+									</select></td>
+								<td style='overflow: hidden'>$uId</td>
+								<td style='overflow: hidden'><input type='text' value='$uPhone' onchange='editValue(this, \"u_phone\")' style='border: none' onkeypress='checkEnterKey(event)'></td>
+								<td style='overflow: hidden'>$uSalutation</td>
+								<td style='overflow: hidden'><input type='text' value='$uAffiliation' onchange='editValue(this, \"u_affiliation\")' style='border: none' onkeypress='checkEnterKey(event)'></td>
+								<td style='overflow: hidden'><input type='text' value='$uMajor' onchange='editValue(this, \"u_major\")' style='border: none' onkeypress='checkEnterKey(event)'></td>
+								<td style='overflow: hidden'>$uAuthProvider</td>
 						
 							</tr>
 							";
@@ -151,38 +169,65 @@ include_once PUBLIC_FILES . '/modules/header.php';
 
 <script type="text/javascript">
 
-$(document).ready(function(){
-	let startTime = Date.now();
-	$('#data_table').Tabledit({
-		url: 'modules/live_edit.php',
-		editmethod: 'post',
-		// Class for row when ajax request fails
-		dangerClass: 'danger',
-		// Class for row when save changes
-		successClass: 'table-success',
-		deleteButton: false,
-		autoFocus: false,
-		editButton: false,
-		paging: true,
-		columns: {
-		  identifier: [5, 'u_id'],
-		  editable: [[1, 'u_fname'], [0, 'u_lname'], [3, 'u_onid'], [6, 'u_phone'], [9, 'u_major'], [4, 'u_ut_id', '{"1": "Student", "2": "Proposer", "3": "Admin"}'], [11, 'project_assigned'], [8, 'u_affiliation'], [2, 'u_email'] ]
-		},
-		hideIdentifier: false,
-		// Executed when the ajax request is completed
-		onSuccess: function () {
-			snackbar("Entry Successfully Updated!", type = 'success');
-			return;
-		},
-		onFail: function () {
-			snackbar("Ajax Request Error", type = 'error');
+function editValue(evntTarget, type) {
+	let data = `action=edit&u_id=${evntTarget.parentElement.parentElement.id}&${type}=${evntTarget.value}`;
+
+	let xhr = new XMLHttpRequest();
+	xhr.onload = function () {
+		let data;
+		try {        
+			data = JSON.parse(this.response);
+			console.log(this.response);
+		} catch(err) { 
+			console.log(this.response);
+			console.log(err);
+			snackbar('Failed to parse response from server (Expecting JSON)', 'error');
 			return;
 		}
+		if (this.status >= 200 && this.status < 300) {
+			console.log(data);
+			snackbar('Successfully updated', 'success');
+			return;
+		} else {
+			snackbar(data.message, 'error');
+		}
+	};
+	xhr.open('post', 'modules/live_edit.php', true);
 
-		
 
-	});
-	console.log('Building Tabledit took ' + (Date.now() - startTime) + 'ms');
+	xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xhr.send(data);
+}
+
+function checkEnterKey(evt) {
+	if(evt.key == 'Enter') {
+		let trigger = new Event('change');
+		evt.target.blur();
+		evt.target.dispatchEvent(trigger);
+	}
+
+}
+
+$('#data_table').DataTable({
+	'searching': false,
+	// 'scrollX': true, 
+	paging: true, 
+	pageLength: 100,
+	lengthMenu: [ [50, 100, 250, 500, 1000, -1], [50, 100, 250, 500, 1000, "All"] ],
+	order:[[0, 'asc']],
+	columns: [
+		{ orderable: false },
+		{ orderable: false },
+		{ orderable: false },
+		{ orderable: false },
+		{ orderable: false },
+		{ orderable: false },
+		{ orderable: false },
+		{ orderable: false },
+		{ orderable: false },
+		{ orderable: false },
+		{ orderable: false }
+		]
 });
 
 </script>

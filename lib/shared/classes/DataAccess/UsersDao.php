@@ -58,6 +58,64 @@ class UsersDao {
     }
 
     /**
+     * Fetches all the users who've logged in since $loginDate from the database.
+     * 
+     * @param string $loginDate The date (format: Y-m-d H:i:s ) a user must have logged in since to be considered active.
+     *     Defaults to 6 months ago
+     * 
+     * If an error occurs during the fetch, the function will return `false`.
+     *
+     * @return User[]|boolean an array of User objects if the fetch succeeds, false otherwise
+     */
+    public function getActiveUsers($loginDate = NULL) {
+        if(is_null($loginDate)) $loginDate = date("Y-m-d H:i:s", strtotime("6 months ago"));
+
+        try {
+            $sql = 'SELECT * FROM user, user_type, user_salutation, user_auth_provider ';
+            $sql .= 'WHERE u_ut_id = ut_id AND u_us_id = us_id AND u_uap_id = uap_id ';
+            $sql .= 'AND u_date_last_login > :loginDate ';
+            $sql .= 'ORDER BY u_lname ASC';
+            $params = array(':loginDate' => $loginDate);
+            $result = $this->conn->query($sql, $params);
+
+            return \array_map('self::ExtractUserFromRow', $result);
+        } catch (\Exception $e) {
+            $this->logError('Failed to fetch users: ' . $e->getMessage());
+
+            return false;
+        }
+    }
+
+    /**
+     * Fetches all the users who've not logged in since $loginDate from the database.
+     * 
+     * @param string $loginDate The date (format: Y-m-d H:i:s ) a user must have not logged in since to be considered
+     *     inactive. Defaults to 6 months ago
+     * 
+     * If an error occurs during the fetch, the function will return `false`.
+     *
+     * @return User[]|boolean an array of User objects if the fetch succeeds, false otherwise
+     */
+    public function getInactiveUsers($loginDate = NULL) {
+        if(is_null($loginDate)) $loginDate = date("Y-m-d H:i:s", strtotime("6 months ago"));
+
+        try {
+            $sql = 'SELECT * FROM user, user_type, user_salutation, user_auth_provider ';
+            $sql .= 'WHERE u_ut_id = ut_id AND u_us_id = us_id AND u_uap_id = uap_id ';
+            $sql .= 'AND u_date_last_login < :loginDate ';
+            $sql .= 'ORDER BY u_lname ASC';
+            $params = array(':loginDate' => $loginDate);
+            $result = $this->conn->query($sql, $params);
+
+            return \array_map('self::ExtractUserFromRow', $result);
+        } catch (\Exception $e) {
+            $this->logError('Failed to fetch users: ' . $e->getMessage());
+
+            return false;
+        }
+    }
+
+    /**
      * Fetches a single user with the given ID from the database.
      *
      * @param string $id the ID of the user to fetch
@@ -452,7 +510,8 @@ class UsersDao {
             $sql .= 'u_phone = :phone, ';
             $sql .= 'u_major = :maj, ';
             $sql .= 'u_affiliation = :affil, ';
-            $sql .= 'u_date_updated = :dateu ';
+            $sql .= 'u_date_updated = :dateu, ';
+            $sql .= 'u_date_last_login = :datelin ';
             $sql .= 'WHERE u_id = :id';
             $params = array(
                 ':type' => $user->getType()->getId(),
@@ -465,6 +524,7 @@ class UsersDao {
                 ':maj' => $user->getMajor(),
                 ':affil' => $user->getAffiliation(),
                 ':dateu' => QueryUtils::FormatDate($user->getDateUpdated()),
+                ':datelin' => QueryUtils::FormatDate($user->getDateLastLogin()),
                 ':id' => $user->getId()
             );
             $this->conn->execute($sql, $params);

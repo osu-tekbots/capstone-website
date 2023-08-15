@@ -82,7 +82,7 @@ if (!$authorizedToProceed) {
 //allowIf($authorizedToProceed);
 
 // Get all the various enumerations from the database
-$users = $usersDao->getAllUsers();
+$users = $usersDao->getActiveUsers();
 $types = $dao->getCapstoneProjectTypes();
 $focuses = $dao->getCapstoneProjectFocuses();
 $compensations = $dao->getCapstoneProjectCompensations();

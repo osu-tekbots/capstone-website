@@ -8,7 +8,7 @@ error_reporting(E_ALL);
 use DataAccess\CapstoneProjectsDao;
 use DataAccess\CategoriesDao;
 
-session_start();
+if (!session_id()) session_start();
 
 include_once PUBLIC_FILES . '/lib/shared/authorize.php';
 
@@ -80,7 +80,12 @@ $projectStats .= "ECE44x Projects: $ece441<BR>CS461 Projects: $cs461<BR>CS467 Pr
 			<li class="nav-item">
 				<a class="nav-link" href="pages/adminUser.php">
 					<i class="fas fa-fw fa-table"></i>
-					<span>Users</span></a>
+					<span>Active Users</span></a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="pages/adminUser.php?inactive">
+					<i class="fas fa-fw fa-table"></i>
+					<span>Inactive Users</span></a>
 			</li>
 <!--	<li class="nav-item">
 		<a class="nav-link" href="pages/adminApplication.php">

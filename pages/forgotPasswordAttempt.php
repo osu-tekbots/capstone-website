@@ -38,6 +38,7 @@ if (!$user) { // New user!!!
 		$user->setEmail($_POST['userEmail']);
 		$user->setType($utype);
 		$user->setAuthProvider($auth);
+		$user->setDateLastLogin(new DateTime());
 		$dao->addNewuser($user);
 		$dao->setupLocalUserPassword($user);
 		$logger->error("Added User ". $_POST['userFirst'] . " " . $_POST['userLast']);
