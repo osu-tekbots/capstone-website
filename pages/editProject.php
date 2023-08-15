@@ -200,12 +200,10 @@ var availableTags = [
 			//
 			// Generate the Admin interface if the user is an admin
 			//
-			if ($isAdmin && ($submitted || $approved)) {
+			if ($isAdmin) {
 				$logs = $dao->getCapstoneProjectLogs($project->getId());
 				$editors = $dao->getCapstoneProjectEditors($project->getId());
 				renderAdminReviewPanel($project, $logs, $editors, $categoriesDao, $users, false);
-			} else if ($isAdmin) {
-				echo "<h4>Project has not been submitted.</h4>";
 			}
 			?>
 
