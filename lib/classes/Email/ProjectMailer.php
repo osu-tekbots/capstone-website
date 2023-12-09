@@ -22,6 +22,8 @@ class ProjectMailer extends Mailer {
      * @return boolean true on success, false otherwise
      */
     public function sendProjectSubmissionConfirmationEmail($project, $link) {
+        global $configManager;
+
         $userName = $project->getProposer()->getFirstName() . ' ' . $project->getProposer()->getLastName();
         $pid = $project->getId();
         $title = $project->getTitle();
@@ -45,7 +47,9 @@ class ProjectMailer extends Mailer {
         deter students from sharing the results of their academic work at OSU with fellow students, parents or future 
         employers.
 
-        This does not prevent a separate arrangement between you each student individually.';
+        This does not prevent a separate arrangement between you each student individually.
+        
+        If you require an NDA/IP agreement, please have your company\'s legal team fill out and return the NDA agreement ('.$configManager->getBaseURL().$configManager->get('files.nda_agreement') .') as soon as possible.';
 
         $message = "
         Dear $userName,

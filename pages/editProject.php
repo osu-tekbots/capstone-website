@@ -589,11 +589,13 @@ var availableTags = [
 									<b>The university will not participate in any agreement that requires students to transfer intellectual 
 									property rights ownership to your company or puts overly burdensome confidentiality obligations on 
 									the students.</b>
-									<br><br>Though OSU certainly appreciates your company’s sponsorship, we strongly discourage any agreements 
+									<br><br>Though OSU certainly appreciates your company's sponsorship, we strongly discourage any agreements 
 									that could deter students from sharing the results of their academic work at OSU with fellow students, 
 									parents or future employers.
 									<br><br>
 									This does not prevent a separate arrangement between you each student individually.
+									<br><br>
+									If you require an NDA/IP agreement, please have your company's legal team fill out and return <a target="_blank" href="<?php echo $configManager->get('files.nda_agreement'); ?>">this agreement</a> as soon as possible.
 									</p>
 								</div>
 								<div class="modal-footer">
