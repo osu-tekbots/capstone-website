@@ -24,23 +24,27 @@ $projectsDao = new CapstoneProjectsDao($dbConn, $logger);
 $keywordsDao = new KeywordsDao($dbConn, $logger);
 $categoriesDao = new CategoriesDao($dbConn, $logger);
 
-if (isset($_REQUEST['status']))
+if (isset($_REQUEST['status'])) {
 	if ($_REQUEST['status'] == 0)
 		unset($_SESSION['status']);
 	else
 		$_SESSION['status'] = $_REQUEST['status'];
+}
 
-if (isset($_REQUEST['category']))
-	if ($_REQUEST['category'] == 0)
+if (isset($_REQUEST['category'])) {
+	if ($_REQUEST['category'] == '-1')
 		unset($_SESSION['category']);
 	else
-		$_SESSION['category'] = $_REQUEST['category'];
+		$_SESSION['category'] = strpos($_REQUEST['category'], ',') !== false ? 
+			explode(',', $_REQUEST['category']) : intval($_REQUEST['category']);
+}
 
 
 $breadcrumb = "All Projects";
-if(isset($_REQUEST['category'])){
-	$projects = $projectsDao->getCapstoneProjectsForAdminByCategory(0);
-	$breadcrumb = "Projects not Assigned to Course";
+if(isset($_SESSION['category'])){
+	$projects = $projectsDao->getCapstoneProjectsForAdminByCategory($_SESSION['category'], $_SESSION['status'] ?? null);
+	$breadcrumb = 'Filtered Projects';
+	if($_SESSION['category'] == '0') $breadcrumb = "Projects Without a Course";
 } else {
 	if(isset($_SESSION['status'])){
 		$projects = $projectsDao->getCapstoneProjectsForAdmin($_SESSION['status']);
@@ -76,6 +80,33 @@ if (isset($_REQUEST['archive'])){ //Only show archived projects to admin
 	$CardCount = count($projects_new);
 	$projects = $projects_new;
 }
+
+// Create HTML for category checkboxes
+$CATEGORY_COLUMNS = 3;
+$categories = $projectsDao->getCapstoneProjectCategories();
+$categorySelects = '';
+$index = 0;
+for($i = 1; $i < $CATEGORY_COLUMNS + 1; $i++) {
+	$categorySelects .= '<div class="col-xl">';
+	for(; $index < ($i * count($categories) / $CATEGORY_COLUMNS); $index++) {
+		$category = $categories[$index];
+		$categorySelects .= '
+			<div class="form-check">
+				<input class="form-check-input" type="checkbox" value="'.$category->getID().'" id="categoryCheck'.$index.'"';
+		if (!isset($_SESSION['category']) || 
+			(gettype($_SESSION['category']) == 'array' ?
+				in_array($category->getId(), $_SESSION['category']) :
+				$category->getId() == $_SESSION['category'])) {
+			$categorySelects .= ' checked';	
+		}
+		$categorySelects .= '>
+				<label class="form-check-label" for="categoryCheck'.$index.'">'.$category->getName().'</label>
+			</div>
+		';
+	}
+	$categorySelects .= '</div>';
+}
+
 
 include_once PUBLIC_FILES . '/modules/cards.php';
 
@@ -145,7 +176,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 		// Grab the ID of the selected element
 		var childID = $('#categoryselect'+id).children(":selected").attr("value");
 		
-//		alert(childID);
+		// alert(childID);
 		
 		let body = {
 			action: 'updateCategory',
@@ -212,7 +243,8 @@ include_once PUBLIC_FILES . '/modules/header.php';
 
 
 <br/>
-<div style="background-color:#e9ecef;">
+<!-- <div style="background-color:#e9ecef;"> --> <!-- Remove background color -->
+<div>
 
 	<div id="wrapper">
 	<!-- Sidebar -->
@@ -243,12 +275,12 @@ include_once PUBLIC_FILES . '/modules/header.php';
 				<i class="fas fa-fw fa-table"></i>
 				<span>Inactive Users</span></a>
 		</li>
-<!--	<li class="nav-item">
-		<a class="nav-link" href="pages/adminApplication.php">
-			<i class="fas fa-fw fa-file-invoice"></i>
-			<span>Applications</span></a>
-	</li>
---><li class="nav-item">
+		<!-- <li class="nav-item">
+			<a class="nav-link" href="pages/adminApplication.php">
+				<i class="fas fa-fw fa-file-invoice"></i>
+				<span>Applications</span></a>
+		</li> -->
+		<li class="nav-item">
 			<a class="nav-link" href="pages/adminCourses.php">
 				<i class="fas fa-fw fa-table"></i>
 				<span>Course Listings</span></a>
@@ -259,15 +291,14 @@ include_once PUBLIC_FILES . '/modules/header.php';
 				<span>Keywords</span></a>
 		</li>
 	</ul>
-	<div class="container-fluid">
-		<br>
-			<!-- Breadcrumbs-->
-			<ol class="breadcrumb">
-				<li class="breadcrumb-item">
-					<a>Projects</a>
-				</li>
-				<li class="breadcrumb-item active"><?php echo $breadcrumb;?></li>
-			</ol>
+	<div id="content-wrapper" class="container-fluid">
+		<!-- Breadcrumbs-->
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item">
+				<a>Projects</a>
+			</li>
+			<li class="breadcrumb-item active"><?php echo $breadcrumb;?></li>
+		</ol>
 
 		<div class="row">
 		<div class="col-sm-12">
@@ -277,9 +308,12 @@ include_once PUBLIC_FILES . '/modules/header.php';
 					<input class="form-control" id="filterInput" type="text" placeholder="Search..." />
 					<br />
                 </div>
-					<div class='col-sm-5' style='border: 2px solid grey; border-radius: 10px; margin-bottom: 10px; padding: 10px;'>				
+				<div class='col-sm-2 ' style='border: 2px solid grey; border-radius: 10px; margin-bottom: 10px; padding: 10px;'>				
 					<div class='row'>
-						<div class='col-sm-6'>
+						<div class='col-sm'>
+							<div class='form-check mb-2'>
+								<a href="./pages/adminProject.php?status=0">All Projects</a>
+							</div>
 							<div class='form-check'>
 								<a href="./pages/adminProject.php?status=1">Projects that are: CREATED</a>
 							</div>
@@ -289,30 +323,36 @@ include_once PUBLIC_FILES . '/modules/header.php';
 							<div class='form-check'>
 								<a href="./pages/adminProject.php?status=3">Projects that are: REJECTED</a>
 							</div>
-						</div>	
-						<div class='col-sm-6'>
 							<div class='form-check'>
 								<a href="./pages/adminProject.php?status=4">Projects that are: APPROVED</a>
 							</div>
-							<div class='form-check'>
-								<a href="./pages/adminProject.php?status=0&category=0">Projects without a Course</a>
-							</div>
-							<div class='form-check'>
-								<a href="./pages/adminProject.php?status=0">All Projects</a>
-							</div>
+							<!-- <div class='form-check mt-2'>
+								<a href="./pages/adminProject.php?category=0">Projects Without a Course</a>
+							</div> -->
 						</div>
+					</div>
+				</div>
+				<div class='col-sm-6 ml-2' style='border: 2px solid grey; border-radius: 10px; margin-bottom: 10px; padding: 10px;'>				
+					<div id="categoryCheckboxes" class='row' oninput="updateCategories();">
+						<div class="w-100 d-flex justify-content-center mb-3" style="gap: 30px;">
+							<a href="./pages/adminProject.php?category=-1">Select All</a>
+							<a href="./pages/adminProject.php?category=5,6,7,9,12">Full Year Projects</a>
+							<a href="./pages/adminProject.php?category=8,9">Single Term Projects</a>
+							<a href="./pages/adminProject.php?status=0&category=0">Deselect All</a>
+						</div>
+						<?php echo $categorySelects; ?>
 					</div>
 				</div>
             </div>
         </div>
 	</div>
 
-		<table class='table' id='ProjectsTable'>	
+		<table class='table border border-dark' id='ProjectsTable'>	
 			<caption>Projects List</caption>
 			<thead>
 				<tr>
 					<th>Status</th>
-					<th></th>
+					<th>Image</th>
 					<th>Description</th>
 					<th>Project Info</th>
 					<th>Partner Info</th>
@@ -415,7 +455,6 @@ function togglePendingApproval(){
 
 // Toggle projects that are rejected
 function toggleRejected(){
-
 	var activeProjects = document.getElementsByClassName('rejected');
 	var checkBox = document.getElementById("RejectedCheckBox");
 
@@ -446,6 +485,18 @@ function toggleApprovedUnpublished(){
 			activeProjects[i].style.display = 'none';
 		}
 	} 
+}
+
+// Update which categories of project to display
+function updateCategories() {
+	let checkedBoxes = document.querySelectorAll('#categoryCheckboxes :checked');
+	
+	let categories = [];
+	for(const value of checkedBoxes.values()) {
+		categories.push(value.value);
+	}
+
+	window.location.replace(`./pages/adminProject.php?category=${categories.join()}`);
 }
 $('#ProjectsTable').DataTable({
 		'searching':false,

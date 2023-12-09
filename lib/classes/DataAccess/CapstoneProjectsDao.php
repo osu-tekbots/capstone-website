@@ -145,7 +145,7 @@ class CapstoneProjectsDao {
            
             return $projects;
         } catch (\Exception $e) {
-            $this->logger->error("Failed to get capstone project for user '$userId': " . $e->getMessage());
+            $this->logger->error("Failed to get active capstone projects for user '$userId': " . $e->getMessage());
             return false;
         }
     }
@@ -166,7 +166,7 @@ class CapstoneProjectsDao {
                 AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND cp_u_id = u_id 
                 AND cp_u_id = :uid
             ';
-            $params = array(':uid' => $userId, ':archived' => false);
+            $params = array(':uid' => $userId/* , ':archived' => false */); // Noticed on 8/29/23 that archived status was not being checked
             $results = $this->conn->query($sql, $params);
 
             $projects = array();
@@ -178,7 +178,7 @@ class CapstoneProjectsDao {
            
             return $projects;
         } catch (\Exception $e) {
-            $this->logger->error("Failed to get capstone project for user '$userId': " . $e->getMessage());
+            $this->logger->error("Failed to get capstone projects for user '$userId': " . $e->getMessage());
             return false;
         }
     }
@@ -211,7 +211,7 @@ class CapstoneProjectsDao {
            
             return $projects;
         } catch (\Exception $e) {
-            $this->logger->error("Failed to get capstone project for user '$userId': " . $e->getMessage());
+            $this->logger->error("Failed to get archived capstone projects for user '$userId': " . $e->getMessage());
             return false;
         }
     }
@@ -300,60 +300,90 @@ class CapstoneProjectsDao {
      */
     public function getCapstoneProjectsForAdminByCategory($category, $status = null) {
         try {
-			if ($category == 0){ //Look for ones without a category
+			if ($category == 0) { 
+                //Look for ones without a category
 				if (!($status == null)){
-					$sql = '
-					SELECT * 
-					FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
-						capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user 
-					WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
-						AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id 
-						AND cp_cps_id = :status 
-					ORDER BY cp_date_updated DESC
-					   
+					$sql = 'SELECT * 
+                        FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+                            capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user 
+                        WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+                            AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id 
+                            AND cp_cps_id = :status 
+                        ORDER BY cp_date_updated DESC
 					';  
 					$params = array(':status' => $status);
 					$results = $this->conn->query($sql, $params);
 				} else {
-					$sql = '
-					SELECT * 
-					FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
-						capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user 
-					WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
-						AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id  
-					ORDER BY cp_date_updated DESC  
+					$sql = 'SELECT * 
+                        FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+                            capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user 
+                        WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+                            AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id  
+                        ORDER BY cp_date_updated DESC  
 					';  
-					$params = array();
-					$results = $this->conn->query($sql, $params);
-				
-					
+					$results = $this->conn->query($sql);
 				}
-			} else {
+			} else if (gettype($category) == 'array') {
+                // Get projects that include at least one of the $category s
+
+                // Escape the input with intval to prevent arbitrary SQL injection
+                $categories = implode(',', array_map('intval', $category));
+
+                // Make the proper query based on optional param
+                if (!($status === null)){
+                    // NOTE: FIND_IN_SET used bc $this->conn automatically adds quotes around string vars, preventing WHERE _ IN
+                    //     from executing properly
+					$sql = 'SELECT * 
+                        FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+                            capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user, capstone_project_category_for 
+                        WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+                            AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id AND cpcf_entity_id = cp_id 
+                            AND cp_cps_id = :status 
+                            AND FIND_IN_SET(cpcf_cpc_id, :categories) <> 0 
+                        GROUP BY cp_id
+                        ORDER BY cp_date_updated DESC
+					';  
+					$params = array(
+                        ':status' => $status,
+                        ':categories' => $categories);
+					$results = $this->conn->query($sql, $params);
+				} else {
+                    // NOTE: FIND_IN_SET used bc $this->conn automatically adds quotes around string vars, preventing WHERE _ IN
+                    //     from executing properly
+					$sql = 'SELECT * 
+                        FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+                            capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user, capstone_project_category_for 
+                        WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+                            AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id AND cpcf_entity_id = cp_id 
+                            AND FIND_IN_SET(cpcf_cpc_id, :categories) <> 0 
+                        GROUP BY cp_id
+                        ORDER BY cp_date_updated DESC
+					';  
+					$params = array(':categories' => $categories);
+					$results = $this->conn->query($sql, $params);
+				}
+            } else {
 				if (!($status === null)){
-					$sql = '
-					SELECT * 
-					FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
-						capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user, capstone_project_category_for 
-					WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
-						AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id AND cpcf_entity_id = cp_id 
-						AND cp_cps_id = :status 
-						AND cpcf_cpc_id = :category 
-					ORDER BY cp_date_updated DESC
-					   
+					$sql = 'SELECT * 
+                        FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+                            capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user, capstone_project_category_for 
+                        WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+                            AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id AND cpcf_entity_id = cp_id 
+                            AND cp_cps_id = :status 
+                            AND cpcf_cpc_id = :category 
+                        ORDER BY cp_date_updated DESC
 					';  
 					$params = array(':status' => $status,
 									':category' => $category);
 					$results = $this->conn->query($sql, $params);
 				} else {
-					$sql = '
-					SELECT * 
-					FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
-						capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user, capstone_project_category_for 
-					WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
-						AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id AND cpcf_entity_id = cp_id 
-						AND cpcf_cpc_id = :category 
-					ORDER BY cp_date_updated DESC
-					   
+					$sql = 'SELECT * 
+                        FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+                            capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user, capstone_project_category_for 
+                        WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+                            AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id AND cpcf_entity_id = cp_id 
+                            AND cpcf_cpc_id = :category 
+                        ORDER BY cp_date_updated DESC
 					';  
 					$params = array(':category' => $category);
 					$results = $this->conn->query($sql, $params);
@@ -673,7 +703,7 @@ class CapstoneProjectsDao {
         }
     }
 
-/**
+    /**
      * Fetches the capstone project logs with a given project ID
      *
      * @param string $project_id
@@ -784,7 +814,7 @@ class CapstoneProjectsDao {
         }
     }
 
-/**
+    /**
      * Adds a new capstone project log entry into the database.
      *
      * @param \Model\CapstoneProjectLog $log the log to insert
@@ -1332,6 +1362,7 @@ class CapstoneProjectsDao {
      * @return \Model\CapstoneProject
      */
     public static function ExtractCapstoneProjectFromRow($row, $userInRow = false) {
+        global $logger;
         $project = new CapstoneProject($row['cp_id']);
         $project->setProposerId($row['cp_u_id'])
             ->setTitle($row['cp_title'])
