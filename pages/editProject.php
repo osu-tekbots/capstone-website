@@ -62,24 +62,25 @@ if ($project) {
 
 
 // If the user is not the creator of the project or an admin, redirect them to the home page (unauthorized)
-//Workaround here
+//Workaround here -- not sure what this was, but the authorizedEditors block was commented out. Restored on 8/28/23
 $authorizedToProceed = $isAdmin;
-/*
+if (!$authorizedToProceed) {
+	$authorizedToProceed = $project->getProposer()->getId() == $_SESSION['userID'];
+}
+
 if (!$authorizedToProceed) {
 	$authorizedEditors = $dao->getCapstoneProjectEditors($project->getId());
 	if ($authorizedEditors) {
 		foreach ($authorizedEditors as $editor) {
 			if ($editor->getId() == $_SESSION['userID']) {
-				$authorizedToProceed = True;
+				$authorizedToProceed = TRUE;
 			}
 		}
 	}
 }
-*/
-if (!$authorizedToProceed) {
-	$authorizedToProceed = $project->getProposer()->getId() == $_SESSION['userID'];
-}
+
 //allowIf($authorizedToProceed);
+allowIf($authorizedToProceed, '../pages/index.php');
 
 // Get all the various enumerations from the database
 $users = $usersDao->getActiveUsers();
@@ -106,8 +107,6 @@ else {
 	$approved = $pStatusId >= CapstoneProjectStatus::ACCEPTING_APPLICANTS && $pStatusId != CapstoneProjectStatus::REJECTED;
 }
 
-
-allowIf($authorizedToProceed, 'pages/index.php');
 
 include_once PUBLIC_FILES . '/modules/admin-review.php';
 
