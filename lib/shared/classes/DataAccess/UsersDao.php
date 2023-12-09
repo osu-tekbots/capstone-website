@@ -460,10 +460,36 @@ class UsersDao {
      */
     public function addNewUser($user) {
         try {
-            $sql = 'INSERT INTO user ';
-            $sql .= '(u_id, u_ut_id, u_fname, u_lname, u_us_id, u_email, u_phone, u_major, u_affiliation, u_onid, ';
-            $sql .= 'u_uap_id, u_uap_provided_id, u_date_created) ';
-            $sql .= 'VALUES (:id,:type,:fname,:lname,:salu,:email,:phone,:maj,:affil,:onid,:auth,:authpid,:datec)';
+            $sql = 'INSERT INTO user (
+                u_id, 
+                u_ut_id, 
+                u_fname, 
+                u_lname, 
+                u_us_id, 
+                u_email, 
+                u_phone, 
+                u_major, 
+                u_affiliation, 
+                u_onid, 
+                u_uap_id, 
+                u_uap_provided_id, 
+                u_date_updated,
+                u_date_created) 
+            VALUES (
+                :id,
+                :type,
+                :fname,
+                :lname,
+                :salu,
+                :email,
+                :phone,
+                :maj,
+                :affil,
+                :onid,
+                :auth,
+                :authpid,
+                :dateu,
+                :datec)';
             $params = array(
                 ':id' => $user->getId(),
                 ':type' => $user->getType()->getId(),
@@ -477,6 +503,7 @@ class UsersDao {
                 ':onid' => $user->getOnid(),
                 ':auth' => $user->getAuthProvider()->getId(),
                 ':authpid' => $user->getAuthProviderId(),
+                ':dateu' => QueryUtils::FormatDate($user->getDateCreated()),
                 ':datec' => QueryUtils::FormatDate($user->getDateCreated())
             );
             $this->conn->execute($sql, $params);

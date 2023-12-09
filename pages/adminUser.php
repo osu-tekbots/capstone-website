@@ -83,7 +83,7 @@ include_once PUBLIC_FILES . '/modules/header.php';
 				<li class="breadcrumb-item">
 					<a>Users</a>
 				</li>
-				<li class="breadcrumb-item active">Overview</li>
+				<li class="breadcrumb-item active"><?php echo isset($_REQUEST['inactive']) ? "Inactive" : "Active"; ?></li>
 			</ol>
 
 
@@ -226,8 +226,20 @@ $('#data_table').DataTable({
 		{ orderable: false },
 		{ orderable: false },
 		{ orderable: false },
-		{ orderable: false }
-		]
+		{ orderable: false }],
+	// columnDefs: [{
+	// 		targets: [0, 1, 2, 3, 4, 6, 8, 9],
+	// 		type: 'string',
+	// 		render: function(data, type, full, meta) {
+	// 			if (type === 'filter' || type === 'sort') {
+	// 				var api = new $.fn.dataTable.Api(meta.settings);
+	// 				var td = api.cell({row: meta.row, column: meta.col}).node();
+	// 				data = $('select, input[type="text"]', td).val();
+	// 			}
+
+	// 			return data;
+	// 		}
+	// 	}] // Allow searching on inputs
 });
 
 </script>
