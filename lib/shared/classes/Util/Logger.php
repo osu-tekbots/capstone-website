@@ -49,7 +49,7 @@ class Logger {
      */
     public function setLevel($level) {
         $i = array_search($level, $this->levels);
-        if (!$i) {
+        if ($i === false) {
             if ($this->level == null) {
                 $this->level = 1;
             }
@@ -118,7 +118,7 @@ class Logger {
      * @return void
      */
     private function log($level, $message) {
-        $str = $level . ' [' . date('Y/m/d h:i:s', time()) . '] ' . $message . "\n";
+        $str = $level . ' [' . date('Y/m/d h:i:s', time()) . '] (' . ($_SESSION['userID'] ?? 'Logged out') . ') '. $message . "\n";
         fwrite($this->file, $str);
     }
 }
