@@ -137,6 +137,7 @@ function uploadProjectImage() {
     data.append('image', $('#imgInp').prop('files')[0]);
 
     api.post('/upload.php', data, true).then(res => {
+        snackbar(res.message, 'success');
         // TODO: display newly uploaded image in image picker
     }).catch(err => {
         snackbar(err.message, 'error');
