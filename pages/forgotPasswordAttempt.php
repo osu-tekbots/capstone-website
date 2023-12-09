@@ -41,7 +41,7 @@ if (!$user) { // New user!!!
 		$user->setDateLastLogin(new DateTime());
 		$dao->addNewuser($user);
 		$dao->setupLocalUserPassword($user);
-		$logger->error("Added User ". $_POST['userFirst'] . " " . $_POST['userLast']);
+		$logger->info("Added User ". $_POST['userFirst'] . " " . $_POST['userLast']);
 	}
 }
 
