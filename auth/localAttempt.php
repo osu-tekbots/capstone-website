@@ -25,6 +25,7 @@ if ( !isset($_POST) || (isset($_POST) && !isset($_POST['localEmail'])) || (isset
 $dao = new UsersDao($dbConn, $logger);
 $u = $dao->getLocalUserWithCredentials($_POST['localEmail'], $_POST['localPassword']);
 if ($u) {
+    $_SESSION['site'] = 'capstoneSubmission';
     $_SESSION['userID'] = $u->getId();
     $_SESSION['accessLevel'] = $u->getType()->getName();
     $_SESSION['newUser'] = false;

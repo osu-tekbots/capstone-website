@@ -4,7 +4,7 @@ include_once '../bootstrap.php';
 use DataAccess\UsersDao;
 use DataAccess\CapstoneProjectsDao;
 
-session_start();
+if (!session_id()) session_start();
 
 include_once PUBLIC_FILES . '/lib/shared/authorize.php';
 

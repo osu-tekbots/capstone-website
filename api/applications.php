@@ -12,7 +12,7 @@ use DataAccess\CapstoneApplicationsDao;
 use DataAccess\CapstoneProjectsDao;
 use Api\ApplicationsActionHandler;
 
-session_start();
+if (!session_id()) session_start();
 
 // Setup our data access and handler classes
 $projectsDao = new CapstoneProjectsDao($dbConn, $logger);

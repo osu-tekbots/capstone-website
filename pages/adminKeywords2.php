@@ -10,7 +10,7 @@ error_reporting(E_ALL);
 
 use DataAccess\KeywordsDao;
 
-session_start();
+if (!session_id()) session_start();
 
 include_once PUBLIC_FILES . '/lib/shared/authorize.php';
 

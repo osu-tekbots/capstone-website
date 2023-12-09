@@ -6,7 +6,7 @@ use DataAccess\CapstoneProjectsDao;
 use Model\CapstoneApplicationStatus;
 use Util\Security;
 
-session_start();
+if (!session_id()) session_start();
 
 include_once PUBLIC_FILES . '/lib/shared/authorize.php';
 

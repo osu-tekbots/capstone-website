@@ -9,7 +9,7 @@ use Api\Response;
 use Api\KeywordsActionHandler;
 use DataAccess\KeywordsDao;
 
-session_start();
+if (!session_id()) session_start();
 
 // Setup our data access and handler classes
 $keywordsDao = new KeywordsDao($dbConn, $logger);

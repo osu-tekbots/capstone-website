@@ -23,3 +23,6 @@ try {
 } catch (\Exception $e) {
     $logger = null;
 }
+
+// Set $_SESSION variables to be for this site
+include PUBLIC_FILES . '/lib/authenticate.php';

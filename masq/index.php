@@ -10,7 +10,7 @@ include_once '../bootstrap.php';
 
 use DataAccess\UsersDao;
 
-session_start();
+if (!session_id()) session_start();
 
 $dao = new UsersDao($dbConn, $logger);
 

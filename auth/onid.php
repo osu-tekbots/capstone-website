@@ -24,6 +24,7 @@ function authenticateStudent() {
 
     $u = $dao->getUserByOnid($onid);
     if ($u) {
+        $_SESSION['site'] = 'capstoneSubmission';
         $_SESSION['userID'] = $u->getId();
         $_SESSION['accessLevel'] = $u->getType()->getName();
         $_SESSION['newUser'] = false;
@@ -42,6 +43,7 @@ function authenticateStudent() {
         $ok = $dao->addNewUser($u);
         // TODO: handle error
 
+        $_SESSION['site'] = 'capstoneSubmission';
         $_SESSION['userID'] = $u->getId();
         $_SESSION['accessLevel'] = $u->getType()->getName();
         $_SESSION['newUser'] = true;

@@ -50,6 +50,7 @@ function authenticateWithMicrosoft() {
 
     $u = $dao->getUserByAuthProviderProvidedId($authProvidedId);
     if ($u) {
+        $_SESSION['site'] = 'capstoneSubmission';
         $_SESSION['userID'] = $u->getId();
         $_SESSION['accessLevel'] = $u->getType()->getName();
         $_SESSION['newUser'] = false;
@@ -64,6 +65,7 @@ function authenticateWithMicrosoft() {
         $ok = $dao->addNewUser($u);
         // TODO: handle error
 
+        $_SESSION['site'] = 'capstoneSubmission';
         $_SESSION['userID'] = $u->getId();
         $_SESSION['accessLevel'] = $u->getType()->getName();
         $_SESSION['newUser'] = true;
