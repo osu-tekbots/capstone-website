@@ -167,4 +167,52 @@ class ProjectMailer extends Mailer {
         return $this->sendEmail($addresses, $subject, $message);
 
     }
+
+    public function sendActiveProjectsReminder($name, $email, $projectNames, $totalHours) {
+        global $configManager;
+
+        $projectCount = \count($projectNames);
+        
+        // Generate text based on number of projects
+        if($projectCount > 1) {
+            $projectCountText = "$projectCount projects";
+
+            $projectListText = "As a reminder, your projects are:<BR>
+                <ul>";
+            foreach($projectNames as $projectName) {
+                $projectListText .= "<li>$projectName</li>\n";
+            }
+            $projectListText .= "</ul>\n";
+            
+        } else {
+            $projectCountText = "project";
+
+            $projectListText = "As a reminder, your project is \"".$projectNames[0]."\".";
+        }
+
+        $subject = "Confirmation of Current Projects";
+
+        $message = "
+            Dear $name, <BR>
+            <BR>
+            As we get ready to kick off our Capstone projects, we would like to confirm that you are willing and able to
+            serve as a project partner (dedicating one hour per team per project per week to mentoring the student team)
+            for the $projectCountText you have submitted. $projectListText<br>
+            ";
+
+        if($totalHours > 1) {
+            $message .= "As you have indicated willingess to mentor more than one team, we would especially like to
+            confirm that you are able to dedicate up to <b>$totalHours hours per week</b> to serving as a mentor.<BR>";
+        }
+
+        $message .= "
+        <BR>
+        Sincerely,<BR>
+        <BR>
+        Senior Design Capstone Team<BR>
+        Oregon State University";
+
+		$to = $email;
+        return $this->sendEmail($to, $subject, $message, true);
+    }
 }

@@ -220,7 +220,7 @@ class ProjectsActionHandler extends ActionHandler {
 				
 			}			
 		}
-/*
+        /*
         //Clear all existing preferred courses to account for removed courses.
 		$this->preferredCoursesDao->removeAllPreferredCoursesForEntity($id);
         $preferredCoursesBracketSeparatedString = $this->getFromBody('preferredCourses');
@@ -239,7 +239,7 @@ class ProjectsActionHandler extends ActionHandler {
                 $this->preferredCoursesDao->addPreferredCourseInJoinTable($pc, $id);
             }
         }
-*/
+        */
         $project = $this->projectsDao->getCapstoneProject($id);
         // TODO: handle case when project is not found
 
@@ -757,6 +757,46 @@ class ProjectsActionHandler extends ActionHandler {
             'Successfully updated the project'
         ));
     }
+    
+    public function handleRemindActiveProjects() {
+        $this->verifyAdminSession();
+
+        $projects = $this->projectsDao->getActiveCapstoneProjectsForAdmin();
+
+        // Filter projects by active user
+        $remindersSent = 0;
+
+        $this->logger->info(var_export($projects, true));
+
+        if (count($projects)){
+            $lastProposerID = $projects[0]->getProposer()->getId();
+            $projectNames = [];
+            $totalHours = 0;
+            foreach ($projects as $project){
+                $proposerID = $project->getProposer()->getId();
+                // Ordered by proposer, so this check is sufficient
+                if($proposerID != $lastProposerID) {
+                    $ok = $this->mailer->sendActiveProjectsReminder($name, $email, $projectNames, $totalHours);
+                    if(!$ok) {
+                        $this->respond(new Response(Response::INTERNAL_SERVER_ERROR, "Failed to send reminder email ($remindersSent sent)"));
+                        $this->logger->error("Failed to send reminder email to $name ($email): ".var_export($projectNames, true));
+                    }
+                    $remindersSent++;
+                    $projectNames = [];
+                    $totalHours = 0;
+                    $lastProposerID = $proposerID;
+                }
+                // Update this after sending email so it sends the email to the correct user with the correct details
+                $projectNames[] = $project->getTitle();
+                $totalHours += $project->getNumberGroups(); // 1 hour per group per week
+                $name = $project->getProposer()->getFirstName().' '.$project->getProposer()->getLastName();
+                // $email = $project->getProposer()->getEmail();
+                $email = 'bairdn@oregonstate.edu';
+            }
+        }
+        
+        $this->respond(new Response(Response::OK, "Successfully sent $remindersSent reminder emails"));
+    }
 	
 
     /**
@@ -825,6 +865,9 @@ class ProjectsActionHandler extends ActionHandler {
                 break;		
             case 'addEditor':
                 $this->handleAddEditor();
+                break;
+            case 'remindActiveProjects':
+                $this->handleRemindActiveProjects();
                 break;
 				
             default:

@@ -262,6 +262,35 @@ class CapstoneProjectsDao {
             return false;
         }
     }
+
+    /**
+     * Fetches active capstone projects relevant for sending confirmation emails to each project partner (ordered by partner).
+     *
+     * @return \Model\CapstoneProject[]|boolean an array of projects on success, false otherwise
+     */
+    public function getActiveCapstoneProjectsForAdmin() {
+        try {
+            $sql = 'SELECT * 
+				FROM capstone_project, capstone_project_compensation, capstone_project_category, capstone_project_type, 
+					capstone_project_focus, capstone_project_cop, capstone_project_nda_ip, capstone_project_status, user
+				WHERE cp_cpcmp_id = cpcmp_id AND cp_cpc_id = cpc_id AND cp_cpt_id = cpt_id AND cp_cpf_id = cpf_id 
+					AND cp_cpcop_id = cpcop_id AND cp_cpni_id = cpni_id AND cp_cps_id = cps_id AND u_id = cp_u_id
+                    AND (cp_cps_id = 4 OR cp_cps_id = 5) AND cp_archived = 0
+				ORDER BY cp_u_id DESC  
+				';  
+            $results = $this->conn->query($sql);
+
+            $projects = [];
+            foreach($results as $row) {
+                $projects[] = self::ExtractCapstoneProjectFromRow($row, true);
+            }
+
+            return $projects;
+        } catch (\Exception $e) {
+            $this->logger->error('Failed to get active projects for admin: ' . $e->getMessage());
+            return false;
+        }
+    }
 	
 	
 	/**

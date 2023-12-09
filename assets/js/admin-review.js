@@ -264,4 +264,18 @@ $('#adminDeleteProjectBtn').on('click', function() {
         });
 });
 
+$('#adminVerifyProjectList').on('click', function() {
+    if(!confirm('This action will send an email to all project partners who have an active project, confirming that they are ready to run their project. Are you sure you wish to send all these emails?'))
+        return false;
 
+    let data = {
+        action: 'remindActiveProjects'
+    }
+
+    snackbar('Generating email to project partners', 'info');
+    api.post('/projects.php', data).then(res => {
+        snackbar(res.message, 'success');
+    }).catch(err => {
+        snackbar(err.message, 'error');
+    });
+});

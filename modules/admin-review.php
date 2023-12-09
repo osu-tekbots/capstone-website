@@ -25,13 +25,22 @@ function renderAdminReviewPanel($project, $logs, $editors, $categoriesDao, $user
 	$tooltipPublish = "This will reveal this project to a general search by students. Allows students to find and bid on project.";
 	$tooltipunPublish = "This hides a project from students. Useful for project that are already filled with selected students or has an NDA concern.";
     $tooltipEdit = "This allows you to edit this project.";
+    $tooltipVerify = "This sends a confirmation email to each project partner about how many active projects they have and asks them to confirm that they are willing to run that many projects.";
     $tooltipDeleteEditor = "This button deletes a user from the list of users with permissions to edit a project.";
 
     $proposerHTML = "<select id='proposerSelect' class='form-control'>";
+    $proposerFound = false;
 	foreach ($users as $u) {
+        if($pProposerId == $u->getId()) $proposerFound = true;
 		$proposerHTML .= "" .
         "<option value='" . $u->getId() . "' " . ($pProposerId == $u->getId() ? 'selected' : '' ) . ">" .
             $u->getLastname() . ", " . $u->getFirstname() . ": " . $u->getEmail() . 
+        "</option>";
+    }
+    if(!$proposerFound) {
+        $proposerHTML .= "" .
+        "<option value='" . $pProposer->getId() . "' selected>" .
+            $pProposer->getLastname() . ", " . $pProposer->getFirstname() . ": " . $pProposer->getEmail() . 
         "</option>";
     }
 	$proposerHTML .= "</select>";
@@ -111,7 +120,7 @@ function renderAdminReviewPanel($project, $logs, $editors, $categoriesDao, $user
                     : '<h6><p style="color:black">No action required at this time</p></h6>';
 
     $commentsHtml = $pComments != '' 
-					? "<h6><p style='background-color:#f1a582'>Proposer Comments: $pComments</p></h6>"
+					? "<h6><p class='p-1' style='background-color:#f1a582'>Proposer Comments: $pComments</p></h6>"
                     : '';
     $isArchived = $pIsArchived
                     ? 'Archived Project (Not longer Active)'
@@ -196,6 +205,8 @@ function renderAdminReviewPanel($project, $logs, $editors, $categoriesDao, $user
                 <br/>";
 	if ($singleView == true)
 		echo "<a href='pages/editProject.php?id=$pId'><button class='btn btn-lg btn-info admin-btn' type='button' data-toggle='tooltip' data-placement='bottom' title='$tooltipEdit' id='adminDeleteProjectBtn'>Edit Project</button></a>";
+    if (/* $singleView == */ true)
+    echo "<button class='btn btn-lg btn-outline-info admin-btn' type='button' data-toggle='tooltip' data-placement='bottom' title='$tooltipVerify' id='adminVerifyProjectList'>Verify All Projects</button>";
 
     if ($logs != false) {
         echo "
@@ -238,6 +249,13 @@ function renderAdminReviewPanel($project, $logs, $editors, $categoriesDao, $user
         </div>
     </div>
 
+    ";
+
+    echo "
+        <script>
+            // Instantiates all tool tips.
+            $('[data-toggle=\"tooltip\"]').tooltip();
+        </script>
     ";
 }
 
