@@ -69,7 +69,7 @@ $types = $dao->getCapstoneProjectTypes();
                         <?php 
                         $categories = $categoriesDao->getAllCategories();
                         foreach ($categories as $c) {
-                            if (in_array($c->getId(), array(5,6,8,10)))
+                            if (in_array($c->getId(), array(5,6,8,10, 11, 12))) // Add category IDs here to sort by them
 								echo '<option>' . $c->getName() . '</option>';
                         }
                         ?>
