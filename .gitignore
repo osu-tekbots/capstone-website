@@ -4,3 +4,4 @@ dev/
 .htaccess
 private/
 .private/
+.DS_Store
